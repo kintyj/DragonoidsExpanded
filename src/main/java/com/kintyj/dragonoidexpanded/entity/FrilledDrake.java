@@ -286,7 +286,8 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
         return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), // Cancel fighting if the target is no
                                                                              // longer valid
                 new SetWalkTargetToAttackTarget<>(),
-                new LeapAtTarget<>(0).leapRange((mob, entity) -> 12f).jumpStrength(((mob, entity) -> 12f))
+                new LeapAtTarget<>(0).verticalJumpStrength(((mob, entity) -> 5f)).leapRange((mob, entity) -> 12f)
+                        .jumpStrength(((mob, entity) -> 5f))
                         .whenStarting(entity -> setAggressive(true))
                         .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
                             return (BrainUtils.getTargetOfEntity(entity) != null
