@@ -512,6 +512,5 @@ public class FrilledDrake extends TamableAnimal
             player.startRiding(this);
         }
     }
-
     // Coder no spell good.
 }
