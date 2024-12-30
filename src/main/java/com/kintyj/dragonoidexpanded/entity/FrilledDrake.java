@@ -223,13 +223,13 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
             int growthScore = getGrowthScore();
 
             if (growthScore <= DrakeAge.DRAKELING.getAge()) {
-                setGrowthScore(DrakeAge.DRAKELING.getAge());
+                setGrowthScore(DrakeAge.DRAKELING.getAge() + 1);
             } else if (growthScore <= DrakeAge.TEEN.getAge()) {
-                setGrowthScore(DrakeAge.TEEN.getAge());
+                setGrowthScore(DrakeAge.TEEN.getAge() + 1);
             } else if (growthScore <= DrakeAge.ADULT.getAge()) {
-                setGrowthScore(DrakeAge.ADULT.getAge());
+                setGrowthScore(DrakeAge.ADULT.getAge() + 1);
             } else if (growthScore <= DrakeAge.ELDER.getAge()) {
-                setGrowthScore(DrakeAge.ELDER.getAge());
+                setGrowthScore(DrakeAge.ELDER.getAge() + 1);
             }
 
             if (!player.isCreative()) {
