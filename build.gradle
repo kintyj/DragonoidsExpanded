@@ -105,7 +105,7 @@ dependencies {
     // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
     // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
     implementation "net.neoforged:neoforge:${neo_version}"
-    implementation "net.tslat.smartbrainlib:SmartBrainLib-neoforge-1.21:1.14.3"
+    implementation "net.tslat.smartbrainlib:SmartBrainLib-neoforge-1.21.1:1.16.2"
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:4.6.6"
     
     // Example optional mod dependency with JEI
