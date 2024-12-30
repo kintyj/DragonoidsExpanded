@@ -134,7 +134,8 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
         this.getAttribute(Attributes.ATTACK_KNOCKBACK)
                 .setBaseValue(BASE_ATTACK_KNOCKBACK * (0.75f + scale * (1.25f - 0.75f)));
         this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(BASE_STEP_HEIGHT * (0.5f + scale * (2f - 0.5f)));
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED * (0.5f + scale * (1.5f - 0.5f)));
+        this.getAttribute(Attributes.MOVEMENT_SPEED)
+                .setBaseValue(BASE_MOVEMENT_SPEED * (0.85f + scale * (1.5f - 0.85f)));
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_HEALTH * (0.25f + scale * (2f - 0.25f)));
         this.heal(BASE_HEALTH / MAX_GROWTH);
 
