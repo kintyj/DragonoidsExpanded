@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "":{
+            "model": "dragonoidexpanded:block/example_block"
+        }
+    }
+}
