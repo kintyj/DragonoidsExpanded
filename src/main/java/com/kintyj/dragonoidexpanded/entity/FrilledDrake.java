@@ -195,7 +195,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
             if (this.getDeltaMovement().y > 1.0f)
-                return event.setAndContinue(RawAnimation.begin().thenPlayAndHold("animation.frilled_drake.jump"));
+                return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.jump"));
             if (this.isAggressive()) {
                 return event.setAndContinue(event.isMoving()
                         ? (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggresive_swim")
@@ -210,7 +210,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
                                 : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
             }
         }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
-                .triggerableAnim("jump", RawAnimation.begin().thenPlayAndHold("animation.frilled_drake.jump"))
+                .triggerableAnim("jump", RawAnimation.begin().thenPlay("animation.frilled_drake.jump"))
                 .triggerableAnim("claw_strike_left",
                         RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_left"))
                 .triggerableAnim("claw_strike_right",
@@ -347,16 +347,22 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
                                                                              // longer valid
                 new SetWalkTargetToAttackTarget<>(),
                 new FirstApplicableBehaviour<>(
-                        new LeapAtTarget<>(0).verticalJumpStrength(((mob, entity) -> 5f))
-                                .leapRange((mob, entity) -> 12f)
-                                .jumpStrength(((mob, entity) -> 5f))
+                        new LeapAtTarget<>(0)
+                                .verticalJumpStrength(((mob, entity) -> {
+                                    float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
+                                    return distanceToEntity / 6f;
+                                }))
+                                .leapRange((mob, entity) -> 25f)
+                                .jumpStrength(((mob, entity) -> {
+                                    return 2f;
+                                }))
                                 .whenStarting(entity -> {
                                     setAggressive(true);
                                     triggerAnim("defaultController", "jump");
                                 })
                                 .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
                                     return (BrainUtils.getTargetOfEntity(entity) != null
-                                            && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 5);
+                                            && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 7);
                                 }), // Set the walk target to the attack target
                         new AnimatableMeleeAttack<>(12).whenStarting(entity -> {
                             setAggressive(true);
