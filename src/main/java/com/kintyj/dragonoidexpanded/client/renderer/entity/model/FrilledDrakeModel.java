@@ -75,13 +75,13 @@ public class FrilledDrakeModel extends GeoModel<FrilledDrake> {
 
     @Override
     public ResourceLocation getTextureResource(FrilledDrake object) {
-        if (object.getGrowthScore() > 1600) {
+        if (object.getGrowthScore() > FrilledDrake.DrakeAge.ELDER.getAge()) {
             return FrilledDrakeModel.texture[object.getColor()][4]; // 401-402 days - Elder
-        } else if (object.getGrowthScore() > 1200) {
+        } else if (object.getGrowthScore() > FrilledDrake.DrakeAge.ADULT.getAge()) {
             return FrilledDrakeModel.texture[object.getColor()][3]; // 301-400 days - Adult
-        } else if (object.getGrowthScore() > 400) {
+        } else if (object.getGrowthScore() > FrilledDrake.DrakeAge.TEEN.getAge()) {
             return FrilledDrakeModel.texture[object.getColor()][2]; // 101-300 days - Teen
-        } else if (object.getGrowthScore() > 80) {
+        } else if (object.getGrowthScore() > FrilledDrake.DrakeAge.DRAKELING.getAge()) {
             return FrilledDrakeModel.texture[object.getColor()][1]; // 021-100 days - Drakeling
         } else {
             return FrilledDrakeModel.texture[object.getColor()][0]; // 000-020 days - Hatchling
