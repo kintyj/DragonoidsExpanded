@@ -123,6 +123,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
 
     public void setGrowthScore(int pGrowthScore) {
         this.entityData.set(GROWTH_SCORE, pGrowthScore);
+        updateScale(pGrowthScore);
     }
 
     @Override
@@ -139,7 +140,6 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
         if (!level().isClientSide) {
             if (this.tickCount % DrakeAge.TIME_BETWEEN_GROWTH == 0 && getGrowthScore() < DrakeAge.MAX_GROWTH.getAge()) {
                 setGrowthScore(getGrowthScore() + 1);
-                updateScale(getGrowthScore());
             }
         }
 
@@ -250,7 +250,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
             @Nonnull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         SpawnGroupData spawnGroupDataInternal = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
         this.setColor(level().getRandom().nextInt(0, 4));
-        setScale(getGrowthScore());
+        setGrowthScore(0);
         return spawnGroupDataInternal;
     }
 
