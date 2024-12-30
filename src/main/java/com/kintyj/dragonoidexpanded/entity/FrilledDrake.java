@@ -173,6 +173,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
     public AgeableMob getBreedOffspring(@Nonnull ServerLevel serverLevel, @Nonnull AgeableMob partner) {
         FrilledDrake child = (FrilledDrake) this.getType().create(serverLevel);
         if (child != null) {
+            child.setGrowthScore(0);
             child.setColor(this.getColor());
         }
         return child;
@@ -201,7 +202,12 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
                         : (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.float")
                                 : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
             }
-        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite")));
+        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
+                .triggerableAnim("jump", RawAnimation.begin().thenPlayAndHold("animation.frilled_drake.jump"))
+                .triggerableAnim("claw_strike_left",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_left"))
+                .triggerableAnim("claw_strike_right",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_right")));
     }
 
     @Override
@@ -299,23 +305,30 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public BrainActivityGroup<? extends FrilledDrake> getFightTasks() { // These are the tasks that handle fighting
         return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), // Cancel fighting if the target is no
                                                                              // longer valid
                 new SetWalkTargetToAttackTarget<>(),
-                new LeapAtTarget<>(0).verticalJumpStrength(((mob, entity) -> 5f)).leapRange((mob, entity) -> 12f)
-                        .jumpStrength(((mob, entity) -> 5f))
-                        .whenStarting(entity -> setAggressive(true))
-                        .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
-                            return (BrainUtils.getTargetOfEntity(entity) != null
-                                    && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 5);
-                        }), // Set the walk target to the attack target
-                new AnimatableMeleeAttack<>(0).whenStarting(entity -> {
-                    setAggressive(true);
-                    triggerAnim("defaultController", "bite");
-                })
-                        .whenStopping(entity -> setAggressive(false)));
+                new FirstApplicableBehaviour<>(
+                        new LeapAtTarget<>(0).verticalJumpStrength(((mob, entity) -> 5f))
+                                .leapRange((mob, entity) -> 12f)
+                                .jumpStrength(((mob, entity) -> 5f))
+                                .whenStarting(entity -> {
+                                    setAggressive(true);
+                                    triggerAnim("defaultController", "jump");
+                                })
+                                .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
+                                    return (BrainUtils.getTargetOfEntity(entity) != null
+                                            && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 5);
+                                }), // Set the walk target to the attack target
+                        new AnimatableMeleeAttack<>(12).whenStarting(entity -> {
+                            setAggressive(true);
+                            triggerAnim("defaultController", "bite");
+                        }).whenStopping(entity -> setAggressive(false))
+
+                ));
     }
 
     // Coder no spell good.
