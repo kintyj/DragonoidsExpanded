@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.kintyj.dragonoidexpanded.DragonoidExpanded;
 import com.kintyj.dragonoidexpanded.brain.behaviour.LeapAtTarget;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -14,6 +15,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AgeableMob;
@@ -26,8 +29,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -66,7 +71,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
     private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> COLOR = SynchedEntityData
             .defineId(FrilledDrake.class, EntityDataSerializers.INT);
 
-    enum DrakeColor {
+    public enum DrakeColor {
         BLUE(0),
         AQUA(1),
         TURQUOISE(2),
@@ -83,6 +88,27 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
         }
     }
 
+    public static enum DrakeAge {
+        HATCHLING(0),
+        DRAKELING(80),
+        TEEN(400),
+        ADULT(1200),
+        ELDER(1600),
+        MAX_GROWTH(2000);
+
+        public static final int TIME_BETWEEN_GROWTH = 6000;
+
+        private final int age;
+
+        DrakeAge(int age) {
+            this.age = age;
+        }
+
+        public int getAge() {
+            return age;
+        }
+    }
+
     private static final float BASE_ATTACK_DAMAGE = 10;
     private static final float BASE_ATTACK_SPEED = 2.4f;
     private static final float BASE_ATTACK_KNOCKBACK = 2.4f;
@@ -91,14 +117,13 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
     private static final float BASE_SCALE = 1f;
     private static final float BASE_HEALTH = 225f;
 
-    private static final int MAX_GROWTH = 2000;
-
     public int getGrowthScore() {
         return this.entityData.get(GROWTH_SCORE);
     }
 
     public void setGrowthScore(int pGrowthScore) {
         this.entityData.set(GROWTH_SCORE, pGrowthScore);
+        updateScale(pGrowthScore);
     }
 
     @Override
@@ -113,17 +138,15 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
         super.tick();
 
         if (!level().isClientSide) {
-            // Increment growth score by 4 every day (6000)
-            if (this.tickCount % 6000 == 0 && getGrowthScore() < MAX_GROWTH) {
+            if (this.tickCount % DrakeAge.TIME_BETWEEN_GROWTH == 0 && getGrowthScore() < DrakeAge.MAX_GROWTH.getAge()) {
                 setGrowthScore(getGrowthScore() + 1);
-                updateScale(getGrowthScore());
             }
         }
 
     }
 
     private void updateScale(int growth) {
-        float scale = (growth / (float) MAX_GROWTH);
+        float scale = (growth / (float) DrakeAge.MAX_GROWTH.getAge());
         this.setScale(scale);
     }
 
@@ -132,12 +155,12 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(BASE_ATTACK_DAMAGE * (0.1f + scale * (2.5f - 0.1f)));
         this.getAttribute(Attributes.ATTACK_SPEED).setBaseValue(BASE_ATTACK_SPEED * (0.5f + scale * (1.5f - 0.5f)));
         this.getAttribute(Attributes.ATTACK_KNOCKBACK)
-                .setBaseValue(BASE_ATTACK_KNOCKBACK * (0.75f + scale * (1.25f - 0.75f)));
+                .setBaseValue(BASE_ATTACK_KNOCKBACK * (0.15f + scale * (1.25f - 0.15f)));
         this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(BASE_STEP_HEIGHT * (0.5f + scale * (2f - 0.5f)));
         this.getAttribute(Attributes.MOVEMENT_SPEED)
                 .setBaseValue(BASE_MOVEMENT_SPEED * (0.85f + scale * (1.5f - 0.85f)));
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_HEALTH * (0.25f + scale * (2f - 0.25f)));
-        this.heal(BASE_HEALTH / MAX_GROWTH);
+        this.heal(BASE_HEALTH / DrakeAge.MAX_GROWTH.getAge());
 
         this.getAttribute(Attributes.SCALE).setBaseValue(BASE_SCALE * (0.25f + scale * (5.0f - 0.25f)));
         this.refreshDimensions();
@@ -155,6 +178,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
     public AgeableMob getBreedOffspring(@Nonnull ServerLevel serverLevel, @Nonnull AgeableMob partner) {
         FrilledDrake child = (FrilledDrake) this.getType().create(serverLevel);
         if (child != null) {
+            child.setGrowthScore(0);
             child.setColor(this.getColor());
         }
         return child;
@@ -170,7 +194,9 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
-            if (BrainUtils.getTargetOfEntity(this) != null) {
+            if (this.getDeltaMovement().y > 1.0f)
+                return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.jump"));
+            if (this.isAggressive()) {
                 return event.setAndContinue(event.isMoving()
                         ? (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggresive_swim")
                                 : RawAnimation.begin().thenLoop("animation.frilled_drake.intimidate"))
@@ -183,7 +209,40 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
                         : (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.float")
                                 : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
             }
-        }));
+        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
+                .triggerableAnim("jump", RawAnimation.begin().thenPlay("animation.frilled_drake.jump"))
+                .triggerableAnim("claw_strike_left",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_left"))
+                .triggerableAnim("claw_strike_right",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_right")));
+    }
+
+    @Override
+    public InteractionResult interactAt(@Nonnull Player player, @Nonnull Vec3 vec, @Nonnull InteractionHand hand) {
+        if (player.getItemInHand(hand).is(DragonoidExpanded.EXAMPLE_ITEM)) {
+            int growthScore = getGrowthScore();
+
+            if (growthScore <= DrakeAge.DRAKELING.getAge()) {
+                setGrowthScore(DrakeAge.DRAKELING.getAge() + 1);
+            } else if (growthScore <= DrakeAge.TEEN.getAge()) {
+                setGrowthScore(DrakeAge.TEEN.getAge() + 1);
+            } else if (growthScore <= DrakeAge.ADULT.getAge()) {
+                setGrowthScore(DrakeAge.ADULT.getAge() + 1);
+            } else if (growthScore <= DrakeAge.ELDER.getAge()) {
+                setGrowthScore(DrakeAge.ELDER.getAge() + 1);
+            }
+
+            if (!player.isCreative()) {
+                player.getItemInHand(hand).shrink(1);
+            }
+
+            return InteractionResult.CONSUME;
+        }
+        player.hurt(damageSources().mobAttack(this), 15f);
+        if (level().isClientSide) {
+            triggerAnim("defaultController", "bite");
+        }
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -191,7 +250,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
             @Nonnull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         SpawnGroupData spawnGroupDataInternal = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
         this.setColor(level().getRandom().nextInt(0, 4));
-        setScale(getGrowthScore());
+        setGrowthScore(0);
         return spawnGroupDataInternal;
     }
 
@@ -281,18 +340,36 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public BrainActivityGroup<? extends FrilledDrake> getFightTasks() { // These are the tasks that handle fighting
         return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), // Cancel fighting if the target is no
                                                                              // longer valid
                 new SetWalkTargetToAttackTarget<>(),
-                new LeapAtTarget<>(0).whenStarting(entity -> setAggressive(true))
-                        .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
-                            return (BrainUtils.getTargetOfEntity(entity) != null
-                                    && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 15);
-                        }), // Set the walk target to the attack target
-                new AnimatableMeleeAttack<>(0).whenStarting(entity -> setAggressive(true))
-                        .whenStopping(entity -> setAggressive(false)));
+                new FirstApplicableBehaviour<>(
+                        new LeapAtTarget<>(0)
+                                .verticalJumpStrength(((mob, entity) -> {
+                                    float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
+                                    return distanceToEntity / 6f;
+                                }))
+                                .leapRange((mob, entity) -> 25f)
+                                .jumpStrength(((mob, entity) -> {
+                                    return 2f;
+                                }))
+                                .whenStarting(entity -> {
+                                    setAggressive(true);
+                                    triggerAnim("defaultController", "jump");
+                                })
+                                .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
+                                    return (BrainUtils.getTargetOfEntity(entity) != null
+                                            && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 7);
+                                }), // Set the walk target to the attack target
+                        new AnimatableMeleeAttack<>(12).whenStarting(entity -> {
+                            setAggressive(true);
+                            triggerAnim("defaultController", "bite");
+                        }).whenStopping(entity -> setAggressive(false))
+
+                ));
     }
 
     // Coder no spell good.
