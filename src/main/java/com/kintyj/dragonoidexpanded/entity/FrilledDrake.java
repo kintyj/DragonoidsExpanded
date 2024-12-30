@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.world.DifficultyInstance;
@@ -20,18 +21,25 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PlayerRideableJumping;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -61,7 +69,8 @@ import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.animation.RawAnimation;
 
-public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartBrainOwner<FrilledDrake> {
+public class FrilledDrake extends TamableAnimal
+        implements Enemy, GeoEntity, PlayerRideableJumping, SmartBrainOwner<FrilledDrake> {
     public FrilledDrake(EntityType<? extends FrilledDrake> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
@@ -108,6 +117,9 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
             return age;
         }
     }
+
+    protected boolean isJumping;
+    protected float playerJumpPendingScale;
 
     private static final float BASE_ATTACK_DAMAGE = 10;
     private static final float BASE_ATTACK_SPEED = 2.4f;
@@ -194,7 +206,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
-            if (this.getDeltaMovement().y > 1.0f)
+            if (this.getDeltaMovement().y > 1.0f && this.isFallFlying())
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.jump"));
             if (this.isAggressive()) {
                 return event.setAndContinue(event.isMoving()
@@ -217,6 +229,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
                         RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_right")));
     }
 
+    @SuppressWarnings("null")
     @Override
     public InteractionResult interactAt(@Nonnull Player player, @Nonnull Vec3 vec, @Nonnull InteractionHand hand) {
         if (player.getItemInHand(hand).is(DragonoidExpanded.EXAMPLE_ITEM)) {
@@ -237,12 +250,22 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
             }
 
             return InteractionResult.CONSUME;
+        } else if (isFood(player.getItemInHand(hand))) {
+            if (getOwner() == null) {
+                this.tame(player);
+            }
         }
-        player.hurt(damageSources().mobAttack(this), 15f);
-        if (level().isClientSide) {
-            triggerAnim("defaultController", "bite");
+
+        if (getOwner() != null && getOwner().is(player)) {
+            doPlayerRide(player);
+            return InteractionResult.SUCCESS;
+        } else {
+            player.hurt(damageSources().mobAttack(this), 15f);
+            if (level().isClientSide) {
+                triggerAnim("defaultController", "bite");
+            }
+            return InteractionResult.PASS;
         }
-        return InteractionResult.PASS;
     }
 
     @Override
@@ -311,12 +334,17 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
         tickBrain(this);
     }
 
+    @SuppressWarnings("null")
     @Override
     public List<ExtendedSensor<? extends FrilledDrake>> getSensors() {
         return ObjectArrayList.of(
                 new NearbyLivingEntitySensor<FrilledDrake>()
-                        .setPredicate((target, entity) -> !(target instanceof FrilledDrake)), // This tracks nearby
-                                                                                              // entities
+                        .setPredicate(
+                                (target, entity) -> !(target instanceof FrilledDrake
+                                        || (entity.getOwner() != null && entity.getOwner().is(target)))), // This
+                // tracks
+                // nearby
+                // entities
                 new HurtBySensor<>(), new InWaterSensor<>()); // This tracks the last damage source and attacker
 
     }
@@ -350,7 +378,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
                         new LeapAtTarget<>(0)
                                 .verticalJumpStrength(((mob, entity) -> {
                                     float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
-                                    return distanceToEntity / 6f;
+                                    return 0.5f + distanceToEntity / 6f;
                                 }))
                                 .leapRange((mob, entity) -> 25f)
                                 .jumpStrength(((mob, entity) -> {
@@ -370,6 +398,119 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
                         }).whenStopping(entity -> setAggressive(false))
 
                 ));
+    }
+
+    @Override
+    public boolean isFood(@Nonnull ItemStack stack) {
+        return stack.is(Items.BEEF);
+    }
+
+    @Override
+    protected void tickRidden(@Nonnull Player player, @Nonnull Vec3 travelVector) {
+        super.tickRidden(player, travelVector);
+        Vec2 vec2 = this.getRiddenRotation(player);
+        this.setRot(vec2.y, vec2.x);
+        this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
+        if (this.isControlledByLocalInstance()) {
+            if (this.onGround()) {
+                this.isJumping = false;
+                if (this.playerJumpPendingScale > 0.0F && !this.isJumping) {
+                    this.executeRidersJump(this.playerJumpPendingScale, travelVector);
+                }
+
+                this.playerJumpPendingScale = 0.0F;
+            }
+        }
+    }
+
+    @Override
+    public Vec3 getPassengerRidingPosition(@Nonnull Entity entity) {
+        return super.getPassengerRidingPosition(entity).add(0, -0.35, 0);
+    }
+
+    protected Vec2 getRiddenRotation(LivingEntity entity) {
+        return new Vec2(entity.getXRot() * 0.5F, entity.getYRot());
+    }
+
+    @Override
+    protected Vec3 getRiddenInput(@Nonnull Player player, @Nonnull Vec3 travelVector) {
+        if (this.onGround() && this.playerJumpPendingScale == 0.0F) {
+            return Vec3.ZERO;
+        } else {
+            float f = player.xxa * 0.5F;
+            float f1 = player.zza;
+            if (f1 <= 0.0F) {
+                f1 *= 0.25F;
+            }
+
+            return new Vec3((double) f, 0.0, (double) f1);
+        }
+    }
+
+    @Override
+    protected float getRiddenSpeed(@Nonnull Player player) {
+        return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED);
+    }
+
+    protected void executeRidersJump(float playerJumpPendingScale, Vec3 travelVector) {
+        double d0 = (double) this.getJumpPower(playerJumpPendingScale);
+        Vec3 vec3 = this.getDeltaMovement();
+        this.setDeltaMovement(vec3.x, d0, vec3.z);
+        this.isJumping = true;
+        this.hasImpulse = true;
+        net.neoforged.neoforge.common.CommonHooks.onLivingJump(this);
+        if (travelVector.z > 0.0) {
+            float f = Mth.sin(this.getYRot() * (float) (Math.PI / 180.0));
+            float f1 = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
+            this.setDeltaMovement(this.getDeltaMovement().add((double) (-0.4F * f * playerJumpPendingScale), 0.0,
+                    (double) (0.4F * f1 * playerJumpPendingScale)));
+        }
+    }
+
+    @Override
+    public void onPlayerJump(int jumpPower) {
+        if (jumpPower < 0) {
+            jumpPower = 0;
+        } else {
+        }
+
+        if (jumpPower >= 90) {
+            this.playerJumpPendingScale = 1.0F;
+        } else {
+            this.playerJumpPendingScale = 0.4F + 0.4F * (float) jumpPower / 90.0F;
+        }
+    }
+
+    @Override
+    public boolean canJump() {
+        return true;
+    }
+
+    @Override
+    public void handleStartJump(int jumpPower) {
+    }
+
+    @Override
+    public void handleStopJump() {
+    }
+
+    @Nullable
+    @Override
+    public LivingEntity getControllingPassenger() {
+        Entity entity = this.getFirstPassenger();
+        if (entity instanceof Player) {
+            return (Player) entity;
+        }
+
+        return super.getControllingPassenger();
+    }
+
+    protected void doPlayerRide(Player player) {
+        if (!this.level().isClientSide) {
+            player.setYRot(this.getYRot());
+            player.setXRot(this.getXRot());
+            player.startRiding(this);
+        }
     }
 
     // Coder no spell good.
