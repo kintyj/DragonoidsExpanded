@@ -170,7 +170,7 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
-            if (BrainUtils.getTargetOfEntity(this) != null) {
+            if (this.isAggressive()) {
                 return event.setAndContinue(event.isMoving()
                         ? (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggresive_swim")
                                 : RawAnimation.begin().thenLoop("animation.frilled_drake.intimidate"))
