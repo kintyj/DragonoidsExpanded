@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.kintyj.dragonoidexpanded.DragonoidExpanded;
 import com.kintyj.dragonoidexpanded.brain.behaviour.LeapAtTarget;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -14,6 +15,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AgeableMob;
@@ -26,8 +29,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -189,6 +194,8 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
+            if (this.getDeltaMovement().y > 1.0f)
+                return event.setAndContinue(RawAnimation.begin().thenPlayAndHold("animation.frilled_drake.jump"));
             if (this.isAggressive()) {
                 return event.setAndContinue(event.isMoving()
                         ? (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggresive_swim")
@@ -208,6 +215,34 @@ public class FrilledDrake extends AgeableMob implements Enemy, GeoEntity, SmartB
                         RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_left"))
                 .triggerableAnim("claw_strike_right",
                         RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_right")));
+    }
+
+    @Override
+    public InteractionResult interactAt(@Nonnull Player player, @Nonnull Vec3 vec, @Nonnull InteractionHand hand) {
+        if (player.getItemInHand(hand).is(DragonoidExpanded.EXAMPLE_ITEM)) {
+            int growthScore = getGrowthScore();
+
+            if (growthScore <= DrakeAge.DRAKELING.getAge()) {
+                setGrowthScore(DrakeAge.DRAKELING.getAge());
+            } else if (growthScore <= DrakeAge.TEEN.getAge()) {
+                setGrowthScore(DrakeAge.TEEN.getAge());
+            } else if (growthScore <= DrakeAge.ADULT.getAge()) {
+                setGrowthScore(DrakeAge.ADULT.getAge());
+            } else if (growthScore <= DrakeAge.ELDER.getAge()) {
+                setGrowthScore(DrakeAge.ELDER.getAge());
+            }
+
+            if (!player.isCreative()) {
+                player.getItemInHand(hand).shrink(1);
+            }
+
+            return InteractionResult.CONSUME;
+        }
+        player.hurt(damageSources().mobAttack(this), 15f);
+        if (level().isClientSide) {
+            triggerAnim("defaultController", "bite");
+        }
+        return InteractionResult.PASS;
     }
 
     @Override
