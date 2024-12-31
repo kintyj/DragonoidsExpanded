@@ -241,6 +241,8 @@ public class FrilledDrake extends TamableAnimal
                 setGrowthScore(DrakeAge.ADULT.getAge() + 1);
             } else if (growthScore <= DrakeAge.ELDER.getAge()) {
                 setGrowthScore(DrakeAge.ELDER.getAge() + 1);
+            } else if (growthScore <= DrakeAge.MAX_GROWTH.getAge()) {
+                setGrowthScore(DrakeAge.MAX_GROWTH.getAge() + 1);
             }
 
             if (!player.isCreative()) {
