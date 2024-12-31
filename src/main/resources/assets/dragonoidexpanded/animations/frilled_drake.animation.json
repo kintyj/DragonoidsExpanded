@@ -2158,9 +2158,6 @@
 				"RightFoot": {
 					"rotation": {
 						"vector": [0, 0, 22.5]
-					},
-					"position": {
-						"vector": [-2, 1.4, 0]
 					}
 				},
 				"HeadNeck": {
