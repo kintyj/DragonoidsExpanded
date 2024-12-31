@@ -206,8 +206,6 @@ public class FrilledDrake extends TamableAnimal
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
-            if (this.getDeltaMovement().y > 1.0f && this.isFallFlying())
-                return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.jump"));
             if (this.isAggressive()) {
                 return event.setAndContinue(event.isMoving()
                         ? (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggresive_swim")
@@ -386,7 +384,7 @@ public class FrilledDrake extends TamableAnimal
                                 }))
                                 .whenStarting(entity -> {
                                     setAggressive(true);
-                                    triggerAnim("defaultController", "jump");
+                                    // triggerAnim("defaultController", "jump");
                                 })
                                 .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
                                     return (BrainUtils.getTargetOfEntity(entity) != null
@@ -434,17 +432,13 @@ public class FrilledDrake extends TamableAnimal
 
     @Override
     protected Vec3 getRiddenInput(@Nonnull Player player, @Nonnull Vec3 travelVector) {
-        if (this.onGround() && this.playerJumpPendingScale == 0.0F) {
-            return Vec3.ZERO;
-        } else {
-            float f = player.xxa * 0.5F;
-            float f1 = player.zza;
-            if (f1 <= 0.0F) {
-                f1 *= 0.25F;
-            }
-
-            return new Vec3((double) f, 0.0, (double) f1);
+        float f = player.xxa * 0.5F;
+        float f1 = player.zza;
+        if (f1 <= 0.0F) {
+            f1 *= 0.25F;
         }
+
+        return new Vec3((double) f, 0.0, (double) f1);
     }
 
     @Override
