@@ -2431,9 +2431,6 @@
 				}
 			}
 		},
-		"animation.frilled_drake.strafe_left": {
-			"loop": true
-		},
 		"animation.frilled_drake.walk": {
 			"loop": true,
 			"animation_length": 1.5,
@@ -3017,6 +3014,10 @@
 					}
 				}
 			}
+		},
+		"animation.frilled_drake.strafe_left": {
+			"loop": true,
+			"animation_length": 1
 		},
 		"animation.frilled_drake.jump": {
 			"loop": "hold_on_last_frame",
@@ -6204,7 +6205,7 @@
 						"vector": [0, 0, 22.5]
 					},
 					"position": {
-						"vector": [-2, 1.4, 0]
+						"vector": [0, -1, 0]
 					}
 				},
 				"BodyUpper": {
