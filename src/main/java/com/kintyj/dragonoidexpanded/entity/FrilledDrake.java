@@ -99,11 +99,11 @@ public class FrilledDrake extends TamableAnimal
 
     public static enum DrakeAge {
         HATCHLING(0),
-        DRAKELING(80),
-        TEEN(400),
-        ADULT(1200),
-        ELDER(1600),
-        MAX_GROWTH(2000);
+        DRAKELING(20),
+        TEEN(100),
+        ADULT(200),
+        ELDER(300),
+        MAX_GROWTH(400);
 
         public static final int TIME_BETWEEN_GROWTH = 6000;
 
@@ -155,6 +155,9 @@ public class FrilledDrake extends TamableAnimal
             }
         }
 
+        this.setYRot(this.interpolateRotation(this.getYRot(), targetYaw, 5.0F));
+
+        this.targetYaw = this.getYHeadRot();
     }
 
     private void updateScale(int growth) {
@@ -172,7 +175,7 @@ public class FrilledDrake extends TamableAnimal
         this.getAttribute(Attributes.MOVEMENT_SPEED)
                 .setBaseValue(BASE_MOVEMENT_SPEED * (0.85f + scale * (1.5f - 0.85f)));
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_HEALTH * (0.25f + scale * (2f - 0.25f)));
-        this.heal(BASE_HEALTH / DrakeAge.MAX_GROWTH.getAge());
+        this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getBaseValue());
 
         this.getAttribute(Attributes.SCALE).setBaseValue(BASE_SCALE * (0.25f + scale * (5.0f - 0.25f)));
         this.refreshDimensions();
@@ -206,25 +209,48 @@ public class FrilledDrake extends TamableAnimal
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
-            if (this.isAggressive()) {
-                return event.setAndContinue(event.isMoving()
-                        ? (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggresive_swim")
-                                : RawAnimation.begin().thenLoop("animation.frilled_drake.intimidate"))
-                        : (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.angry_float")
-                                : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
+            
+            float currentYaw = this.getYRot();
+            float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
+
+            if (!event.isMoving()) {
+                if (Math.abs(deltaYaw) > 5.0F) {
+                    if (deltaYaw > 0) { // Turning right
+                        return event
+                                .setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.turn_right"));
+                    } else { // Turning left
+                        return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left"));
+                    }
+                } else { // If not turning, ensure the idle animation starts
+                    if (this.isAggressive()) {
+                        return event.setAndContinue(
+                                (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.angry_float")
+                                        : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
+                    } else {
+                        return event.setAndContinue(
+                                (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.float")
+                                        : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
+                    }
+                }
+            } else if (this.isAggressive()) {
+                return event.setAndContinue((this.isInWater()
+                        ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggresive_swim")
+                        : RawAnimation.begin().thenLoop("animation.frilled_drake.intimidate")));
             } else {
-                return event.setAndContinue(event.isMoving()
-                        ? (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.swim")
-                                : RawAnimation.begin().thenLoop("animation.frilled_drake.walk"))
-                        : (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.float")
-                                : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
-            }
+                return event.setAndContinue(
+                        (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.swim")
+                                : RawAnimation.begin().thenLoop("animation.frilled_drake.walk")));
+            }     
         }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
                 .triggerableAnim("jump", RawAnimation.begin().thenPlay("animation.frilled_drake.jump"))
                 .triggerableAnim("claw_strike_left",
                         RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_left"))
                 .triggerableAnim("claw_strike_right",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_right")));
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_right"))
+                .triggerableAnim("animation.frilled_drake.turn_right",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.turn_right"))
+                .triggerableAnim("animation.frilled_drake.turn_left",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left")));
     }
 
     @SuppressWarnings("null")
@@ -362,8 +388,7 @@ public class FrilledDrake extends TamableAnimal
     public BrainActivityGroup<? extends FrilledDrake> getIdleTasks() { // These are the tasks that run when the mob
                                                                        // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
-                new FirstApplicableBehaviour<FrilledDrake>(new TargetOrRetaliate<>(), new SetPlayerLookTarget<>(),
-                        new SetRandomLookTarget<>()),
+                new FirstApplicableBehaviour<FrilledDrake>(new TargetOrRetaliate<>(), new SetPlayerLookTarget<>()),
                 new OneRandomBehaviour<>(new SetRandomWalkTarget<>().speedModifier(0.5f),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
     }
@@ -410,16 +435,35 @@ public class FrilledDrake extends TamableAnimal
         super.tickRidden(player, travelVector);
         Vec2 vec2 = this.getRiddenRotation(player);
         this.setRot(vec2.y, vec2.x);
-        this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
+        this.setYHeadRot(player.getYHeadRot());
         if (this.isControlledByLocalInstance()) {
+            // Check if on ground to allow for jumping
             if (this.onGround()) {
                 this.isJumping = false;
                 if (this.playerJumpPendingScale > 0.0F && !this.isJumping) {
                     this.executeRidersJump(this.playerJumpPendingScale, travelVector);
                 }
-
                 this.playerJumpPendingScale = 0.0F;
             }
+
+            // Trigger turning animations based on player's camera rotation
+            float currentYaw = this.getYRot();
+            targetYaw = this.getYHeadRot();
+            float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
+
+            DragonoidExpanded.LOGGER.info("Current Yaw: " + currentYaw + "\nTarget Yaw: " + targetYaw + "\nDelta Yaw: " + deltaYaw);
+
+            if (Math.abs(deltaYaw) > 5.0F) { // Only trigger animation for significant rotation
+                if (deltaYaw < 0) {
+                    // Player is turning right
+                    triggerAnim("defaultController", "animation.frilled_drake.turn_right");
+                } else {
+                    // Player is turning left
+                    triggerAnim("defaultController", "animation.frilled_drake.turn_left");
+                }
+            }
+
+            this.setYRot(this.interpolateRotation(currentYaw, targetYaw, 5.0F)); // Smoothly rotate towards target yaw
         }
     }
 
@@ -509,4 +553,15 @@ public class FrilledDrake extends TamableAnimal
         }
     }
     // Coder no spell good.
+    
+    private float targetYaw;
+
+    private float interpolateRotation(float currentYaw, float targetYaw, float maxStep) {
+        float delta = Mth.wrapDegrees(targetYaw - currentYaw);
+        if (delta > maxStep)
+            delta = maxStep;
+        if (delta < -maxStep)
+            delta = -maxStep;
+        return currentYaw + delta;
+    }
 }
