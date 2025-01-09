@@ -47,7 +47,7 @@ public class DragonoidExpanded
     // Define mod id in a common place for everything to reference
     public static final String MODID = "dragonoidexpanded";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     //#region Registers 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
@@ -57,7 +57,7 @@ public class DragonoidExpanded
     //#endregion
 
     //#region Entities
-    public static final DeferredHolder<EntityType<?>, EntityType<FrilledDrake>> FRILLED_DRAKE = ENTITY_TYPES.register("frilled_drake", () -> EntityType.Builder.of(FrilledDrake::new, MobCategory.MONSTER).sized(3.0F, 1.3F).clientTrackingRange(10).build("frilled_drake"));
+    public static final DeferredHolder<EntityType<?>, EntityType<FrilledDrake>> FRILLED_DRAKE = ENTITY_TYPES.register("frilled_drake", () -> EntityType.Builder.of(FrilledDrake::new, MobCategory.MONSTER).sized(1.5F, 1.3F).clientTrackingRange(10).build("frilled_drake"));
     public static final DeferredItem<SpawnEggItem> FRILLED_DRAKE_ADULT_SPAWN_EGG = ITEMS.register("frilled_drake_adult_spawn_egg", () -> new DeferredSpawnEggItem(FRILLED_DRAKE, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
     // #endregion
 

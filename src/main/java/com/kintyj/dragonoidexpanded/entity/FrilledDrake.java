@@ -105,11 +105,11 @@ public class FrilledDrake extends TamableAnimal
 
     public static enum DrakeAge {
         HATCHLING(0),
-        DRAKELING(80),
-        TEEN(400),
-        ADULT(800),
-        ELDER(1200),
-        MAX_GROWTH(1600);
+        DRAKELING(20),
+        TEEN(100),
+        ADULT(200),
+        ELDER(300),
+        MAX_GROWTH(400);
 
         public static final int TIME_BETWEEN_GROWTH = 6000;
 
@@ -160,15 +160,10 @@ public class FrilledDrake extends TamableAnimal
                 setGrowthScore(getGrowthScore() + 1);
             }
         }
-        // 159-167 AI code
-        this.yRotO = this.interpolateRotation(this.yRotO, targetYaw, 5.0F);
 
-        if (this.getTarget() != null) {
-            // Calculate targetYaw based on the target's position
-            double dx = this.getTarget().getX() - this.getX();
-            double dz = this.getTarget().getZ() - this.getZ();
-            this.targetYaw = (float)(Math.atan2(dz, dx) * (180 / Math.PI)) - 90.0F;
-            }
+        this.setYRot(this.interpolateRotation(this.getYRot(), targetYaw, 5.0F));
+
+        this.targetYaw = this.getYHeadRot();
     }
 
     private void updateScale(int growth) {
@@ -186,7 +181,7 @@ public class FrilledDrake extends TamableAnimal
         this.getAttribute(Attributes.MOVEMENT_SPEED)
                 .setBaseValue(BASE_MOVEMENT_SPEED * (0.85f + scale * (1.5f - 0.85f)));
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_HEALTH * (0.25f + scale * (2f - 0.25f)));
-        this.heal(BASE_HEALTH / DrakeAge.MAX_GROWTH.getAge());
+        this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getBaseValue());
 
         this.getAttribute(Attributes.SCALE).setBaseValue(BASE_SCALE * (0.25f + scale * (5.0f - 0.25f)));
         this.refreshDimensions();
@@ -210,7 +205,7 @@ public class FrilledDrake extends TamableAnimal
         return child;
     }
 
-    //#region Animations
+    // #region Animations
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     @Override
@@ -218,28 +213,54 @@ public class FrilledDrake extends TamableAnimal
         return cache;
     }
 
+    // #region Animations
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "turnIdleController", 0, event -> {
-            boolean isTurning = Math.abs(this.yRotO - this.targetYaw) > 45.0F; // Check if turning
-            boolean isMoving = event.isMoving(); // Check if the entity is moving
-        
-            if (!isMoving) { // Only evaluate if the entity is stationary
-                if (isTurning) { // If the entity is turning
-                    if (this.yRotO < this.targetYaw) { // Turning right
-                        return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.turn_right"));
+        controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
+
+            float currentYaw = this.getYRot();
+            float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
+
+            if (!event.isMoving()) {
+                if (Math.abs(deltaYaw) > 5.0F) {
+                    if (deltaYaw > 0) { // Turning right
+                        return event
+                                .setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.turn_right"));
                     } else { // Turning left
                         return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left"));
                     }
                 } else { // If not turning, ensure the idle animation starts
-                    return event.setAndContinue(RawAnimation.begin().thenLoop("animation.frilled_drake.idle"));
+                    if (this.isAggressive()) {
+                        return event.setAndContinue(
+                                (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.angry_float")
+                                        : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
+                    } else {
+                        return event.setAndContinue(
+                                (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.float")
+                                        : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
+                    }
                 }
+            } else if (this.isAggressive()) {
+                return event.setAndContinue((this.isInWater()
+                        ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggressive_swim")
+                        : RawAnimation.begin().thenLoop("animation.frilled_drake.intimidate")));
+            } else {
+                return event.setAndContinue(
+                        (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.swim")
+                                : RawAnimation.begin().thenLoop("animation.frilled_drake.walk")));
             }
-            return PlayState.STOP; // Stop animations if moving
-        }));          
-    }    
-
-    //#endregion
+        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
+                .triggerableAnim("jump", RawAnimation.begin().thenPlay("animation.frilled_drake.jump"))
+                .triggerableAnim("claw_strike_left",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_left"))
+                .triggerableAnim("claw_strike_right",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_right"))
+                .triggerableAnim("animation.frilled_drake.turn_right",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.turn_right"))
+                .triggerableAnim("animation.frilled_drake.turn_left",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left")));
+    }
+    // #endregion
 
     @SuppressWarnings("null")
     @Override
@@ -255,6 +276,8 @@ public class FrilledDrake extends TamableAnimal
                 setGrowthScore(DrakeAge.ADULT.getAge() + 1);
             } else if (growthScore <= DrakeAge.ELDER.getAge()) {
                 setGrowthScore(DrakeAge.ELDER.getAge() + 1);
+            } else if (growthScore <= DrakeAge.MAX_GROWTH.getAge()) {
+                setGrowthScore(DrakeAge.MAX_GROWTH.getAge() + 1);
             } else if (growthScore <= DrakeAge.MAX_GROWTH.getAge()) {
                 setGrowthScore(DrakeAge.MAX_GROWTH.getAge() + 1);
             }
@@ -376,8 +399,7 @@ public class FrilledDrake extends TamableAnimal
     public BrainActivityGroup<? extends FrilledDrake> getIdleTasks() { // These are the tasks that run when the mob
                                                                        // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
-                new FirstApplicableBehaviour<FrilledDrake>(new TargetOrRetaliate<>(), new SetPlayerLookTarget<>(),
-                        new SetRandomLookTarget<>()),
+                new FirstApplicableBehaviour<FrilledDrake>(new TargetOrRetaliate<>(), new SetPlayerLookTarget<>()),
                 new OneRandomBehaviour<>(new SetRandomWalkTarget<>().speedModifier(0.5f),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
     }
@@ -424,16 +446,36 @@ public class FrilledDrake extends TamableAnimal
         super.tickRidden(player, travelVector);
         Vec2 vec2 = this.getRiddenRotation(player);
         this.setRot(vec2.y, vec2.x);
-        this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
+        this.setYHeadRot(player.getYHeadRot());
         if (this.isControlledByLocalInstance()) {
+            // Check if on ground to allow for jumping
             if (this.onGround()) {
                 this.isJumping = false;
                 if (this.playerJumpPendingScale > 0.0F && !this.isJumping) {
                     this.executeRidersJump(this.playerJumpPendingScale, travelVector);
                 }
-
                 this.playerJumpPendingScale = 0.0F;
             }
+
+            // Trigger turning animations based on player's camera rotation
+            float currentYaw = this.getYRot();
+            targetYaw = this.getYHeadRot();
+            float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
+
+            DragonoidExpanded.LOGGER
+                    .info("Current Yaw: " + currentYaw + "\nTarget Yaw: " + targetYaw + "\nDelta Yaw: " + deltaYaw);
+
+            if (Math.abs(deltaYaw) > 5.0F) { // Only trigger animation for significant rotation
+                if (deltaYaw < 0) {
+                    // Player is turning right
+                    triggerAnim("defaultController", "animation.frilled_drake.turn_right");
+                } else {
+                    // Player is turning left
+                    triggerAnim("defaultController", "animation.frilled_drake.turn_left");
+                }
+            }
+
+            this.setYRot(this.interpolateRotation(currentYaw, targetYaw, 5.0F)); // Smoothly rotate towards target yaw
         }
     }
 
@@ -524,53 +566,14 @@ public class FrilledDrake extends TamableAnimal
     }
     // Coder no spell good.
 
-    //#region We are Pro AI starting right here
-
     private float targetYaw;
 
     private float interpolateRotation(float currentYaw, float targetYaw, float maxStep) {
         float delta = Mth.wrapDegrees(targetYaw - currentYaw);
-        if (delta > maxStep) delta = maxStep;
-        if (delta < -maxStep) delta = -maxStep;
+        if (delta > maxStep)
+            delta = maxStep;
+        if (delta < -maxStep)
+            delta = -maxStep;
         return currentYaw + delta;
     }
-
-    private static class TurnToLookGoal extends Goal {
-        private final FrilledDrake entity;
-    
-        public TurnToLookGoal(FrilledDrake entity) {
-            this.entity = entity;
-            this.setFlags(EnumSet.of(Goal.Flag.LOOK));
-        }
-        
-        @Override
-            public boolean canUse() {
-                return true;
-            }
-
-        @Override
-            public void tick() {
-                LookControl lookControl = this.entity.getLookControl();
-                MoveControl moveControl = this.entity.getMoveControl();
-            
-                // Get the entity's rotation in radians
-                boolean isMoving = this.entity.getDeltaMovement().lengthSqr() > 0.001;
-            
-                if (!isMoving) {
-                    float yaw = entity.getYRot() * ((float)Math.PI / 180F);
-                // Calculate the direction vector based on the entity's yaw
-                Vec3 facingDirection = new Vec3(-Math.sin(yaw), 0, Math.cos(yaw)).normalize();
-            
-                // Adjust the entity's movement based on its facing direction
-                moveControl.setWantedPosition(
-                    entity.getX() + facingDirection.x, 
-                    entity.getY(), 
-                    entity.getZ() + facingDirection.z, 
-                    1.0
-                    );
-                }
-        
-            }
-        }
-    }
-            
+}
