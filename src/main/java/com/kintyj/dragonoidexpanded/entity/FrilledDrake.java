@@ -206,6 +206,7 @@ public class FrilledDrake extends TamableAnimal
         return cache;
     }
 
+    //#region Animations
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
@@ -234,7 +235,7 @@ public class FrilledDrake extends TamableAnimal
                 }
             } else if (this.isAggressive()) {
                 return event.setAndContinue((this.isInWater()
-                        ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggresive_swim")
+                        ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggressive_swim")
                         : RawAnimation.begin().thenLoop("animation.frilled_drake.intimidate")));
             } else {
                 return event.setAndContinue(
@@ -252,6 +253,7 @@ public class FrilledDrake extends TamableAnimal
                 .triggerableAnim("animation.frilled_drake.turn_left",
                         RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left")));
     }
+    //#endregion
 
     @SuppressWarnings("null")
     @Override
