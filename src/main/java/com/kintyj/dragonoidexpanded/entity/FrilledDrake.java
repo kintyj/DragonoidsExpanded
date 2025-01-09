@@ -424,11 +424,14 @@ public class FrilledDrake extends TamableAnimal
         return navigation;
     }
 
-    @Override
-    public void aiStep() {
-        this.tickPart(this.head, Mth.cos(this.getYRot()), 1.4f, Mth.sin(this.getYRot()));
-        this.tickPart(this.body, 0.0f, 0.0f, 0.0f);
-    }
+    /**
+     * @Override
+     *           public void aiStep() {
+     *           this.tickPart(this.head, Mth.cos(this.getYRot()), 1.4f,
+     *           Mth.sin(this.getYRot()));
+     *           this.tickPart(this.body, 0.0f, 0.0f, 0.0f);
+     *           }
+     */
 
     @Override
     protected void customServerAiStep() {
