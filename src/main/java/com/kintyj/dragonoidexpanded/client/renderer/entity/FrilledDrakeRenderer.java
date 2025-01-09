@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-public class FrilledDrakeRenderer extends GeoEntityRenderer<FrilledDrake>{
+public class FrilledDrakeRenderer extends GeoEntityRenderer<FrilledDrake> {
     public FrilledDrakeRenderer(EntityRendererProvider.Context context) {
         super(context, new FrilledDrakeModel());
     }
