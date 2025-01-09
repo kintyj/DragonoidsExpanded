@@ -33,6 +33,7 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -41,6 +42,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.entity.PartEntity;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -49,6 +51,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FollowOwner;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
@@ -64,20 +67,57 @@ import net.tslat.smartbrainlib.util.BrainUtils;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.animation.RawAnimation;
 
 public class FrilledDrake extends TamableAnimal
         implements Enemy, GeoEntity, PlayerRideableJumping, SmartBrainOwner<FrilledDrake> {
+    private final FrilledDrakePart[] subEntities;
+    public final FrilledDrakePart head;
+    private final FrilledDrakePart body;
+
+    @Override
+    public boolean isMultipartEntity() {
+        return true;
+    }
+
+    @Override
+    public PartEntity<?>[] getParts() {
+        return this.subEntities;
+    }
+
     public FrilledDrake(EntityType<? extends FrilledDrake> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+
+        this.head = new FrilledDrakePart(this, "head", 0.7f, 0.4f);
+        this.body = new FrilledDrakePart(this, "body", 1.5f, 0.3f);
+        this.subEntities = new FrilledDrakePart[] { this.head, this.body };
     }
 
     private static final EntityDataAccessor<Integer> GROWTH_SCORE = SynchedEntityData.defineId(FrilledDrake.class,
             EntityDataSerializers.INT);
-    private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> COLOR = SynchedEntityData
+    private static final EntityDataAccessor<Integer> STATE = SynchedEntityData.defineId(FrilledDrake.class,
+            EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData
             .defineId(FrilledDrake.class, EntityDataSerializers.INT);
+
+    public enum DrakeState {
+        SLEEPING(0),
+        AWAKE(1),
+        SITTING(2);
+
+        private final int state;
+
+        DrakeState(int state) {
+            this.state = state;
+        }
+
+        public int getState() {
+            return state;
+        }
+    }
 
     public enum DrakeColor {
         BLUE(0),
@@ -102,7 +142,7 @@ public class FrilledDrake extends TamableAnimal
         TEEN(100),
         ADULT(200),
         ELDER(300),
-        MAX_GROWTH(400);
+        MAX_GROWTH(500);
 
         public static final int TIME_BETWEEN_GROWTH = 6000;
 
@@ -127,6 +167,7 @@ public class FrilledDrake extends TamableAnimal
     private static final float BASE_MOVEMENT_SPEED = 0.3f;
     private static final float BASE_SCALE = 1f;
     private static final float BASE_HEALTH = 225f;
+    private static final float BASE_JUMP_STRENGTH = 1.5f;
 
     public int getGrowthScore() {
         return this.entityData.get(GROWTH_SCORE);
@@ -137,11 +178,24 @@ public class FrilledDrake extends TamableAnimal
         updateScale(pGrowthScore);
     }
 
+    public int getState() {
+        return this.entityData.get(STATE);
+    }
+
+    public void setState(int pState) {
+        this.entityData.set(STATE, pState);
+    }
+
     @Override
     protected void defineSynchedData(@Nonnull SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(GROWTH_SCORE, 0);
+        builder.define(STATE, DrakeState.AWAKE.getState());
         builder.define(COLOR, DrakeColor.BLUE.getColor());
+    }
+
+    private void tickPart(FrilledDrakePart part, double offsetX, double offsetY, double offsetZ) {
+        part.setPos(this.getX() + offsetX, this.getY() + offsetY, this.getZ() + offsetZ);
     }
 
     @Override
@@ -174,6 +228,7 @@ public class FrilledDrake extends TamableAnimal
         this.getAttribute(Attributes.MOVEMENT_SPEED)
                 .setBaseValue(BASE_MOVEMENT_SPEED * (0.85f + scale * (1.5f - 0.85f)));
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_HEALTH * (0.25f + scale * (2f - 0.25f)));
+        this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(BASE_JUMP_STRENGTH * (0.25f + scale * (2f - 0.25f)));
         this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getBaseValue());
 
         this.getAttribute(Attributes.SCALE).setBaseValue(BASE_SCALE * (0.25f + scale * (5.0f - 0.25f)));
@@ -206,11 +261,12 @@ public class FrilledDrake extends TamableAnimal
         return cache;
     }
 
-    // #region Animations
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "attackController", event -> {
+            return PlayState.CONTINUE;
+        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite")));
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
-
             float currentYaw = this.getYRot();
             float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
 
@@ -230,7 +286,13 @@ public class FrilledDrake extends TamableAnimal
                     } else {
                         return event.setAndContinue(
                                 (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.float")
-                                        : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
+                                        : (this.getState() == DrakeState.AWAKE.getState()
+                                                ? RawAnimation.begin().thenLoop("animation.frilled_drake.idle")
+                                                : (this.getState() == DrakeState.SITTING.getState()
+                                                        ? RawAnimation.begin()
+                                                                .thenLoop("animation.frilled_drake.sit_idle")
+                                                        : RawAnimation.begin()
+                                                                .thenLoop("animation.frilled_drake.sleeping")))));
                     }
                 }
             } else if (this.isAggressive()) {
@@ -242,8 +304,7 @@ public class FrilledDrake extends TamableAnimal
                         (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.swim")
                                 : RawAnimation.begin().thenLoop("animation.frilled_drake.walk")));
             }
-        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
-                .triggerableAnim("jump", RawAnimation.begin().thenPlay("animation.frilled_drake.jump"))
+        }).triggerableAnim("jump", RawAnimation.begin().thenPlay("animation.frilled_drake.jump"))
                 .triggerableAnim("claw_strike_left",
                         RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_left"))
                 .triggerableAnim("claw_strike_right",
@@ -251,7 +312,11 @@ public class FrilledDrake extends TamableAnimal
                 .triggerableAnim("animation.frilled_drake.turn_right",
                         RawAnimation.begin().thenPlay("animation.frilled_drake.turn_right"))
                 .triggerableAnim("animation.frilled_drake.turn_left",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left")));
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left"))
+                .triggerableAnim("sit_down",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.sitdown"))
+                .triggerableAnim("lay_down",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.laydown")));
     }
     // #endregion
 
@@ -286,13 +351,13 @@ public class FrilledDrake extends TamableAnimal
             }
         }
 
-        if (getOwner() != null && getOwner().is(player)) {
+        if (getGrowthScore() >= DrakeAge.TEEN.getAge() && getOwner() != null && getOwner().is(player)) {
             doPlayerRide(player);
             return InteractionResult.SUCCESS;
         } else {
             player.hurt(damageSources().mobAttack(this), 15f);
             if (level().isClientSide) {
-                triggerAnim("defaultController", "bite");
+                triggerAnim("attackController", "bite");
             }
             return InteractionResult.PASS;
         }
@@ -321,8 +386,8 @@ public class FrilledDrake extends TamableAnimal
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 450.0).add(Attributes.ATTACK_DAMAGE, 10.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.0)
                 .add(Attributes.ATTACK_SPEED, 2.4).add(Attributes.FOLLOW_RANGE, 50.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.STEP_HEIGHT, 3);
-
+                .add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.STEP_HEIGHT, 3)
+                .add(Attributes.JUMP_STRENGTH, 5.0);
     }
     // #endregion
 
@@ -360,6 +425,12 @@ public class FrilledDrake extends TamableAnimal
     }
 
     @Override
+    public void aiStep() {
+        this.tickPart(this.head, Mth.cos(this.getYRot()), 1.4f, Mth.sin(this.getYRot()));
+        this.tickPart(this.body, 0.0f, 0.0f, 0.0f);
+    }
+
+    @Override
     protected void customServerAiStep() {
         tickBrain(this);
     }
@@ -371,7 +442,8 @@ public class FrilledDrake extends TamableAnimal
                 new NearbyLivingEntitySensor<FrilledDrake>()
                         .setPredicate(
                                 (target, entity) -> !(target instanceof FrilledDrake
-                                        || (entity.getOwner() != null && entity.getOwner().is(target)))), // This
+                                        || (entity.getOwner() != null && entity.getOwner().is(target))
+                                        || (entity.getOwner() != null && !(target instanceof Mob)))), // This
                 // tracks
                 // nearby
                 // entities
@@ -392,12 +464,13 @@ public class FrilledDrake extends TamableAnimal
     public BrainActivityGroup<? extends FrilledDrake> getIdleTasks() { // These are the tasks that run when the mob
                                                                        // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
-                new FirstApplicableBehaviour<FrilledDrake>(new TargetOrRetaliate<>(), new SetPlayerLookTarget<>()),
+                new FirstApplicableBehaviour<FrilledDrake>(new TargetOrRetaliate<>(), new SetPlayerLookTarget<>(),
+                        new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
                 new OneRandomBehaviour<>(new SetRandomWalkTarget<>().speedModifier(0.5f),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "null" })
     @Override
     public BrainActivityGroup<? extends FrilledDrake> getFightTasks() { // These are the tasks that handle fighting
         return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), // Cancel fighting if the target is no
@@ -411,11 +484,11 @@ public class FrilledDrake extends TamableAnimal
                                 }))
                                 .leapRange((mob, entity) -> 25f)
                                 .jumpStrength(((mob, entity) -> {
-                                    return 2f;
+                                    return (float) entity.getAttribute(Attributes.JUMP_STRENGTH).getBaseValue();
                                 }))
                                 .whenStarting(entity -> {
                                     setAggressive(true);
-                                    // triggerAnim("defaultController", "jump");
+                                    // triggerAnim("defaultController", "jump"); (No SFX)
                                 })
                                 .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
                                     return (BrainUtils.getTargetOfEntity(entity) != null
@@ -423,7 +496,7 @@ public class FrilledDrake extends TamableAnimal
                                 }), // Set the walk target to the attack target
                         new AnimatableMeleeAttack<>(12).whenStarting(entity -> {
                             setAggressive(true);
-                            triggerAnim("defaultController", "bite");
+                            triggerAnim("attackController", "bite");
                         }).whenStopping(entity -> setAggressive(false))
 
                 ));
