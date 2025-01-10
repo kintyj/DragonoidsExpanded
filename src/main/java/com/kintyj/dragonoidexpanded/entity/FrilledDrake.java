@@ -94,13 +94,14 @@ public class FrilledDrake extends TamableAnimal
     }
 
     private static final int yawnDelay = 200;
-    private static final int blinkDelay = 30;
+    private static final int blinkDelay = 300;
     private static final int blinkTime = 30;
 
     public int blinkTimer;
+    public boolean blinking = true;
 
     public boolean isBlinking() {
-        return this.entityData.get(BLINKING);
+        return blinking;
     }
 
     public FrilledDrake(EntityType<? extends FrilledDrake> pEntityType, Level pLevel) {
@@ -117,8 +118,6 @@ public class FrilledDrake extends TamableAnimal
             EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData
             .defineId(FrilledDrake.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> BLINKING = SynchedEntityData
-            .defineId(FrilledDrake.class, EntityDataSerializers.BOOLEAN);
 
     public enum DrakeState {
         SLEEPING(0),
@@ -209,7 +208,6 @@ public class FrilledDrake extends TamableAnimal
         builder.define(GROWTH_SCORE, 0);
         builder.define(STATE, DrakeState.AWAKE.getState());
         builder.define(COLOR, DrakeColor.BLUE.getColor());
-        builder.define(BLINKING, true);
     }
 
     @SuppressWarnings("unused")
@@ -460,10 +458,30 @@ public class FrilledDrake extends TamableAnimal
     private int timer = 0;
 
     @Override
+    public void aiStep() {
+        if (getState() != DrakeState.SLEEPING.getState()) {
+            blinkTimer++;
+
+            if (blinking) {
+                if (blinkTimer > blinkTime) {
+                    DragonoidExpanded.LOGGER.info("I have stopped blinking.");
+                    blinkTimer = 0;
+                    blinking = false;
+                    DragonoidExpanded.LOGGER.info("Blinking: " + blinking);
+                }
+            } else if (blinkTimer > blinkDelay) {
+                DragonoidExpanded.LOGGER.info("I have started blinking.");
+                blinkTimer = 0;
+                blinking = true;
+                DragonoidExpanded.LOGGER.info("Blinking: " + blinking);
+            }
+        }
+    }
+
+    @Override
     protected void customServerAiStep() {
         if (getState() != DrakeState.SLEEPING.getState()) {
             timer++;
-            blinkTimer++;
 
             if (timer > yawnDelay) {
                 timer = 0;
@@ -472,21 +490,10 @@ public class FrilledDrake extends TamableAnimal
                         (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
                         (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
             }
-
-            if (isBlinking()) {
-                if (blinkTimer > blinkTime) {
-                    DragonoidExpanded.LOGGER.info("I have stopped blinking.");
-                    blinkTimer = 0;
-                    this.entityData.set(BLINKING, false);
-                }
-            } else if (blinkTimer > blinkDelay) {
-                DragonoidExpanded.LOGGER.info("I have started blinking.");
-                blinkTimer = 0;
-                this.entityData.set(BLINKING, true);
-            }
         }
 
-        if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
+        if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()
+                && !hasControllingPassenger()) {
             triggerAnim("defaultController", "lay_down");
             setState(DrakeState.SLEEPING.getState());
         } else if ((!level().isNight() || isAggressive() || hasControllingPassenger())
