@@ -67,6 +67,12 @@ public class DragonoidExpanded {
     public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_YAWN = SOUND_EVENTS
             .register("entity.frilled_drake.yawn", () -> SoundEvent.createVariableRangeEvent(
                     ResourceLocation.fromNamespaceAndPath(MODID, "entity.frilled_drake.yawn")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_ROAR = SOUND_EVENTS
+            .register("entity.frilled_drake.roar", () -> SoundEvent.createVariableRangeEvent(
+                    ResourceLocation.fromNamespaceAndPath(MODID, "entity.frilled_drake.roar")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_ALERT = SOUND_EVENTS
+            .register("entity.frilled_drake.alert", () -> SoundEvent.createVariableRangeEvent(
+                    ResourceLocation.fromNamespaceAndPath(MODID, "entity.frilled_drake.alert")));
     // #endregion
 
     // #region Entities

@@ -4,5 +4,17 @@
             "dragonoidexpanded:entity/frilled_drake/yawn"
         ],
         "subtitle": "subtitles.dragonoidsexpanded.entity.frilled_drake.yawn"
+    },
+    "entity.frilled_drake.roar": {
+        "sounds": [
+            "dragonoidexpanded:entity/frilled_drake/roar"
+        ],
+        "subtitle": "subtitles.dragonoidsexpanded.entity.frilled_drake.roar"
+    },
+    "entity.frilled_drake.alert": {
+        "sounds": [
+            "dragonoidexpanded:entity/frilled_drake/alert"
+        ],
+        "subtitle": "subtitles.dragonoidsexpanded.entity.frilled_drake.alert"
     }
 }
