@@ -507,9 +507,6 @@ public class FrilledDrake extends TamableAnimal
 
     @Override
     protected void customServerAiStep() {
-        if (getGrowthScore() < DrakeAge.HATCHLING.getAge())
-            return;
-
         if (getState() != DrakeState.SLEEPING.getState()) {
             timer++;
 
@@ -539,10 +536,14 @@ public class FrilledDrake extends TamableAnimal
         return ObjectArrayList.of(
                 // #region Sad region for sad people: Attacks
                 new NearbyLivingEntitySensor<FrilledDrake>()
-                        .setPredicate((target, entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())), // This
+                        .setPredicate((target,
+                                entity) -> !(entity.getState() == DrakeState.SLEEPING.getState()
+                                        && entity.getAge() < DrakeAge.HATCHLING.getAge())), // This
                 new NearbyAdultSensor<>(),
                 // #endregion
-                new HurtBySensor<>(), new InWaterSensor<>()); // This tracks the last damage source and attacker
+                new HurtBySensor<FrilledDrake>().setPredicate(
+                        (damageSource, mob) -> this.getAge() >= DrakeAge.HATCHLING.getAge()),
+                new InWaterSensor<>()); // This tracks the last damage source and attacker
 
     }
 
@@ -555,10 +556,16 @@ public class FrilledDrake extends TamableAnimal
                             DragonoidsExpanded.LOGGER.info("They are now ready to breed.");
                         }).whenStopping((entity) -> {
                             DragonoidsExpanded.LOGGER.info("They are no longer ready to breed.");
-                        }).startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
+                        })
+                        .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState()
+                                && entity.getAge() < DrakeAge.HATCHLING.getAge())),
                 new LookAtTarget<FrilledDrake>()
-                        .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
-                new MoveToWalkTarget<>()); // Walk towards the current walk target
+                        .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState()
+                                && entity.getAge() < DrakeAge.HATCHLING.getAge())),
+                new MoveToWalkTarget<FrilledDrake>()
+                        .startCondition((entity) -> !(entity.getAge() < DrakeAge.HATCHLING.getAge()))); // Walk towards
+                                                                                                        // the current
+                                                                                                        // walk target
     }
 
     @SuppressWarnings({ "unchecked", "null" })
@@ -576,11 +583,13 @@ public class FrilledDrake extends TamableAnimal
                                         || (this.getOwner() != null && !(target instanceof Mob))
                                         || (target instanceof Player && ((Player) target).isCreative()))),
                         new SetPlayerLookTarget<>(),
-                        new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
-                new OneRandomBehaviour<>(
+                        new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24))
+                        .startCondition((entity) -> !(entity.getAge() < DrakeAge.HATCHLING.getAge())),
+                new OneRandomBehaviour<FrilledDrake>(
                         new SetRandomWalkTarget<FrilledDrake>().speedModifier(0.5f)
                                 .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
-                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
+                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60)))
+                        .startCondition((entity) -> !(entity.getAge() < DrakeAge.HATCHLING.getAge())));
     }
 
     @SuppressWarnings({ "unchecked", "null" })
@@ -590,8 +599,9 @@ public class FrilledDrake extends TamableAnimal
                                                                              // target is
                 // no
                 // longer valid
-                new SetWalkTargetToAttackTarget<>(),
-                new FirstApplicableBehaviour<>(
+                new SetWalkTargetToAttackTarget<FrilledDrake>()
+                        .startCondition((entity) -> !(entity.getAge() < DrakeAge.HATCHLING.getAge())),
+                new FirstApplicableBehaviour<FrilledDrake>(
                         new LeapAtTarget<>(0)
                                 .verticalJumpStrength(((mob, entity) -> {
                                     float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
@@ -614,7 +624,7 @@ public class FrilledDrake extends TamableAnimal
                             triggerAnim("attackController", "bite");
                         }).whenStopping(entity -> setAggressive(false))
 
-                ));
+                ).startCondition((entity) -> !(entity.getAge() < DrakeAge.HATCHLING.getAge())));
     }
 
     @Override

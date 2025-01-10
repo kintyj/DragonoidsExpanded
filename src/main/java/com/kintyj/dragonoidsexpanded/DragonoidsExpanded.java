@@ -78,8 +78,8 @@ public class DragonoidsExpanded {
 	public static final DeferredHolder<EntityType<?>, EntityType<FrilledDrake>> FRILLED_DRAKE = ENTITY_TYPES
 			.register("frilled_drake", () -> EntityType.Builder.of(FrilledDrake::new, MobCategory.MONSTER)
 					.sized(1.5F, 1.3F).clientTrackingRange(10).build("frilled_drake"));
-	public static final DeferredItem<SpawnEggItem> FRILLED_DRAKE_ADULT_SPAWN_EGG = ITEMS.register(
-			"frilled_drake_adult_spawn_egg",
+	public static final DeferredItem<SpawnEggItem> FRILLED_DRAKE_SPAWN_EGG = ITEMS.register(
+			"frilled_drake_spawn_egg",
 			() -> new DeferredSpawnEggItem(FRILLED_DRAKE, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
 	// #endregion
 
@@ -97,7 +97,7 @@ public class DragonoidsExpanded {
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_MOSSY_COBBLESTONE_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_mossy_cobblestone",
-			SLIMY_COBBLESTONE);
+			SLIMY_MOSSY_COBBLESTONE);
 	public static final DeferredBlock<Block> SLIMY_STONE = BLOCKS.registerSimpleBlock("slimy_stone",
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_STONE_ITEM = ITEMS.registerSimpleBlockItem("slimy_stone",
@@ -116,7 +116,7 @@ public class DragonoidsExpanded {
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_POLISHED_GRANITE_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_polished_granite",
-			SLIMY_GRANITE);
+			SLIMY_POLISHED_GRANITE);
 	public static final DeferredBlock<Block> SLIMY_DIORITE = BLOCKS.registerSimpleBlock("slimy_diorite",
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_DIORITE_ITEM = ITEMS.registerSimpleBlockItem("slimy_diorite",
@@ -126,7 +126,7 @@ public class DragonoidsExpanded {
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_POLISHED_DIORITE_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_polished_diorite",
-			SLIMY_DIORITE);
+			SLIMY_POLISHED_DIORITE);
 	public static final DeferredBlock<Block> SLIMY_ANDESITE = BLOCKS.registerSimpleBlock("slimy_andesite",
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_ANDESITE_ITEM = ITEMS.registerSimpleBlockItem("slimy_andesite",
@@ -136,7 +136,7 @@ public class DragonoidsExpanded {
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_POLISHED_ANDESITE_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_polished_andesite",
-			SLIMY_ANDESITE);
+			SLIMY_POLISHED_ANDESITE);
 	public static final DeferredBlock<Block> SLIMY_STONE_BRICKS = BLOCKS.registerSimpleBlock("slimy_stone_bricks",
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
@@ -147,19 +147,19 @@ public class DragonoidsExpanded {
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_MOSSY_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_mossy_stone_bricks",
-			SLIMY_STONE_BRICKS);
+			SLIMY_MOSSY_STONE_BRICKS);
 	public static final DeferredBlock<Block> SLIMY_CRACKED_STONE_BRICKS = BLOCKS.registerSimpleBlock(
 			"slimy_cracked_stone_bricks",
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_CRACKED_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_cracked_stone_bricks",
-			SLIMY_STONE_BRICKS);
+			SLIMY_CRACKED_STONE_BRICKS);
 	public static final DeferredBlock<Block> SLIMY_CHISELED_STONE_BRICKS = BLOCKS.registerSimpleBlock(
 			"slimy_chiseled_stone_bricks",
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
 	public static final DeferredItem<BlockItem> SLIMY_CHISELED_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_chiseled_stone_bricks",
-			SLIMY_STONE_BRICKS);
+			SLIMY_CHISELED_STONE_BRICKS);
 
 	// Creates a new food item with the id "examplemod:example_id", nutrition 1 and
 	// saturation 2
@@ -263,7 +263,7 @@ public class DragonoidsExpanded {
 			event.accept(SLIMY_COBBLESTONE_ITEM);
 			event.accept(SLIMY_MOSSY_COBBLESTONE_ITEM);
 		} else if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
-			event.accept(FRILLED_DRAKE_ADULT_SPAWN_EGG);
+			event.accept(FRILLED_DRAKE_SPAWN_EGG);
 		}
 	}
 
