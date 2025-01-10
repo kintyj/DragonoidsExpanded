@@ -468,11 +468,11 @@ public class FrilledDrake extends TamableAnimal
             }
             if (blinking) {
                 if (blinkTimer > blinkTime) {
-                    timer = 0;
+                    blinkTimer = 0;
                     blinking = false;
                 }
             } else if (blinkTimer > blinkDelay) {
-                timer = 0;
+                blinkTimer = 0;
                 blinking = true;
             }
         }
