@@ -495,8 +495,8 @@ public class FrilledDrake extends TamableAnimal
     @SuppressWarnings({ "unchecked", "null" })
     @Override
     public BrainActivityGroup<? extends FrilledDrake> getFightTasks() { // These are the tasks that handle fighting
-        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>()), // Cancel fighting if the
-                                                                                           // target is
+        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), // Cancel fighting if the
+                                                                             // target is
                 // no
                 // longer valid
                 new SetWalkTargetToAttackTarget<>(),
