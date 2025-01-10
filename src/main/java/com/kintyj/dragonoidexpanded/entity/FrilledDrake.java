@@ -468,7 +468,7 @@ public class FrilledDrake extends TamableAnimal
                 new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 16)
                         .runFor((entity) -> 1200).whenStarting((entity) -> {
                             DragonoidExpanded.LOGGER.info("They are now ready to breed.");
-                        }.whenStopping((entity) -> {
+                        }).whenStopping((entity) -> {
                             DragonoidExpanded.LOGGER.info("They are no longer ready to breed.");
                         }),
                 new LookAtTarget<>(), // Have the entity turn to face and look at its
