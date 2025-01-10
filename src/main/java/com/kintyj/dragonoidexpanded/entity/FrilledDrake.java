@@ -492,11 +492,10 @@ public class FrilledDrake extends TamableAnimal
             }
         }
 
-        if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()
-                && !hasControllingPassenger()) {
+        if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
             triggerAnim("defaultController", "lay_down");
             setState(DrakeState.SLEEPING.getState());
-        } else if ((!level().isNight() || isAggressive() || hasControllingPassenger())
+        } else if ((!level().isNight() || isAggressive())
                 && getState() == DrakeState.SLEEPING.getState()) {
             triggerAnim("defaultController", "wake_up");
             setState(DrakeState.AWAKE.getState());
