@@ -42,6 +42,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
@@ -215,12 +216,22 @@ public class FrilledDrake extends TamableAnimal
         part.setPos(this.getX() + offsetX, this.getY() + offsetY, this.getZ() + offsetZ);
     }
 
+    private boolean isIncubating() {
+        return (getGrowthScore() < DrakeAge.HATCHLING.getAge()
+                && level().getBlockState(this.blockPosition().below()).is(Blocks.SLIME_BLOCK)
+                && level().getBlockState(this.blockPosition().north()).is(Blocks.SLIME_BLOCK)
+                && level().getBlockState(this.blockPosition().south()).is(Blocks.SLIME_BLOCK)
+                && level().getBlockState(this.blockPosition().west()).is(Blocks.SLIME_BLOCK)
+                && level().getBlockState(this.blockPosition().east()).is(Blocks.SLIME_BLOCK));
+    }
+
     @Override
     public void tick() {
         super.tick();
 
         if (!level().isClientSide) {
-            if (this.tickCount % DrakeAge.TIME_BETWEEN_GROWTH == 0 && getGrowthScore() < DrakeAge.MAX_GROWTH.getAge()) {
+            if (this.tickCount % DrakeAge.TIME_BETWEEN_GROWTH == 0 && getGrowthScore() < DrakeAge.MAX_GROWTH.getAge()
+                    && (getGrowthScore() >= DrakeAge.HATCHLING.getAge() || isIncubating())) {
                 setGrowthScore(getGrowthScore() + 1);
             }
         }
@@ -287,7 +298,9 @@ public class FrilledDrake extends TamableAnimal
                 .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.frilled_drake.yawn")));
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
             if (this.getGrowthScore() < DrakeAge.HATCHLING.getAge()) {
-                return event.setAndContinue(RawAnimation.begin().thenLoop("animation.frilled_drake.egg"));
+                return event.setAndContinue(
+                        isIncubating() ? RawAnimation.begin().thenLoop("animation.frilled_drake.incubating")
+                                : RawAnimation.begin().thenLoop("animation.frilled_drake.egg"));
             }
 
             float currentYaw = this.getYRot();
