@@ -459,7 +459,6 @@ public class FrilledDrake extends TamableAnimal
         tickBrain(this);
     }
 
-    @SuppressWarnings("null")
     @Override
     public List<ExtendedSensor<? extends FrilledDrake>> getSensors() {
         return ObjectArrayList.of(
