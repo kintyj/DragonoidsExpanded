@@ -48,6 +48,7 @@ import net.neoforged.neoforge.entity.PartEntity;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
+import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
@@ -422,7 +423,7 @@ public class FrilledDrake extends TamableAnimal
         SmoothAmphibiousPathNavigation navigation = new SmoothAmphibiousPathNavigation(this, pLevel) {
             @Override
             public boolean prefersShallowSwimming() {
-                return true;
+                return false;
             }
         };
 
@@ -481,7 +482,6 @@ public class FrilledDrake extends TamableAnimal
     public BrainActivityGroup<? extends FrilledDrake> getIdleTasks() { // These are the tasks that run when the mob
                                                                        // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
-
                 new FirstApplicableBehaviour<FrilledDrake>(
                         new TargetOrRetaliate<>(),
                         new SetPlayerLookTarget<>(),
