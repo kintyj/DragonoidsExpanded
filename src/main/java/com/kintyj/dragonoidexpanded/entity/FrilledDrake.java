@@ -464,8 +464,11 @@ public class FrilledDrake extends TamableAnimal
     @Override
     public BrainActivityGroup<? extends FrilledDrake> getCoreTasks() { // These are the tasks that run all the time
                                                                        // (usually)
-        return BrainActivityGroup.coreTasks(new LookAtTarget<>(), // Have the entity turn to face and look at its
-                                                                  // current look target
+        return BrainActivityGroup.coreTasks(
+                new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 16)
+                        .runFor((entity) -> 1200),
+                new LookAtTarget<>(), // Have the entity turn to face and look at its
+                                      // current look target
                 new MoveToWalkTarget<>()); // Walk towards the current walk target
     }
 
@@ -476,8 +479,6 @@ public class FrilledDrake extends TamableAnimal
         return BrainActivityGroup.idleTasks(
 
                 new FirstApplicableBehaviour<FrilledDrake>(
-                        new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 16)
-                                .runFor((entity) -> 1200),
                         new TargetOrRetaliate<>(),
                         new SetPlayerLookTarget<>(),
                         new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
