@@ -33,7 +33,9 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.boss.EnderDragonPart;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -444,7 +446,9 @@ public class FrilledDrake extends TamableAnimal
         return ObjectArrayList.of(
                 new NearbyLivingEntitySensor<FrilledDrake>()
                         .setPredicate(
-                                (target, entity) -> !(target instanceof FrilledDrake
+                                (target, entity) -> !(target instanceof FrilledDrake || target instanceof Creeper
+                                        || getGrowthScore() < DrakeAge.DRAKELING.getAge()
+                                        || target instanceof Bat
                                         || (entity.getOwner() != null && entity.getOwner().is(target))
                                         || (entity.getOwner() != null && !(target instanceof Mob)))), // This
                 // tracks
