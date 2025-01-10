@@ -23,6 +23,7 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.GlowSquid;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
@@ -445,16 +446,16 @@ public class FrilledDrake extends TamableAnimal
     @Override
     public List<ExtendedSensor<? extends FrilledDrake>> getSensors() {
         return ObjectArrayList.of(
+                // #region Sad region for sad people: Attacks
                 new NearbyLivingEntitySensor<FrilledDrake>()
                         .setPredicate(
                                 (target, entity) -> !(target instanceof FrilledDrake || target instanceof Creeper
                                         || getGrowthScore() < DrakeAge.DRAKELING.getAge()
                                         || target instanceof Bat
+                                        || target instanceof GlowSquid
                                         || (entity.getOwner() != null && entity.getOwner().is(target))
                                         || (entity.getOwner() != null && !(target instanceof Mob)))), // This
-                // tracks
-                // nearby
-                // entities
+                // #endregion
                 new HurtBySensor<>(), new InWaterSensor<>()); // This tracks the last damage source and attacker
 
     }
