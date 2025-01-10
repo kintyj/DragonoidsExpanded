@@ -1,6 +1,6 @@
 {
     "parent": "minecraft:item/generated",
     "textures": {
-        "layer0": "dragonoidexpanded:item/example_item"
+        "layer0": "dragonoidsexpanded:item/example_item"
     }
 }
