@@ -95,7 +95,7 @@ public class FrilledDrake extends TamableAnimal
 
     private static final int yawnDelay = 200;
     private static final int blinkDelay = 300;
-    private static final int blinkTime = 10;
+    private static final int blinkTime = 30;
 
     public int blinkTimer;
     public boolean blinking = false;
@@ -330,7 +330,9 @@ public class FrilledDrake extends TamableAnimal
                 .triggerableAnim("sit_down",
                         RawAnimation.begin().thenPlay("animation.frilled_drake.sitdown"))
                 .triggerableAnim("lay_down",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.laydown")));
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.laydown"))
+                .triggerableAnim("wake_up",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.wake_up")));
     }
     // #endregion
 
@@ -465,11 +467,11 @@ public class FrilledDrake extends TamableAnimal
                         (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
             }
             if (blinking) {
-                if (timer > blinkTime) {
+                if (blinkTimer > blinkTime) {
                     timer = 0;
                     blinking = false;
                 }
-            } else if (timer > blinkDelay) {
+            } else if (blinkTimer > blinkDelay) {
                 timer = 0;
                 blinking = true;
             }
@@ -478,7 +480,8 @@ public class FrilledDrake extends TamableAnimal
         if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
             triggerAnim("defaultController", "lay_down");
             setState(DrakeState.SLEEPING.getState());
-        } else if ((!level().isNight() || isAggressive()) && getState() == DrakeState.SLEEPING.getState()) {
+        } else if ((!level().isNight() || isAggressive() || hasControllingPassenger())
+                && getState() == DrakeState.SLEEPING.getState()) {
             triggerAnim("defaultController", "wake_up");
             setState(DrakeState.AWAKE.getState());
         }
