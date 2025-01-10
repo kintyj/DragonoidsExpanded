@@ -1,6 +1,6 @@
 {
     "parent": "block/cube_all",
     "textures": {
-        "all": "dragonoidsexpanded:block/slimy_stone_bricks"
+        "all": "dragonoidsexpanded:block/slimy/slimy_stone_bricks"
     }
 }
