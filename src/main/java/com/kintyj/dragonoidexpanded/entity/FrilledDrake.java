@@ -484,7 +484,8 @@ public class FrilledDrake extends TamableAnimal
                                         || target instanceof Bat
                                         || target instanceof GlowSquid
                                         || (this.getOwner() != null && this.getOwner().is(target))
-                                        || (this.getOwner() != null && !(target instanceof Mob)))),
+                                        || (this.getOwner() != null && !(target instanceof Mob))
+                                        || (target instanceof Player && ((Player) target).isCreative()))),
                         new SetPlayerLookTarget<>(),
                         new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
                 new OneRandomBehaviour<>(new SetRandomWalkTarget<>().speedModifier(0.5f),
@@ -500,9 +501,11 @@ public class FrilledDrake extends TamableAnimal
                         || target instanceof Bat
                         || target instanceof GlowSquid
                         || (this.getOwner() != null && this.getOwner().is(target))
-                        || (this.getOwner() != null && !(target instanceof Mob)))), // Cancel fighting if the target is
-                                                                                    // no
-                                                                                    // longer valid
+                        || (this.getOwner() != null && !(target instanceof Mob))
+                        || (target instanceof Player && ((Player) target).isCreative()))), // Cancel fighting if the
+                                                                                           // target is
+                // no
+                // longer valid
                 new SetWalkTargetToAttackTarget<>(),
                 new FirstApplicableBehaviour<>(
                         new LeapAtTarget<>(0)
