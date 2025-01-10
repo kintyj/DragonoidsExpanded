@@ -5,7 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.kintyj.dragonoidsexpanded.DragonoidExpanded;
+import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
 import com.kintyj.dragonoidsexpanded.brain.behaviour.LeapAtTarget;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;

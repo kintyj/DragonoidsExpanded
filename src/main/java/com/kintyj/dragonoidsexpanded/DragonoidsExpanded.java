@@ -107,12 +107,28 @@ public class DragonoidsExpanded {
 	public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item",
 			new Item.Properties().food(new FoodProperties.Builder()
 					.alwaysEdible().nutrition(1).saturationModifier(2f).build()));
+	public static final DeferredItem<Item> DRAKE_HEART_SCALE = ITEMS.registerSimpleItem("drake_heart_scale",
+			new Item.Properties());
+	public static final DeferredItem<Item> DRAKE_MEAL = ITEMS.registerSimpleItem("drake_meal",
+			new Item.Properties());
+	public static final DeferredItem<Item> FRILLED_DRAKE_SCALE_BLUE = ITEMS.registerSimpleItem(
+			"frilled_drake_scale_blue",
+			new Item.Properties());
+	public static final DeferredItem<Item> FRILLED_DRAKE_SCALE_GREEN = ITEMS.registerSimpleItem(
+			"frilled_drake_scale_green",
+			new Item.Properties());
+	public static final DeferredItem<Item> FRILLED_DRAKE_SCALE_AQUA = ITEMS.registerSimpleItem(
+			"frilled_drake_scale_aqua",
+			new Item.Properties());
+	public static final DeferredItem<Item> FRILLED_DRAKE_SCALE_TURQUOISE = ITEMS.registerSimpleItem(
+			"frilled_drake_scale_turquoise",
+			new Item.Properties());
 
 	// Creates a creative tab with the id "examplemod:example_tab" for the example
 	// item, that is placed after the combat tab
-	public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS
-			.register("dragonoid_expanded_items_tab", () -> CreativeModeTab.builder()
-					.title(Component.translatable("itemGroup.dragonoidexpanded")) // The language
+	public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DRAGONOIDS_EXPANDED_ITEMS_TAB = CREATIVE_MODE_TABS
+			.register("dragonoids_expanded_items_tab", () -> CreativeModeTab.builder()
+					.title(Component.translatable("itemGroup.dragonoidsexpanded")) // The language
 																					// key for the
 																					// title of
 																					// your
@@ -120,9 +136,13 @@ public class DragonoidsExpanded {
 					.withTabsBefore(CreativeModeTabs.COMBAT)
 					.icon(() -> EXAMPLE_ITEM.get().getDefaultInstance())
 					.displayItems((parameters, output) -> {
-						output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab.
-															// For your own tabs, this
-															// method is preferred over the event
+						output.accept(EXAMPLE_ITEM.get());
+						output.accept(DRAKE_MEAL.get());
+						output.accept(DRAKE_HEART_SCALE.get());
+						output.accept(FRILLED_DRAKE_SCALE_BLUE.get());
+						output.accept(FRILLED_DRAKE_SCALE_GREEN.get());
+						output.accept(FRILLED_DRAKE_SCALE_AQUA.get());
+						output.accept(FRILLED_DRAKE_SCALE_TURQUOISE.get());
 					}).build());
 
 	// The constructor for the mod class is the first code that is run when your mod
