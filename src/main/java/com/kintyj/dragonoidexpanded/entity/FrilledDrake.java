@@ -48,7 +48,6 @@ import net.neoforged.neoforge.entity.PartEntity;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
-import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
@@ -199,6 +198,7 @@ public class FrilledDrake extends TamableAnimal
         builder.define(COLOR, DrakeColor.BLUE.getColor());
     }
 
+    @SuppressWarnings("unused")
     private void tickPart(FrilledDrakePart part, double offsetX, double offsetY, double offsetZ) {
         part.setPos(this.getX() + offsetX, this.getY() + offsetY, this.getZ() + offsetZ);
     }
@@ -472,7 +472,7 @@ public class FrilledDrake extends TamableAnimal
                 new MoveToWalkTarget<>()); // Walk towards the current walk target
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "null" })
     @Override
     public BrainActivityGroup<? extends FrilledDrake> getIdleTasks() { // These are the tasks that run when the mob
                                                                        // isn't doing anything else (usually)
