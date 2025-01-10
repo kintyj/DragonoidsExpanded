@@ -466,7 +466,11 @@ public class FrilledDrake extends TamableAnimal
                                                                        // (usually)
         return BrainActivityGroup.coreTasks(
                 new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 16)
-                        .runFor((entity) -> 1200),
+                        .runFor((entity) -> 1200).whenStarting((entity) -> {
+                            DragonoidExpanded.LOGGER.info("They are now ready to breed.");
+                        }.whenStopping((entity) -> {
+                            DragonoidExpanded.LOGGER.info("They are no longer ready to breed.");
+                        }),
                 new LookAtTarget<>(), // Have the entity turn to face and look at its
                                       // current look target
                 new MoveToWalkTarget<>()); // Walk towards the current walk target
@@ -509,7 +513,7 @@ public class FrilledDrake extends TamableAnimal
                                 .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
                                     return (BrainUtils.getTargetOfEntity(entity) != null
                                             && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 7);
-                                }), // Set the walk target to the attack target
+                                }).cooldownFor((entity) -> 120), // Set the walk target to the attack target
                         new AnimatableMeleeAttack<>(12).whenStarting(entity -> {
                             setAggressive(true);
                             triggerAnim("attackController", "bite");
