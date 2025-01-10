@@ -92,6 +92,8 @@ public class FrilledDrake extends TamableAnimal
         return this.subEntities;
     }
 
+    private static final int yawnDelay = 200;
+
     public FrilledDrake(EntityType<? extends FrilledDrake> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
 
@@ -270,7 +272,8 @@ public class FrilledDrake extends TamableAnimal
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "attackController", event -> {
             return PlayState.CONTINUE;
-        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite")));
+        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
+                .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.frilled_drake.yawn")));
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
             float currentYaw = this.getYRot();
             float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
@@ -440,8 +443,15 @@ public class FrilledDrake extends TamableAnimal
      *           }
      */
 
+    private int timer = 0;
+
     @Override
     protected void customServerAiStep() {
+        timer++;
+        if (timer > yawnDelay) {
+            timer = 0;
+            triggerAnim("attackController", "yawn");
+        }
         tickBrain(this);
     }
 
