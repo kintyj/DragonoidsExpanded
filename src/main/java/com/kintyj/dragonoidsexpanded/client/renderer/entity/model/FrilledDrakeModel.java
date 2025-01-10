@@ -1,8 +1,8 @@
-package com.kintyj.dragonoidexpanded.client.renderer.entity.model;
+package com.kintyj.dragonoidsexpanded.client.renderer.entity.model;
 
-import com.kintyj.dragonoidexpanded.DragonoidExpanded;
-import com.kintyj.dragonoidexpanded.entity.FrilledDrake;
-import com.kintyj.dragonoidexpanded.entity.FrilledDrake.DrakeState;
+import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
+import com.kintyj.dragonoidsexpanded.entity.FrilledDrake;
+import com.kintyj.dragonoidsexpanded.entity.FrilledDrake.DrakeState;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
@@ -10,113 +10,113 @@ import software.bernie.geckolib.model.GeoModel;
 public class FrilledDrakeModel extends GeoModel<FrilledDrake> {
         // Models must be stored in assets/<modid>/geo with subfolders supported inside
         // the geo folder
-        private static final ResourceLocation model = ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+        private static final ResourceLocation model = ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                         "geo/entity/frilled_drake.geo.json");
         // Textures must be stored in assets/<modid>/geo with subfolders supported
         // inside the textures folder
         private static final ResourceLocation[][] texture = {
                         { // Blue
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_hatchling_one.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_drakeling_one.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_teen_one.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_adult_one.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_elder_one.png"),
                         },
                         { // Aqua
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_hatchling_two.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_drakeling_two.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_teen_two.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_adult_two.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_elder_two.png"),
                         },
                         { // Turquoise
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_hatchling_three.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_drakeling_three.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_teen_three.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_adult_three.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_elder_three.png"),
                         },
                         { // Green
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_hatchling_four.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_drakeling_four.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_teen_four.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_adult_four.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_elder_four.png"),
                         }
         };
         private static final ResourceLocation[][] closedTexture = {
                         { // Blue
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_hatchling_one_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_drakeling_one_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_teen_one_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_adult_one_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_elder_one_eyes_closed.png"),
                         },
                         { // Aqua
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_hatchling_two_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_drakeling_two.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_teen_two_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_adult_two_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_elder_two_eyes_closed.png"),
                         },
                         { // Turquoise
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_hatchling_three_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_drakeling_three_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_teen_three_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_adult_three_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_elder_three_eyes_closed.png"),
                         },
                         { // Green
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_hatchling_four_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_drakeling_four_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_teen_four_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_adult_four_eyes_closed.png"),
-                                        ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+                                        ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                                                         "textures/entity/frilled_drake/frilled_drake_elder_four_eyes_closed.png"),
                         }
         };
         // Animations must be stored in assets/<modid>/animations with subfolders
         // supported inside the animations folder
-        private static final ResourceLocation animation = ResourceLocation.fromNamespaceAndPath(DragonoidExpanded.MODID,
+        private static final ResourceLocation animation = ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
                         "animations/entity/frilled_drake.animation.json");
 
         @Override

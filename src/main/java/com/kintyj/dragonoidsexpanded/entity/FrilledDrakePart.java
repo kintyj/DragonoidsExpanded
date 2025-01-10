@@ -1,4 +1,4 @@
-package com.kintyj.dragonoidexpanded.entity;
+package com.kintyj.dragonoidsexpanded.entity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

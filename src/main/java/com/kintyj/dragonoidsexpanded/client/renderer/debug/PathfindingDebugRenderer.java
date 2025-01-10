@@ -1,4 +1,4 @@
-package com.kintyj.dragonoidexpanded.client.renderer.debug;
+package com.kintyj.dragonoidsexpanded.client.renderer.debug;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 

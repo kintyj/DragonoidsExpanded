@@ -1,12 +1,12 @@
-package com.kintyj.dragonoidexpanded.entity;
+package com.kintyj.dragonoidsexpanded.entity;
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.kintyj.dragonoidexpanded.DragonoidExpanded;
-import com.kintyj.dragonoidexpanded.brain.behaviour.LeapAtTarget;
+import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
+import com.kintyj.dragonoidsexpanded.brain.behaviour.LeapAtTarget;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -363,7 +363,7 @@ public class FrilledDrake extends TamableAnimal
     @SuppressWarnings("null")
     @Override
     public InteractionResult interactAt(@Nonnull Player player, @Nonnull Vec3 vec, @Nonnull InteractionHand hand) {
-        if (player.getItemInHand(hand).is(DragonoidExpanded.EXAMPLE_ITEM)) {
+        if (player.getItemInHand(hand).is(DragonoidsExpanded.EXAMPLE_ITEM)) {
             int growthScore = getGrowthScore();
 
             if (growthScore <= DrakeAge.HATCHLING.getAge()) {
@@ -488,16 +488,16 @@ public class FrilledDrake extends TamableAnimal
 
             if (blinking) {
                 if (blinkTimer > blinkTime) {
-                    DragonoidExpanded.LOGGER.info("I have stopped blinking.");
+                    DragonoidsExpanded.LOGGER.info("I have stopped blinking.");
                     blinkTimer = 0;
                     blinking = false;
-                    DragonoidExpanded.LOGGER.info("Blinking: " + blinking);
+                    DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
                 }
             } else if (blinkTimer > blinkDelay) {
-                DragonoidExpanded.LOGGER.info("I have started blinking.");
+                DragonoidsExpanded.LOGGER.info("I have started blinking.");
                 blinkTimer = 0;
                 blinking = true;
-                DragonoidExpanded.LOGGER.info("Blinking: " + blinking);
+                DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
             }
         }
     }
@@ -510,7 +510,7 @@ public class FrilledDrake extends TamableAnimal
             if (timer > yawnDelay) {
                 timer = 0;
                 triggerAnim("attackController", "yawn");
-                playSound(DragonoidExpanded.FRILLED_DRAKE_YAWN.get(),
+                playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get(),
                         (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
                         (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
             }
@@ -547,9 +547,9 @@ public class FrilledDrake extends TamableAnimal
         return BrainActivityGroup.coreTasks(
                 new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 2)
                         .runFor((entity) -> 1200).whenStarting((entity) -> {
-                            DragonoidExpanded.LOGGER.info("They are now ready to breed.");
+                            DragonoidsExpanded.LOGGER.info("They are now ready to breed.");
                         }).whenStopping((entity) -> {
-                            DragonoidExpanded.LOGGER.info("They are no longer ready to breed.");
+                            DragonoidsExpanded.LOGGER.info("They are no longer ready to breed.");
                         }).startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
                 new LookAtTarget<FrilledDrake>()
                         .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
@@ -638,7 +638,7 @@ public class FrilledDrake extends TamableAnimal
             targetYaw = this.getYHeadRot();
             float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
 
-            DragonoidExpanded.LOGGER
+            DragonoidsExpanded.LOGGER
                     .info("Current Yaw: " + currentYaw + "\nTarget Yaw: " + targetYaw + "\nDelta Yaw: " + deltaYaw);
 
             if (Math.abs(deltaYaw) > 5.0F) { // Only trigger animation for significant rotation

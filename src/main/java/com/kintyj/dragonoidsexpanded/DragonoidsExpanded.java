@@ -1,10 +1,10 @@
-package com.kintyj.dragonoidexpanded;
+package com.kintyj.dragonoidsexpanded;
 
 import org.slf4j.Logger;
 
-import com.kintyj.dragonoidexpanded.client.renderer.debug.PathfindingDebugRenderer;
-import com.kintyj.dragonoidexpanded.client.renderer.entity.FrilledDrakeRenderer;
-import com.kintyj.dragonoidexpanded.entity.FrilledDrake;
+import com.kintyj.dragonoidsexpanded.client.renderer.debug.PathfindingDebugRenderer;
+import com.kintyj.dragonoidsexpanded.client.renderer.entity.FrilledDrakeRenderer;
+import com.kintyj.dragonoidsexpanded.entity.FrilledDrake;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.Minecraft;
@@ -45,8 +45,8 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
-@Mod(DragonoidExpanded.MODID)
-public class DragonoidExpanded {
+@Mod(DragonoidsExpanded.MODID)
+public class DragonoidsExpanded {
         // Define mod id in a common place for everything to reference
         public static final String MODID = "dragonoidsexpanded";
         // Directly reference a slf4j logger
@@ -121,7 +121,7 @@ public class DragonoidExpanded {
         // is loaded.
         // FML will recognize some parameter types like IEventBus or ModContainer and
         // pass them in automatically.
-        public DragonoidExpanded(IEventBus modEventBus, ModContainer modContainer, Dist dist) {
+        public DragonoidsExpanded(IEventBus modEventBus, ModContainer modContainer, Dist dist) {
                 // Register the commonSetup method for modloading
                 modEventBus.addListener(this::commonSetup);
 

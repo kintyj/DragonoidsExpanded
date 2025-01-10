@@ -10527,95 +10527,6 @@
 				}
 			}
 		},
-		"animation.frilled_drake.egg": {
-			"loop": true,
-			"bones": {
-				"root": {
-					"rotation": {
-						"vector": [-90, 0, 0]
-					},
-					"position": {
-						"vector": [0, 6, 6]
-					},
-					"scale": {
-						"vector": [0.8, 0.8, 0.8]
-					}
-				},
-				"HeadNeck": {
-					"rotation": {
-						"vector": [47.5, 0, 0]
-					}
-				},
-				"HeadUpperNeck": {
-					"rotation": {
-						"vector": [25, 0, 0]
-					}
-				},
-				"Head": {
-					"rotation": {
-						"vector": [97.5, 0, 0]
-					}
-				},
-				"FullLeftArm": {
-					"rotation": {
-						"vector": [0, 0, 55]
-					}
-				},
-				"LeftForeArm": {
-					"rotation": {
-						"vector": [0, 22.5, 0]
-					}
-				},
-				"FullRightArm": {
-					"rotation": {
-						"vector": [0, 0, -55]
-					}
-				},
-				"RightForeArm": {
-					"rotation": {
-						"vector": [0, -22.5, 0]
-					}
-				},
-				"LeftLeg": {
-					"rotation": {
-						"vector": [0, 0, 55]
-					}
-				},
-				"RightLeg": {
-					"rotation": {
-						"vector": [0, 0, -55]
-					}
-				},
-				"FullTail": {
-					"rotation": {
-						"vector": [-50, 0, 0]
-					}
-				},
-				"Tail1": {
-					"rotation": {
-						"vector": [-67.5, 0, 0]
-					}
-				},
-				"Tail2": {
-					"rotation": {
-						"vector": [-50, 0, 0]
-					}
-				},
-				"TailTip": {
-					"rotation": {
-						"vector": [-40, 0, 0]
-					}
-				},
-				"egg": {
-					"position": {
-						"vector": [0, -5, 0]
-					},
-					"scale": {
-						"vector": [4, 4, 4]
-					}
-				}
-			}
-		},
 		"animation.frilled_drake.incubate": {
 			"loop": true,
 			"animation_length": 1,
@@ -11081,6 +10992,96 @@
 						"1.75": {
 							"vector": [0, 0, 0]
 						}
+					}
+				}
+			}
+		},
+		"animation.frilled_drake.egg": {
+			"loop": true,
+			"animation_length": 0.0417,
+			"bones": {
+				"root": {
+					"rotation": {
+						"vector": [-92.5, 0, 0]
+					},
+					"position": {
+						"vector": [0, 6, 5.25]
+					},
+					"scale": {
+						"vector": [0.8, 0.8, 0.8]
+					}
+				},
+				"HeadNeck": {
+					"rotation": {
+						"vector": [47.5, 0, 0]
+					}
+				},
+				"HeadUpperNeck": {
+					"rotation": {
+						"vector": [25, 0, 0]
+					}
+				},
+				"Head": {
+					"rotation": {
+						"vector": [97.5, 0, 0]
+					}
+				},
+				"FullLeftArm": {
+					"rotation": {
+						"vector": [0, 0, 55]
+					}
+				},
+				"LeftForeArm": {
+					"rotation": {
+						"vector": [0, 22.5, 0]
+					}
+				},
+				"FullRightArm": {
+					"rotation": {
+						"vector": [0, 0, -55]
+					}
+				},
+				"RightForeArm": {
+					"rotation": {
+						"vector": [0, -22.5, 0]
+					}
+				},
+				"LeftLeg": {
+					"rotation": {
+						"vector": [0, 0, 55]
+					}
+				},
+				"RightLeg": {
+					"rotation": {
+						"vector": [0, 0, -55]
+					}
+				},
+				"FullTail": {
+					"rotation": {
+						"vector": [-50, 0, 0]
+					}
+				},
+				"Tail1": {
+					"rotation": {
+						"vector": [-67.5, 0, 0]
+					}
+				},
+				"Tail2": {
+					"rotation": {
+						"vector": [-50, 0, 0]
+					}
+				},
+				"TailTip": {
+					"rotation": {
+						"vector": [-40, 0, 0]
+					}
+				},
+				"egg": {
+					"position": {
+						"vector": [0, -5, 0]
+					},
+					"scale": {
+						"vector": [4, 4, 4]
 					}
 				}
 			}
