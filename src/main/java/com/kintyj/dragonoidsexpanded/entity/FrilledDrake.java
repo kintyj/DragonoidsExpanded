@@ -539,7 +539,8 @@ public class FrilledDrake extends TamableAnimal
                         .setPredicate((target,
                                 entity) -> !(entity.getState() == DrakeState.SLEEPING.getState()
                                         && entity.getAge() < DrakeAge.HATCHLING.getAge())), // This
-                new NearbyAdultSensor<>(),
+                new NearbyAdultSensor<FrilledDrake>()
+                        .setPredicate((target, entity) -> !(entity.getAge() < DrakeAge.HATCHLING.getAge())),
                 // #endregion
                 new HurtBySensor<FrilledDrake>().setPredicate(
                         (damageSource, mob) -> this.getAge() >= DrakeAge.HATCHLING.getAge()),
