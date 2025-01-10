@@ -192,6 +192,8 @@ public class FrilledDrake extends TamableAnimal
 
     public void setGrowthScore(int pGrowthScore) {
         this.entityData.set(GROWTH_SCORE, pGrowthScore);
+        if (pGrowthScore == DrakeAge.HATCHLING.getAge())
+            triggerAnim("defaultController", "hatch");
         updateScale(pGrowthScore);
     }
 
@@ -368,6 +370,7 @@ public class FrilledDrake extends TamableAnimal
 
             if (growthScore <= DrakeAge.HATCHLING.getAge()) {
                 setGrowthScore(DrakeAge.HATCHLING.getAge() + 1);
+                triggerAnim("defaultController", "hatch");
             } else if (growthScore <= DrakeAge.DRAKELING.getAge()) {
                 setGrowthScore(DrakeAge.DRAKELING.getAge() + 1);
             } else if (growthScore <= DrakeAge.TEEN.getAge()) {
@@ -504,6 +507,9 @@ public class FrilledDrake extends TamableAnimal
 
     @Override
     protected void customServerAiStep() {
+        if (getGrowthScore() < DrakeAge.HATCHLING.getAge())
+            return;
+
         if (getState() != DrakeState.SLEEPING.getState()) {
             timer++;
 
@@ -525,8 +531,7 @@ public class FrilledDrake extends TamableAnimal
             setState(DrakeState.AWAKE.getState());
         }
 
-        if (getGrowthScore() >= DrakeAge.HATCHLING.getAge())
-            tickBrain(this);
+        tickBrain(this);
     }
 
     @Override
