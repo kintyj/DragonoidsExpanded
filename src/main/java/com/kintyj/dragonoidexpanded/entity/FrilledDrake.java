@@ -94,6 +94,11 @@ public class FrilledDrake extends TamableAnimal
     }
 
     private static final int yawnDelay = 200;
+    private static final int blinkDelay = 300;
+    private static final int blinkTime = 10;
+
+    public int blinkTimer;
+    public boolean blinking = false;
 
     public FrilledDrake(EntityType<? extends FrilledDrake> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -449,6 +454,7 @@ public class FrilledDrake extends TamableAnimal
     @Override
     protected void customServerAiStep() {
         timer++;
+        blinkTimer++;
         if (timer > yawnDelay) {
             timer = 0;
             triggerAnim("attackController", "yawn");
@@ -456,6 +462,23 @@ public class FrilledDrake extends TamableAnimal
                     (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
                     (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
         }
+        if (blinking) {
+            if (timer > blinkTime) {
+                timer = 0;
+                blinking = false;
+            }
+        } else if (timer > blinkDelay) {
+            timer = 0;
+            blinking = true;
+        }
+        if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
+            triggerAnim("defaultController", "lay_down");
+            setState(DrakeState.SLEEPING.getState());
+        } else if (!level().isNight() || (isAggressive() && getState() == DrakeState.SLEEPING.getState())) {
+            triggerAnim("defaultController", "lay_down");
+            setState(DrakeState.AWAKE.getState());
+        }
+
         tickBrain(this);
     }
 
@@ -463,7 +486,8 @@ public class FrilledDrake extends TamableAnimal
     public List<ExtendedSensor<? extends FrilledDrake>> getSensors() {
         return ObjectArrayList.of(
                 // #region Sad region for sad people: Attacks
-                new NearbyLivingEntitySensor<FrilledDrake>(), // This
+                new NearbyLivingEntitySensor<FrilledDrake>()
+                        .setPredicate((target, entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())), // This
                 new NearbyAdultSensor<>(),
                 // #endregion
                 new HurtBySensor<>(), new InWaterSensor<>()); // This tracks the last damage source and attacker
@@ -479,7 +503,7 @@ public class FrilledDrake extends TamableAnimal
                             DragonoidExpanded.LOGGER.info("They are now ready to breed.");
                         }).whenStopping((entity) -> {
                             DragonoidExpanded.LOGGER.info("They are no longer ready to breed.");
-                        }),
+                        }).startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
                 new LookAtTarget<>(), // Have the entity turn to face and look at its
                                       // current look target
                 new MoveToWalkTarget<>()); // Walk towards the current walk target
@@ -501,7 +525,9 @@ public class FrilledDrake extends TamableAnimal
                                         || (target instanceof Player && ((Player) target).isCreative()))),
                         new SetPlayerLookTarget<>(),
                         new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
-                new OneRandomBehaviour<>(new SetRandomWalkTarget<>().speedModifier(0.5f),
+                new OneRandomBehaviour<>(
+                        new SetRandomWalkTarget<FrilledDrake>().speedModifier(0.5f)
+                                .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
     }
 
