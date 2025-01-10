@@ -66,6 +66,7 @@ import net.tslat.smartbrainlib.api.core.navigation.SmoothAmphibiousPathNavigatio
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.InWaterSensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyAdultSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -449,14 +450,8 @@ public class FrilledDrake extends TamableAnimal
     public List<ExtendedSensor<? extends FrilledDrake>> getSensors() {
         return ObjectArrayList.of(
                 // #region Sad region for sad people: Attacks
-                new NearbyLivingEntitySensor<FrilledDrake>()
-                        .setPredicate(
-                                (target, entity) -> !(target instanceof FrilledDrake || target instanceof Creeper
-                                        || getGrowthScore() < DrakeAge.DRAKELING.getAge()
-                                        || target instanceof Bat
-                                        || target instanceof GlowSquid
-                                        || (entity.getOwner() != null && entity.getOwner().is(target))
-                                        || (entity.getOwner() != null && !(target instanceof Mob)))), // This
+                new NearbyLivingEntitySensor<FrilledDrake>(), // This
+                new NearbyAdultSensor<>(),
                 // #endregion
                 new HurtBySensor<>(), new InWaterSensor<>()); // This tracks the last damage source and attacker
 
@@ -483,7 +478,13 @@ public class FrilledDrake extends TamableAnimal
                                                                        // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<FrilledDrake>(
-                        new TargetOrRetaliate<>(),
+                        new TargetOrRetaliate<>().attackablePredicate(
+                                (target) -> !(target instanceof FrilledDrake || target instanceof Creeper
+                                        || getGrowthScore() < DrakeAge.DRAKELING.getAge()
+                                        || target instanceof Bat
+                                        || target instanceof GlowSquid
+                                        || (this.getOwner() != null && this.getOwner().is(target))
+                                        || (this.getOwner() != null && !(target instanceof Mob)))),
                         new SetPlayerLookTarget<>(),
                         new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
                 new OneRandomBehaviour<>(new SetRandomWalkTarget<>().speedModifier(0.5f),
