@@ -453,29 +453,33 @@ public class FrilledDrake extends TamableAnimal
 
     @Override
     protected void customServerAiStep() {
-        timer++;
-        blinkTimer++;
-        if (timer > yawnDelay) {
-            timer = 0;
-            triggerAnim("attackController", "yawn");
-            playSound(DragonoidExpanded.FRILLED_DRAKE_YAWN.get(),
-                    (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
-                    (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
-        }
-        if (blinking) {
-            if (timer > blinkTime) {
+        if (getState() != DrakeState.SLEEPING.getState()) {
+            timer++;
+            blinkTimer++;
+
+            if (timer > yawnDelay) {
                 timer = 0;
-                blinking = false;
+                triggerAnim("attackController", "yawn");
+                playSound(DragonoidExpanded.FRILLED_DRAKE_YAWN.get(),
+                        (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
+                        (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
             }
-        } else if (timer > blinkDelay) {
-            timer = 0;
-            blinking = true;
+            if (blinking) {
+                if (timer > blinkTime) {
+                    timer = 0;
+                    blinking = false;
+                }
+            } else if (timer > blinkDelay) {
+                timer = 0;
+                blinking = true;
+            }
         }
+
         if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
             triggerAnim("defaultController", "lay_down");
             setState(DrakeState.SLEEPING.getState());
-        } else if (!level().isNight() || (isAggressive() && getState() == DrakeState.SLEEPING.getState())) {
-            triggerAnim("defaultController", "lay_down");
+        } else if ((!level().isNight() || isAggressive()) && getState() == DrakeState.SLEEPING.getState()) {
+            triggerAnim("defaultController", "wake_up");
             setState(DrakeState.AWAKE.getState());
         }
 
