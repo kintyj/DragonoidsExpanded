@@ -12,7 +12,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -43,6 +42,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
@@ -153,12 +153,13 @@ public class FrilledDrake extends TamableAnimal
     }
 
     public static enum DrakeAge {
-        HATCHLING(0),
-        DRAKELING(20),
-        TEEN(100),
-        ADULT(200),
-        ELDER(300),
-        MAX_GROWTH(500);
+        EGG(0),
+        HATCHLING(4),
+        DRAKELING(24),
+        TEEN(104),
+        ADULT(204),
+        ELDER(304),
+        MAX_GROWTH(504);
 
         public static final int TIME_BETWEEN_GROWTH = 6000;
 
@@ -215,12 +216,22 @@ public class FrilledDrake extends TamableAnimal
         part.setPos(this.getX() + offsetX, this.getY() + offsetY, this.getZ() + offsetZ);
     }
 
+    private boolean isIncubating() {
+        return (getGrowthScore() < DrakeAge.HATCHLING.getAge()
+                && level().getBlockState(this.blockPosition().below()).is(Blocks.SLIME_BLOCK)
+                && level().getBlockState(this.blockPosition().north()).is(Blocks.SLIME_BLOCK)
+                && level().getBlockState(this.blockPosition().south()).is(Blocks.SLIME_BLOCK)
+                && level().getBlockState(this.blockPosition().west()).is(Blocks.SLIME_BLOCK)
+                && level().getBlockState(this.blockPosition().east()).is(Blocks.SLIME_BLOCK));
+    }
+
     @Override
     public void tick() {
         super.tick();
 
         if (!level().isClientSide) {
-            if (this.tickCount % DrakeAge.TIME_BETWEEN_GROWTH == 0 && getGrowthScore() < DrakeAge.MAX_GROWTH.getAge()) {
+            if (this.tickCount % DrakeAge.TIME_BETWEEN_GROWTH == 0 && getGrowthScore() < DrakeAge.MAX_GROWTH.getAge()
+                    && (getGrowthScore() >= DrakeAge.HATCHLING.getAge() || isIncubating())) {
                 setGrowthScore(getGrowthScore() + 1);
             }
         }
@@ -270,7 +281,8 @@ public class FrilledDrake extends TamableAnimal
         return child;
     }
 
-    // #region Animations
+    public String stir = "a b c d e f g h i j k l m n o p q r s t u v w x y z";
+    // #region Animationsa
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     @Override
@@ -285,6 +297,12 @@ public class FrilledDrake extends TamableAnimal
         }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
                 .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.frilled_drake.yawn")));
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
+            if (this.getGrowthScore() < DrakeAge.HATCHLING.getAge()) {
+                return event.setAndContinue(
+                        isIncubating() ? RawAnimation.begin().thenLoop("animation.frilled_drake.incubating")
+                                : RawAnimation.begin().thenLoop("animation.frilled_drake.egg"));
+            }
+
             float currentYaw = this.getYRot();
             float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
 
@@ -336,7 +354,9 @@ public class FrilledDrake extends TamableAnimal
                 .triggerableAnim("lay_down",
                         RawAnimation.begin().thenPlay("animation.frilled_drake.laydown"))
                 .triggerableAnim("wake_up",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.wake_up")));
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.wake_up"))
+                .triggerableAnim("hatch",
+                        RawAnimation.begin().thenPlay("animation.frilled_drake.hatch")));
     }
     // #endregion
 
@@ -346,7 +366,9 @@ public class FrilledDrake extends TamableAnimal
         if (player.getItemInHand(hand).is(DragonoidExpanded.EXAMPLE_ITEM)) {
             int growthScore = getGrowthScore();
 
-            if (growthScore <= DrakeAge.DRAKELING.getAge()) {
+            if (growthScore <= DrakeAge.HATCHLING.getAge()) {
+                setGrowthScore(DrakeAge.HATCHLING.getAge() + 1);
+            } else if (growthScore <= DrakeAge.DRAKELING.getAge()) {
                 setGrowthScore(DrakeAge.DRAKELING.getAge() + 1);
             } else if (growthScore <= DrakeAge.TEEN.getAge()) {
                 setGrowthScore(DrakeAge.TEEN.getAge() + 1);
@@ -365,22 +387,24 @@ public class FrilledDrake extends TamableAnimal
             }
 
             return InteractionResult.CONSUME;
-        } else if (isFood(player.getItemInHand(hand))) {
+        } else if (isFood(player.getItemInHand(hand)) && getGrowthScore() >= DrakeAge.HATCHLING.getAge()) {
             if (getOwner() == null) {
                 this.tame(player);
             }
             return InteractionResult.SUCCESS;
-        } else if (player.getItemInHand(hand).is(Items.ROSE_BUSH)) {
+        } else if (player.getItemInHand(hand).is(Items.ROSE_BUSH) && getGrowthScore() >= DrakeAge.TEEN.getAge()) {
             this.setInLove(player);
             return InteractionResult.SUCCESS;
         } else if (getGrowthScore() >= DrakeAge.TEEN.getAge() && getOwner() != null && getOwner().is(player)) {
             doPlayerRide(player);
             return InteractionResult.SUCCESS;
-        } else {
+        } else if (getGrowthScore() >= DrakeAge.HATCHLING.getAge()) {
             player.hurt(damageSources().mobAttack(this), 15f);
             if (level().isClientSide) {
                 triggerAnim("attackController", "bite");
             }
+            return InteractionResult.PASS;
+        } else {
             return InteractionResult.PASS;
         }
     }
@@ -501,7 +525,8 @@ public class FrilledDrake extends TamableAnimal
             setState(DrakeState.AWAKE.getState());
         }
 
-        tickBrain(this);
+        if (getGrowthScore() >= DrakeAge.HATCHLING.getAge())
+            tickBrain(this);
     }
 
     @Override

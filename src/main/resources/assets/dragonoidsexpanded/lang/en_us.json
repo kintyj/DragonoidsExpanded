@@ -1,0 +1,13 @@
+{
+    "item.dragonoidsexpanded.example_item": "Steroid Item",
+    "item.dragonoidsexpanded.frilled_drake_adult_spawn_egg": "Frilled Drake Spawn Egg",
+    "item.dragonoidsexpanded.example_block": "Pringle Block",
+    "block.dragonoidsexpanded.example_block": "Pringle Block",
+    "entity.dragonoidsexpanded.frilled_drake": "Frilled Drake",
+    "entity.dragonoidsexpanded.frilled_drake_hatchling": "Frilled Drake Hatchling",
+    "entity.dragonoidsexpanded.frilled_drake_drakeling": "Frilled Drake Drakeling",
+    "entity.dragonoidsexpanded.frilled_drake_teen": "Frilled Drake Teen",
+    "entity.dragonoidsexpanded.frilled_drake_adult": "Frilled Drake Adult",
+    "entity.dragonoidsexpanded.frilled_drake_elder": "Frilled Drake Elder",
+    "itemGroup.dragonoidsexpanded.dragonoid_expanded_items_tab": "Dragonoid Expanded Items"
+}
