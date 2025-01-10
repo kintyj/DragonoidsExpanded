@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -451,6 +452,9 @@ public class FrilledDrake extends TamableAnimal
         if (timer > yawnDelay) {
             timer = 0;
             triggerAnim("attackController", "yawn");
+            playSound(DragonoidExpanded.FRILLED_DRAKE_YAWN.get(),
+                    (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
+                    (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
         }
         tickBrain(this);
     }

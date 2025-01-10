@@ -1,0 +1,8 @@
+{
+    "entity.frilled_drake.yawn": {
+        "sounds": [
+            "dragonoidexpanded:entity/frilled_drake/yawn"
+        ],
+        "subtitle": "subtitles.dragonoidsexpanded.entity.frilled_drake.yawn"
+    }
+}
