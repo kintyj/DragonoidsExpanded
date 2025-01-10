@@ -1,7 +1,7 @@
-package com.kintyj.dragonoidexpanded.client.renderer.entity;
+package com.kintyj.dragonoidsexpanded.client.renderer.entity;
 
-import com.kintyj.dragonoidexpanded.client.renderer.entity.model.FrilledDrakeModel;
-import com.kintyj.dragonoidexpanded.entity.FrilledDrake;
+import com.kintyj.dragonoidsexpanded.client.renderer.entity.model.FrilledDrakeModel;
+import com.kintyj.dragonoidsexpanded.entity.FrilledDrake;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.renderer.MultiBufferSource;

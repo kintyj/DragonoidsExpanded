@@ -1,4 +1,4 @@
-package com.kintyj.dragonoidexpanded.brain.behaviour;
+package com.kintyj.dragonoidsexpanded.brain.behaviour;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
