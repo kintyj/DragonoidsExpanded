@@ -474,7 +474,7 @@ public class FrilledDrake extends TamableAnimal
     public BrainActivityGroup<? extends FrilledDrake> getIdleTasks() { // These are the tasks that run when the mob
                                                                        // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
-                new BreedWithPartner<>(),
+                new BreedWithPartner<>().closeEnoughDist((entity, partner) -> 16),
                 new FirstApplicableBehaviour<FrilledDrake>(new TargetOrRetaliate<>(),
                         new SetPlayerLookTarget<>(),
                         new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
