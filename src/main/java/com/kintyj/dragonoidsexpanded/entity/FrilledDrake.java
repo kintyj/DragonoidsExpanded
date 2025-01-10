@@ -299,7 +299,7 @@ public class FrilledDrake extends TamableAnimal
         controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
             if (this.getGrowthScore() < DrakeAge.HATCHLING.getAge()) {
                 return event.setAndContinue(
-                        isIncubating() ? RawAnimation.begin().thenLoop("animation.frilled_drake.incubating")
+                        isIncubating() ? RawAnimation.begin().thenLoop("animation.frilled_drake.incubate")
                                 : RawAnimation.begin().thenLoop("animation.frilled_drake.egg"));
             }
 

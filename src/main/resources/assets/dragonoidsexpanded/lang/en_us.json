@@ -1,13 +1,25 @@
 {
     "item.dragonoidsexpanded.example_item": "Steroid Item",
+    "item.dragonoidsexpanded.drake_heart_scale": "Drake Heart Scale",
+    "item.dragonoidsexpanded.drake_meal": "Drake Meal",
+    "item.dragonoidsexpanded.frilled_drake_scale_blue": "Frilled Drake Scale Blue",
+    "item.dragonoidsexpanded.frilled_drake_scale_green": "Frilled Drake Scale Green",
+    "item.dragonoidsexpanded.frilled_drake_scale_aqua": "Frilled Drake Scale Aqua",
+    "item.dragonoidsexpanded.frilled_drake_scale_turquoise": "Frilled Drake Scale Turquoise",
     "item.dragonoidsexpanded.frilled_drake_adult_spawn_egg": "Frilled Drake Spawn Egg",
     "item.dragonoidsexpanded.example_block": "Pringle Block",
     "block.dragonoidsexpanded.example_block": "Pringle Block",
+    "item.dragonoidsexpanded.slimy_stone": "Slimy Stone",
+    "block.dragonoidsexpanded.slimy_stone": "Slimy Stone",
+    "item.dragonoidsexpanded.slimy_stone_bricks": "Slimy Stone Bricks",
+    "block.dragonoidsexpanded.slimy_stone_bricks": "Slimy Stone Bricks",
+    "item.dragonoidsexpanded.slimy_cobblestone": "Slimy Cobblestone",
+    "block.dragonoidsexpanded.slimy_cobblestone": "Slimy Cobblestone",
     "entity.dragonoidsexpanded.frilled_drake": "Frilled Drake",
     "entity.dragonoidsexpanded.frilled_drake_hatchling": "Frilled Drake Hatchling",
     "entity.dragonoidsexpanded.frilled_drake_drakeling": "Frilled Drake Drakeling",
     "entity.dragonoidsexpanded.frilled_drake_teen": "Frilled Drake Teen",
     "entity.dragonoidsexpanded.frilled_drake_adult": "Frilled Drake Adult",
     "entity.dragonoidsexpanded.frilled_drake_elder": "Frilled Drake Elder",
-    "itemGroup.dragonoidsexpanded.dragonoid_expanded_items_tab": "Dragonoid Expanded Items"
+    "itemGroup.dragonoidsexpanded.dragonoids_expanded_items_tab": "Dragonoids Expanded Items"
 }

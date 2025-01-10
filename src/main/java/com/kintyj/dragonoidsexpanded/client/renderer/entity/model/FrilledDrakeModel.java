@@ -116,7 +116,8 @@ public class FrilledDrakeModel extends GeoModel<FrilledDrake> {
         };
         // Animations must be stored in assets/<modid>/animations with subfolders
         // supported inside the animations folder
-        private static final ResourceLocation animation = ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
+        private static final ResourceLocation animation = ResourceLocation.fromNamespaceAndPath(
+                        DragonoidsExpanded.MODID,
                         "animations/entity/frilled_drake.animation.json");
 
         @Override
