@@ -365,7 +365,7 @@ public class FrilledDrake extends TamableAnimal
     @SuppressWarnings("null")
     @Override
     public InteractionResult interactAt(@Nonnull Player player, @Nonnull Vec3 vec, @Nonnull InteractionHand hand) {
-        if (player.getItemInHand(hand).is(DragonoidsExpanded.EXAMPLE_ITEM)) {
+        if (player.getItemInHand(hand).is(DragonoidsExpanded.DRAKE_MEAL)) {
             int growthScore = getGrowthScore();
 
             if (growthScore <= DrakeAge.HATCHLING.getAge()) {
