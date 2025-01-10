@@ -495,14 +495,7 @@ public class FrilledDrake extends TamableAnimal
     @SuppressWarnings({ "unchecked", "null" })
     @Override
     public BrainActivityGroup<? extends FrilledDrake> getFightTasks() { // These are the tasks that handle fighting
-        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>().invalidateIf(
-                (entity, target) -> !(target instanceof FrilledDrake || target instanceof Creeper
-                        || getGrowthScore() < DrakeAge.DRAKELING.getAge()
-                        || target instanceof Bat
-                        || target instanceof GlowSquid
-                        || (this.getOwner() != null && this.getOwner().is(target))
-                        || (this.getOwner() != null && !(target instanceof Mob))
-                        || (target instanceof Player && ((Player) target).isCreative()))), // Cancel fighting if the
+        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>()), // Cancel fighting if the
                                                                                            // target is
                 // no
                 // longer valid
