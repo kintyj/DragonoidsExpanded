@@ -127,23 +127,23 @@ public class FrilledDrakeModel extends GeoModel<FrilledDrake> {
         @Override
         public ResourceLocation getTextureResource(FrilledDrake object) {
                 if (object.getGrowthScore() > FrilledDrake.DrakeAge.ELDER.getAge()) {
-                        return (object.blinking || object.getState() == DrakeState.SLEEPING.getState())
+                        return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
                                         ? FrilledDrakeModel.closedTexture[object.getColor()][4]
                                         : FrilledDrakeModel.texture[object.getColor()][4]; // 401-402 days - Elder
                 } else if (object.getGrowthScore() > FrilledDrake.DrakeAge.ADULT.getAge()) {
-                        return (object.blinking || object.getState() == DrakeState.SLEEPING.getState())
+                        return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
                                         ? FrilledDrakeModel.closedTexture[object.getColor()][3]
                                         : FrilledDrakeModel.texture[object.getColor()][3]; // 301-400 days - Adult
                 } else if (object.getGrowthScore() > FrilledDrake.DrakeAge.TEEN.getAge()) {
-                        return (object.blinking || object.getState() == DrakeState.SLEEPING.getState())
+                        return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
                                         ? FrilledDrakeModel.closedTexture[object.getColor()][2]
                                         : FrilledDrakeModel.texture[object.getColor()][2]; // 101-300 days - Teen
                 } else if (object.getGrowthScore() > FrilledDrake.DrakeAge.DRAKELING.getAge()) {
-                        return (object.blinking || object.getState() == DrakeState.SLEEPING.getState())
+                        return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
                                         ? FrilledDrakeModel.closedTexture[object.getColor()][1]
                                         : FrilledDrakeModel.texture[object.getColor()][1]; // 021-100 days - Drakeling
                 } else {
-                        return (object.blinking || object.getState() == DrakeState.SLEEPING.getState())
+                        return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
                                         ? FrilledDrakeModel.closedTexture[object.getColor()][0]
                                         : FrilledDrakeModel.texture[object.getColor()][0]; // 000-020 days - Hatchling
                 }

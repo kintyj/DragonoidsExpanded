@@ -94,11 +94,14 @@ public class FrilledDrake extends TamableAnimal
     }
 
     private static final int yawnDelay = 200;
-    private static final int blinkDelay = 300;
+    private static final int blinkDelay = 30;
     private static final int blinkTime = 30;
 
     public int blinkTimer;
-    public boolean blinking = false;
+
+    public boolean isBlinking() {
+        return this.entityData.get(BLINKING);
+    }
 
     public FrilledDrake(EntityType<? extends FrilledDrake> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -114,6 +117,8 @@ public class FrilledDrake extends TamableAnimal
             EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData
             .defineId(FrilledDrake.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> BLINKING = SynchedEntityData
+            .defineId(FrilledDrake.class, EntityDataSerializers.BOOLEAN);
 
     public enum DrakeState {
         SLEEPING(0),
@@ -204,6 +209,7 @@ public class FrilledDrake extends TamableAnimal
         builder.define(GROWTH_SCORE, 0);
         builder.define(STATE, DrakeState.AWAKE.getState());
         builder.define(COLOR, DrakeColor.BLUE.getColor());
+        builder.define(BLINKING, true);
     }
 
     @SuppressWarnings("unused")
@@ -466,14 +472,17 @@ public class FrilledDrake extends TamableAnimal
                         (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
                         (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
             }
-            if (blinking) {
+
+            if (isBlinking()) {
                 if (blinkTimer > blinkTime) {
+                    DragonoidExpanded.LOGGER.info("I have stopped blinking.");
                     blinkTimer = 0;
-                    blinking = false;
+                    this.entityData.set(BLINKING, false);
                 }
             } else if (blinkTimer > blinkDelay) {
+                DragonoidExpanded.LOGGER.info("I have started blinking.");
                 blinkTimer = 0;
-                blinking = true;
+                this.entityData.set(BLINKING, true);
             }
         }
 
@@ -511,8 +520,8 @@ public class FrilledDrake extends TamableAnimal
                         }).whenStopping((entity) -> {
                             DragonoidExpanded.LOGGER.info("They are no longer ready to breed.");
                         }).startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
-                new LookAtTarget<>(), // Have the entity turn to face and look at its
-                                      // current look target
+                new LookAtTarget<FrilledDrake>()
+                        .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
                 new MoveToWalkTarget<>()); // Walk towards the current walk target
     }
 
