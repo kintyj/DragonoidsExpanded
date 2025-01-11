@@ -11100,6 +11100,9 @@
 					}
 				}
 			}
+		},
+		"animation.frilled_drake.wake_up": {
+			"loop": true
 		}
 	},
 	"geckolib_format_version": 2
