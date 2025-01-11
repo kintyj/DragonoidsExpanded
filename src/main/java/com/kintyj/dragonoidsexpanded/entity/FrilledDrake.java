@@ -537,13 +537,10 @@ public class FrilledDrake extends TamableAnimal
                 // #region Sad region for sad people: Attacks
                 new NearbyLivingEntitySensor<FrilledDrake>()
                         .setPredicate((target,
-                                entity) -> !(entity.getState() == DrakeState.SLEEPING.getState()
-                                        && entity.getAge() < DrakeAge.HATCHLING.getAge())), // This
-                new NearbyAdultSensor<FrilledDrake>()
-                        .setPredicate((target, entity) -> !(entity.getAge() < DrakeAge.HATCHLING.getAge())),
+                                entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())), // This
+                new NearbyAdultSensor<FrilledDrake>(),
                 // #endregion
-                new HurtBySensor<FrilledDrake>().setPredicate(
-                        (damageSource, mob) -> this.getAge() >= DrakeAge.HATCHLING.getAge()),
+                new HurtBySensor<FrilledDrake>(),
                 new InWaterSensor<>()); // This tracks the last damage source and attacker
 
     }
