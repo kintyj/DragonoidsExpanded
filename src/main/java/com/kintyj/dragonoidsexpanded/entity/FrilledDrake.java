@@ -506,11 +506,14 @@ public class FrilledDrake extends TamableAnimal
             triggerAnim("defaultController", "wake_up");
             setState(DrakeState.AWAKE.getState());
         }
+
+        super.aiStep();
     }
 
     @Override
     protected void customServerAiStep() {
-        tickBrain(this);
+        if (getGrowthScore() >= DrakeAge.HATCHLING.getAge())
+            tickBrain(this);
     }
 
     @Override
