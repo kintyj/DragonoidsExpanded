@@ -286,6 +286,10 @@ public class FrilledDrake extends TamableAnimal
             float sidewaysAmount = 0.0f;
             boolean sideways = true;
 
+            if (!this.onGround()) {
+                return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.in_air"));
+            }
+
             if (!event.isMoving()) {
                 if (Math.abs(deltaYaw) > 5.0F) {
                     if (deltaYaw > 0) { // Turning right
@@ -468,43 +472,45 @@ public class FrilledDrake extends TamableAnimal
 
     @Override
     public void aiStep() {
-        if (getState() != DrakeState.SLEEPING.getState()) {
-            blinkTimer++;
+        if (getGrowthScore() >= DrakeAge.HATCHLING.getAge()) {
+            if (getState() != DrakeState.SLEEPING.getState()) {
+                blinkTimer++;
 
-            if (blinking) {
-                if (blinkTimer > blinkTime) {
-                    DragonoidsExpanded.LOGGER.info("I have stopped blinking.");
+                if (blinking) {
+                    if (blinkTimer > blinkTime) {
+                        DragonoidsExpanded.LOGGER.info("I have stopped blinking.");
+                        blinkTimer = 0;
+                        blinking = false;
+                        DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
+                    }
+                } else if (blinkTimer > blinkDelay) {
+                    DragonoidsExpanded.LOGGER.info("I have started blinking.");
                     blinkTimer = 0;
-                    blinking = false;
+                    blinking = true;
                     DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
                 }
-            } else if (blinkTimer > blinkDelay) {
-                DragonoidsExpanded.LOGGER.info("I have started blinking.");
-                blinkTimer = 0;
-                blinking = true;
-                DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
             }
-        }
 
-        if (getState() != DrakeState.SLEEPING.getState()) {
-            timer++;
+            if (getState() != DrakeState.SLEEPING.getState()) {
+                timer++;
 
-            if (timer > yawnDelay) {
-                timer = 0;
-                triggerAnim("attackController", "yawn");
-                playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get(),
-                        (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
-                        (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
+                if (timer > yawnDelay) {
+                    timer = 0;
+                    triggerAnim("attackController", "yawn");
+                    playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get(),
+                            (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
+                            (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
+                }
             }
-        }
 
-        if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
-            triggerAnim("defaultController", "lay_down");
-            setState(DrakeState.SLEEPING.getState());
-        } else if ((!level().isNight() || isAggressive())
-                && getState() == DrakeState.SLEEPING.getState()) {
-            triggerAnim("defaultController", "wake_up");
-            setState(DrakeState.AWAKE.getState());
+            if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
+                triggerAnim("defaultController", "lay_down");
+                setState(DrakeState.SLEEPING.getState());
+            } else if ((!level().isNight() || isAggressive())
+                    && getState() == DrakeState.SLEEPING.getState()) {
+                triggerAnim("defaultController", "wake_up");
+                setState(DrakeState.AWAKE.getState());
+            }
         }
 
         super.aiStep();
@@ -534,7 +540,7 @@ public class FrilledDrake extends TamableAnimal
     public BrainActivityGroup<? extends FrilledDrake> getCoreTasks() { // These are the tasks that run all the time
                                                                        // (usually)
         return BrainActivityGroup.coreTasks(
-                new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 2)
+                new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 6)
                         .runFor((entity) -> 1200).whenStarting((entity) -> {
                             DragonoidsExpanded.LOGGER.info("They are now ready to breed.");
                         }).whenStopping((entity) -> {
@@ -620,6 +626,7 @@ public class FrilledDrake extends TamableAnimal
             if (this.onGround()) {
                 this.isJumping = false;
                 if (this.playerJumpPendingScale > 0.0F && !this.isJumping) {
+                    triggerAnim("defaultController", "jump");
                     this.executeRidersJump(this.playerJumpPendingScale, travelVector);
                 }
                 this.playerJumpPendingScale = 0.0F;
