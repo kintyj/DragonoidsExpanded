@@ -534,7 +534,7 @@ public class FrilledDrake extends TamableAnimal
     public BrainActivityGroup<? extends FrilledDrake> getCoreTasks() { // These are the tasks that run all the time
                                                                        // (usually)
         return BrainActivityGroup.coreTasks(
-                new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 2)
+                new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 6)
                         .runFor((entity) -> 1200).whenStarting((entity) -> {
                             DragonoidsExpanded.LOGGER.info("They are now ready to breed.");
                         }).whenStopping((entity) -> {
