@@ -26,3 +26,4 @@ run-data
 repo
 
 .vscode/
+.vscode/launch.json
