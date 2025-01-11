@@ -468,43 +468,45 @@ public class FrilledDrake extends TamableAnimal
 
     @Override
     public void aiStep() {
-        if (getState() != DrakeState.SLEEPING.getState()) {
-            blinkTimer++;
+        if (getGrowthScore() >= DrakeAge.HATCHLING.getAge()) {
+            if (getState() != DrakeState.SLEEPING.getState()) {
+                blinkTimer++;
 
-            if (blinking) {
-                if (blinkTimer > blinkTime) {
-                    DragonoidsExpanded.LOGGER.info("I have stopped blinking.");
+                if (blinking) {
+                    if (blinkTimer > blinkTime) {
+                        DragonoidsExpanded.LOGGER.info("I have stopped blinking.");
+                        blinkTimer = 0;
+                        blinking = false;
+                        DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
+                    }
+                } else if (blinkTimer > blinkDelay) {
+                    DragonoidsExpanded.LOGGER.info("I have started blinking.");
                     blinkTimer = 0;
-                    blinking = false;
+                    blinking = true;
                     DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
                 }
-            } else if (blinkTimer > blinkDelay) {
-                DragonoidsExpanded.LOGGER.info("I have started blinking.");
-                blinkTimer = 0;
-                blinking = true;
-                DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
             }
-        }
 
-        if (getState() != DrakeState.SLEEPING.getState()) {
-            timer++;
+            if (getState() != DrakeState.SLEEPING.getState()) {
+                timer++;
 
-            if (timer > yawnDelay) {
-                timer = 0;
-                triggerAnim("attackController", "yawn");
-                playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get(),
-                        (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
-                        (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
+                if (timer > yawnDelay) {
+                    timer = 0;
+                    triggerAnim("attackController", "yawn");
+                    playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get(),
+                            (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
+                            (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
+                }
             }
-        }
 
-        if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
-            triggerAnim("defaultController", "lay_down");
-            setState(DrakeState.SLEEPING.getState());
-        } else if ((!level().isNight() || isAggressive())
-                && getState() == DrakeState.SLEEPING.getState()) {
-            triggerAnim("defaultController", "wake_up");
-            setState(DrakeState.AWAKE.getState());
+            if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
+                triggerAnim("defaultController", "lay_down");
+                setState(DrakeState.SLEEPING.getState());
+            } else if ((!level().isNight() || isAggressive())
+                    && getState() == DrakeState.SLEEPING.getState()) {
+                triggerAnim("defaultController", "wake_up");
+                setState(DrakeState.AWAKE.getState());
+            }
         }
 
         super.aiStep();
