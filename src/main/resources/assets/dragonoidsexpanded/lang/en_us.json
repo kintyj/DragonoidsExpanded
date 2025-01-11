@@ -43,5 +43,6 @@
     "entity.dragonoidsexpanded.frilled_drake_teen": "Frilled Drake Teen",
     "entity.dragonoidsexpanded.frilled_drake_adult": "Frilled Drake Adult",
     "entity.dragonoidsexpanded.frilled_drake_elder": "Frilled Drake Elder",
-    "itemGroup.dragonoidsexpanded.dragonoids_expanded_items_tab": "Dragonoids Expanded Items"
+    "itemGroup.dragonoidsexpanded.dragonoids_expanded_items_tab": "Dragonoids Expanded Items",
+    "enchantment.dragonoidsexpanded.dragon_slayer": "Dragon Slayer"
 }
