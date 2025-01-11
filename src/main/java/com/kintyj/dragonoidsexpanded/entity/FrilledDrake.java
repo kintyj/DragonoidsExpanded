@@ -558,15 +558,12 @@ public class FrilledDrake extends TamableAnimal
                         }).whenStopping((entity) -> {
                             DragonoidsExpanded.LOGGER.info("They are no longer ready to breed.");
                         })
-                        .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState()
-                                && entity.getAge() < DrakeAge.HATCHLING.getAge())),
+                        .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
                 new LookAtTarget<FrilledDrake>()
-                        .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState()
-                                && entity.getAge() < DrakeAge.HATCHLING.getAge())),
-                new MoveToWalkTarget<FrilledDrake>()
-                        .startCondition((entity) -> !(entity.getAge() < DrakeAge.HATCHLING.getAge()))); // Walk towards
-                                                                                                        // the current
-                                                                                                        // walk target
+                        .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
+                new MoveToWalkTarget<FrilledDrake>()); // Walk towards
+                                                       // the current
+                                                       // walk target
     }
 
     @SuppressWarnings({ "unchecked", "null" })
@@ -585,12 +582,12 @@ public class FrilledDrake extends TamableAnimal
                                         || (target instanceof Player && ((Player) target).isCreative()))),
                         new SetPlayerLookTarget<>(),
                         new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24))
-                        .startCondition((entity) -> !(entity.getAge() < DrakeAge.HATCHLING.getAge())),
+                        .startCondition((entity) -> (entity.getAge() >= DrakeAge.HATCHLING.getAge())),
                 new OneRandomBehaviour<FrilledDrake>(
                         new SetRandomWalkTarget<FrilledDrake>().speedModifier(0.5f)
                                 .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60)))
-                        .startCondition((entity) -> !(entity.getAge() < DrakeAge.HATCHLING.getAge())));
+                        .startCondition((entity) -> (entity.getAge() >= DrakeAge.HATCHLING.getAge())));
     }
 
     @SuppressWarnings({ "unchecked", "null" })
