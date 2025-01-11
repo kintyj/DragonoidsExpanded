@@ -308,6 +308,9 @@ public class FrilledDrake extends TamableAnimal
             float currentYaw = this.getYRot();
             float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
 
+            float sidewaysAmount = 0.0f;
+            boolean sideways = true;
+
             if (!event.isMoving()) {
                 if (Math.abs(deltaYaw) > 5.0F) {
                     if (deltaYaw > 0) { // Turning right
@@ -340,7 +343,11 @@ public class FrilledDrake extends TamableAnimal
             } else {
                 return event.setAndContinue(
                         (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.swim")
-                                : RawAnimation.begin().thenLoop("animation.frilled_drake.walk")));
+                                : (sideways ? RawAnimation.begin().thenLoop("animation.frilled_drake.walk")
+                                        : (sidewaysAmount > 0.0f
+                                                ? RawAnimation.begin().thenLoop("animation.frilled_drake.strafe_left")
+                                                : RawAnimation.begin()
+                                                        .thenLoop("animation.frilled_drake.strafe_right")))));
             }
         }).triggerableAnim("jump", RawAnimation.begin().thenPlay("animation.frilled_drake.jump"))
                 .triggerableAnim("claw_strike_left",
