@@ -286,6 +286,10 @@ public class FrilledDrake extends TamableAnimal
             float sidewaysAmount = 0.0f;
             boolean sideways = true;
 
+            if (!this.onGround()) {
+                return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.in_air"));
+            }
+
             if (!event.isMoving()) {
                 if (Math.abs(deltaYaw) > 5.0F) {
                     if (deltaYaw > 0) { // Turning right
@@ -622,6 +626,7 @@ public class FrilledDrake extends TamableAnimal
             if (this.onGround()) {
                 this.isJumping = false;
                 if (this.playerJumpPendingScale > 0.0F && !this.isJumping) {
+                    triggerAnim("defaultController", "jump");
                     this.executeRidersJump(this.playerJumpPendingScale, travelVector);
                 }
                 this.playerJumpPendingScale = 0.0F;
