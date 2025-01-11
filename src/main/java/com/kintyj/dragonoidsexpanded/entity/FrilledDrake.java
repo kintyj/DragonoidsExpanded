@@ -45,7 +45,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.PartEntity;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -79,20 +78,6 @@ import software.bernie.geckolib.animation.RawAnimation;
 
 public class FrilledDrake extends TamableAnimal
         implements Enemy, GeoEntity, PlayerRideableJumping, SmartBrainOwner<FrilledDrake> {
-    private final FrilledDrakePart[] subEntities;
-    public final FrilledDrakePart head;
-    private final FrilledDrakePart body;
-
-    @Override
-    public boolean isMultipartEntity() {
-        return true;
-    }
-
-    @Override
-    public PartEntity<?>[] getParts() {
-        return this.subEntities;
-    }
-
     private static final int yawnDelay = 200;
     private static final int blinkDelay = 300;
     private static final int blinkTime = 30;
@@ -106,10 +91,6 @@ public class FrilledDrake extends TamableAnimal
 
     public FrilledDrake(EntityType<? extends FrilledDrake> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-
-        this.head = new FrilledDrakePart(this, "head", 0.7f, 0.4f);
-        this.body = new FrilledDrakePart(this, "body", 1.5f, 0.3f);
-        this.subEntities = new FrilledDrakePart[] { this.head, this.body };
     }
 
     private static final EntityDataAccessor<Integer> GROWTH_SCORE = SynchedEntityData.defineId(FrilledDrake.class,
@@ -211,11 +192,6 @@ public class FrilledDrake extends TamableAnimal
         builder.define(GROWTH_SCORE, 0);
         builder.define(STATE, DrakeState.AWAKE.getState());
         builder.define(COLOR, DrakeColor.BLUE.getColor());
-    }
-
-    @SuppressWarnings("unused")
-    private void tickPart(FrilledDrakePart part, double offsetX, double offsetY, double offsetZ) {
-        part.setPos(this.getX() + offsetX, this.getY() + offsetY, this.getZ() + offsetZ);
     }
 
     private boolean isIncubating() {
