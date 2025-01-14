@@ -93,7 +93,7 @@ public class SlimyBlock extends Block {
             stack.shrink(1);
             player.addItem(new ItemStack(Items.HONEY_BOTTLE, 1));
             level.setBlock(pos, state.setValue(SLIME_STATE, state.getValue(SLIME_STATE) - 1), UPDATE_ALL);
-        } else if (stack.is(Items.SLIME_BALL) && state.getValue(SLIME_STATE) < 4) {
+        } else if (stack.is(Items.SLIME_BALL) && state.getValue(SLIME_STATE) < 3) {
             stack.shrink(1);
             level.setBlock(pos, state.setValue(SLIME_STATE, state.getValue(SLIME_STATE) + 1), UPDATE_ALL);
         }
