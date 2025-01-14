@@ -2,6 +2,7 @@ package com.kintyj.dragonoidsexpanded;
 
 import org.slf4j.Logger;
 
+import com.kintyj.dragonoidsexpanded.block.SlimyBlock;
 import com.kintyj.dragonoidsexpanded.client.renderer.entity.FrilledDrakeRenderer;
 import com.kintyj.dragonoidsexpanded.entity.FrilledDrake;
 import com.mojang.logging.LogUtils;
@@ -87,76 +88,76 @@ public class DragonoidsExpanded {
 			BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
 	public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block",
 			EXAMPLE_BLOCK);
-	public static final DeferredBlock<Block> SLIMY_COBBLESTONE = BLOCKS.registerSimpleBlock("slimy_cobblestone",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+	public static final DeferredBlock<Block> SLIMY_COBBLESTONE = BLOCKS.registerBlock("slimy_cobblestone",
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_COBBLESTONE_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_cobblestone",
 			SLIMY_COBBLESTONE);
-	public static final DeferredBlock<Block> SLIMY_MOSSY_COBBLESTONE = BLOCKS.registerSimpleBlock(
-			"slimy_mossy_cobblestone",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+	public static final DeferredBlock<Block> SLIMY_MOSSY_COBBLESTONE = BLOCKS.registerBlock(
+			"slimy_mossy_cobblestone", SlimyBlock::new,
+			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_MOSSY_COBBLESTONE_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_mossy_cobblestone",
 			SLIMY_MOSSY_COBBLESTONE);
-	public static final DeferredBlock<Block> SLIMY_STONE = BLOCKS.registerSimpleBlock("slimy_stone",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+	public static final DeferredBlock<Block> SLIMY_STONE = BLOCKS.registerBlock("slimy_stone", SlimyBlock::new,
+			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_STONE_ITEM = ITEMS.registerSimpleBlockItem("slimy_stone",
 			SLIMY_STONE);
-	public static final DeferredBlock<Block> SLIMY_SMOOTH_STONE = BLOCKS.registerSimpleBlock("slimy_smooth_stone",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+	public static final DeferredBlock<Block> SLIMY_SMOOTH_STONE = BLOCKS.registerBlock("slimy_smooth_stone",
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_SMOOTH_STONE_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_smooth_stone",
 			SLIMY_SMOOTH_STONE);
-	public static final DeferredBlock<Block> SLIMY_GRANITE = BLOCKS.registerSimpleBlock("slimy_granite",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+	public static final DeferredBlock<Block> SLIMY_GRANITE = BLOCKS.registerBlock("slimy_granite",
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_GRANITE_ITEM = ITEMS.registerSimpleBlockItem("slimy_granite",
 			SLIMY_GRANITE);
-	public static final DeferredBlock<Block> SLIMY_POLISHED_GRANITE = BLOCKS.registerSimpleBlock(
+	public static final DeferredBlock<Block> SLIMY_POLISHED_GRANITE = BLOCKS.registerBlock(
 			"slimy_polished_granite",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_POLISHED_GRANITE_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_polished_granite",
 			SLIMY_POLISHED_GRANITE);
-	public static final DeferredBlock<Block> SLIMY_DIORITE = BLOCKS.registerSimpleBlock("slimy_diorite",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+	public static final DeferredBlock<Block> SLIMY_DIORITE = BLOCKS.registerBlock("slimy_diorite",
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_DIORITE_ITEM = ITEMS.registerSimpleBlockItem("slimy_diorite",
 			SLIMY_DIORITE);
-	public static final DeferredBlock<Block> SLIMY_POLISHED_DIORITE = BLOCKS.registerSimpleBlock(
+	public static final DeferredBlock<Block> SLIMY_POLISHED_DIORITE = BLOCKS.registerBlock(
 			"slimy_polished_diorite",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_POLISHED_DIORITE_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_polished_diorite",
 			SLIMY_POLISHED_DIORITE);
-	public static final DeferredBlock<Block> SLIMY_ANDESITE = BLOCKS.registerSimpleBlock("slimy_andesite",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+	public static final DeferredBlock<Block> SLIMY_ANDESITE = BLOCKS.registerBlock("slimy_andesite",
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_ANDESITE_ITEM = ITEMS.registerSimpleBlockItem("slimy_andesite",
 			SLIMY_ANDESITE);
-	public static final DeferredBlock<Block> SLIMY_POLISHED_ANDESITE = BLOCKS.registerSimpleBlock(
+	public static final DeferredBlock<Block> SLIMY_POLISHED_ANDESITE = BLOCKS.registerBlock(
 			"slimy_polished_andesite",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_POLISHED_ANDESITE_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_polished_andesite",
 			SLIMY_POLISHED_ANDESITE);
-	public static final DeferredBlock<Block> SLIMY_STONE_BRICKS = BLOCKS.registerSimpleBlock("slimy_stone_bricks",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+	public static final DeferredBlock<Block> SLIMY_STONE_BRICKS = BLOCKS.registerBlock("slimy_stone_bricks",
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_stone_bricks",
 			SLIMY_STONE_BRICKS);
-	public static final DeferredBlock<Block> SLIMY_MOSSY_STONE_BRICKS = BLOCKS.registerSimpleBlock(
+	public static final DeferredBlock<Block> SLIMY_MOSSY_STONE_BRICKS = BLOCKS.registerBlock(
 			"slimy_mossy_stone_bricks",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_MOSSY_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_mossy_stone_bricks",
 			SLIMY_MOSSY_STONE_BRICKS);
-	public static final DeferredBlock<Block> SLIMY_CRACKED_STONE_BRICKS = BLOCKS.registerSimpleBlock(
+	public static final DeferredBlock<Block> SLIMY_CRACKED_STONE_BRICKS = BLOCKS.registerBlock(
 			"slimy_cracked_stone_bricks",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_CRACKED_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_cracked_stone_bricks",
 			SLIMY_CRACKED_STONE_BRICKS);
-	public static final DeferredBlock<Block> SLIMY_CHISELED_STONE_BRICKS = BLOCKS.registerSimpleBlock(
+	public static final DeferredBlock<Block> SLIMY_CHISELED_STONE_BRICKS = BLOCKS.registerBlock(
 			"slimy_chiseled_stone_bricks",
-			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN));
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_CHISELED_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_chiseled_stone_bricks",
 			SLIMY_CHISELED_STONE_BRICKS);
@@ -193,7 +194,7 @@ public class DragonoidsExpanded {
 			new Item.Properties());
 	public static final DeferredItem<Item> FRILLED_DRAKE_EGG_GREEN = ITEMS.registerSimpleItem(
 			"frilled_drake_egg_green",
-			new Item.Properties());		
+			new Item.Properties());
 	public static final DeferredItem<Item> DRAKE_LORDS_MACE = ITEMS.registerSimpleItem(
 			"drake_lords_mace",
 			new Item.Properties());
