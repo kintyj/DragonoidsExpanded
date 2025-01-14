@@ -182,6 +182,21 @@ public class DragonoidsExpanded {
 	public static final DeferredItem<Item> FRILLED_DRAKE_SCALE_TURQUOISE = ITEMS.registerSimpleItem(
 			"frilled_drake_scale_turquoise",
 			new Item.Properties());
+	public static final DeferredItem<Item> FRILLED_DRAKE_EGG_BLUE = ITEMS.registerSimpleItem(
+			"frilled_drake_egg_blue",
+			new Item.Properties());
+	public static final DeferredItem<Item> FRILLED_DRAKE_EGG_AQUA = ITEMS.registerSimpleItem(
+			"frilled_drake_egg_aqua",
+			new Item.Properties());
+	public static final DeferredItem<Item> FRILLED_DRAKE_EGG_TURQUOISE = ITEMS.registerSimpleItem(
+			"frilled_drake_egg_turquoise",
+			new Item.Properties());
+	public static final DeferredItem<Item> FRILLED_DRAKE_EGG_GREEN = ITEMS.registerSimpleItem(
+			"frilled_drake_egg_green",
+			new Item.Properties());		
+	public static final DeferredItem<Item> DRAKE_LORDS_MACE = ITEMS.registerSimpleItem(
+			"drake_lords_mace",
+			new Item.Properties());
 
 	// Creates a creative tab with the id "examplemod:example_tab" for the example
 	// item, that is placed after the combat tab
@@ -202,6 +217,11 @@ public class DragonoidsExpanded {
 						output.accept(FRILLED_DRAKE_SCALE_GREEN.get());
 						output.accept(FRILLED_DRAKE_SCALE_AQUA.get());
 						output.accept(FRILLED_DRAKE_SCALE_TURQUOISE.get());
+						output.accept(FRILLED_DRAKE_EGG_BLUE.get());
+						output.accept(FRILLED_DRAKE_EGG_AQUA.get());
+						output.accept(FRILLED_DRAKE_EGG_TURQUOISE.get());
+						output.accept(FRILLED_DRAKE_EGG_GREEN.get());
+						output.accept(DRAKE_LORDS_MACE.get());
 					}).build());
 
 	// The constructor for the mod class is the first code that is run when your mod

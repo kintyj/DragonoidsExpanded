@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dragonoidsexpanded:item/frilled_drake_egg_aqua"
+    }
+}
