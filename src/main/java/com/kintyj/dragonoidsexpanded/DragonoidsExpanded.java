@@ -4,13 +4,16 @@ import org.slf4j.Logger;
 
 import com.kintyj.dragonoidsexpanded.block.SlimyBlock;
 import com.kintyj.dragonoidsexpanded.client.renderer.entity.FrilledDrakeRenderer;
+import com.kintyj.dragonoidsexpanded.effect.Mortis;
 import com.kintyj.dragonoidsexpanded.entity.FrilledDrake;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.food.FoodProperties;
@@ -54,6 +57,7 @@ public class DragonoidsExpanded {
 	// #region Registers
 	public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
+	public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT,MODID);
 	public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT,
 			MODID);
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
@@ -74,6 +78,11 @@ public class DragonoidsExpanded {
 			.register("entity.frilled_drake.alert", () -> SoundEvent.createVariableRangeEvent(
 					ResourceLocation.fromNamespaceAndPath(MODID, "entity.frilled_drake.alert")));
 	// #endregion
+
+	//#region Effects
+	public static final DeferredHolder<MobEffect, MobEffect> MORTIS = EFFECTS
+			.register("mortis", Mortis::new);
+	//#endregion
 
 	// #region Entities
 	public static final DeferredHolder<EntityType<?>, EntityType<FrilledDrake>> FRILLED_DRAKE = ENTITY_TYPES
@@ -236,6 +245,7 @@ public class DragonoidsExpanded {
 		// #region Subscribe registers to event bus
 		BLOCKS.register(modEventBus);
 		ITEMS.register(modEventBus);
+		EFFECTS.register(modEventBus);
 		ENTITY_TYPES.register(modEventBus);
 		CREATIVE_MODE_TABS.register(modEventBus);
 		SOUND_EVENTS.register(modEventBus);
