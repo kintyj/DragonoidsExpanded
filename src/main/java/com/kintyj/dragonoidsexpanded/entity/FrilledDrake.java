@@ -43,6 +43,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
@@ -95,6 +96,8 @@ public class FrilledDrake extends TamableAnimal
 
     private static final EntityDataAccessor<Integer> GROWTH_SCORE = SynchedEntityData.defineId(FrilledDrake.class,
             EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> ATTACK_RANGE = SynchedEntityData.defineId(FrilledDrake.class,
+            EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> STATE = SynchedEntityData.defineId(FrilledDrake.class,
             EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData
@@ -166,6 +169,7 @@ public class FrilledDrake extends TamableAnimal
     private static final float BASE_SCALE = 1f;
     private static final float BASE_HEALTH = 225f;
     private static final float BASE_JUMP_STRENGTH = 1.5f;
+    private static final float BASE_ATTACK_RANGE = 2.5f;
 
     public int getGrowthScore() {
         return this.entityData.get(GROWTH_SCORE);
@@ -176,6 +180,14 @@ public class FrilledDrake extends TamableAnimal
         if (pGrowthScore == DrakeAge.HATCHLING.getAge())
             triggerAnim("defaultController", "hatch");
         updateScale(pGrowthScore);
+    }
+
+    public float getAttackRange() {
+        return this.entityData.get(ATTACK_RANGE);
+    }
+
+    public void setAttackRange(float pAttackRange) {
+        this.entityData.set(ATTACK_RANGE, pAttackRange);
     }
 
     public int getState() {
@@ -190,6 +202,7 @@ public class FrilledDrake extends TamableAnimal
     protected void defineSynchedData(@Nonnull SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(GROWTH_SCORE, 0);
+        builder.define(ATTACK_RANGE, BASE_ATTACK_RANGE);
         builder.define(STATE, DrakeState.AWAKE.getState());
         builder.define(COLOR, DrakeColor.BLUE.getColor());
     }
@@ -432,6 +445,7 @@ public class FrilledDrake extends TamableAnimal
         super.addAdditionalSaveData(compound);
         compound.putInt("GrowthStage", getGrowthScore());
         compound.putInt("Color", getColor());
+        compound.putFloat("AttackRange", getAttackRange());
     }
 
     @Override
@@ -439,6 +453,7 @@ public class FrilledDrake extends TamableAnimal
         super.readAdditionalSaveData(compound);
         setGrowthScore(compound.getInt("GrowthStage"));
         setColor(compound.getInt("Color"));
+        setAttackRange(compound.getFloat("AttackRange"));
     }
     // #endregion
 
@@ -613,6 +628,31 @@ public class FrilledDrake extends TamableAnimal
     @Override
     public boolean isFood(@Nonnull ItemStack stack) {
         return stack.is(Items.BEEF);
+    }
+
+    @Override
+    public boolean isWithinMeleeAttackRange(@Nonnull LivingEntity entity) {
+        return this.getAttackBoundingBox().intersects(entity.getHitbox());
+    }
+
+    protected AABB getAttackBoundingBox() {
+        Entity entity = this.getVehicle();
+        AABB aabb;
+        if (entity != null) {
+            AABB aabb1 = entity.getBoundingBox();
+            AABB aabb2 = this.getBoundingBox();
+            aabb = new AABB(
+                    Math.min(aabb2.minX, aabb1.minX),
+                    aabb2.minY,
+                    Math.min(aabb2.minZ, aabb1.minZ),
+                    Math.max(aabb2.maxX, aabb1.maxX),
+                    aabb2.maxY,
+                    Math.max(aabb2.maxZ, aabb1.maxZ));
+        } else {
+            aabb = this.getBoundingBox();
+        }
+
+        return aabb.inflate(getAttackRange(), 0.0, getAttackRange());
     }
 
     @Override
