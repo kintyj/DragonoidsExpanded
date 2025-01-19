@@ -6,6 +6,7 @@ import com.kintyj.dragonoidsexpanded.block.SlimyBlock;
 import com.kintyj.dragonoidsexpanded.client.renderer.entity.FrilledDrakeRenderer;
 import com.kintyj.dragonoidsexpanded.effect.Mortis;
 import com.kintyj.dragonoidsexpanded.entity.FrilledDrake;
+import com.kintyj.dragonoidsexpanded.item.DrakelordsMace;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.Minecraft;
@@ -204,8 +205,8 @@ public class DragonoidsExpanded {
 	public static final DeferredItem<Item> FRILLED_DRAKE_EGG_GREEN = ITEMS.registerSimpleItem(
 			"frilled_drake_egg_green",
 			new Item.Properties());
-	public static final DeferredItem<Item> DRAKE_LORDS_MACE = ITEMS.registerSimpleItem(
-			"drake_lords_mace",
+	public static final DeferredItem<Item> DRAKE_LORDS_MACE = ITEMS.registerItem(
+			"drake_lords_mace", DrakelordsMace::new,
 			new Item.Properties());
 
 	// Creates a creative tab with the id "examplemod:example_tab" for the example

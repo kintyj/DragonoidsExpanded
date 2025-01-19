@@ -1,6 +1,0 @@
-{
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "dragonoidsexpanded:block/slimy/slimy_smooth_stone"
-    }
-}

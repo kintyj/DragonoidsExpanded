@@ -24,7 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class SlimyBlock extends Block {
-    public static final IntegerProperty SLIME_STATE = ModBlockStateProperties.SLIME_STATE;
+    public static final IntegerProperty SLIME_STATE = ModBlockStateProperties.SLIMY_STATE;
 
     public SlimyBlock(Properties p_49795_) {
         super(p_49795_);
