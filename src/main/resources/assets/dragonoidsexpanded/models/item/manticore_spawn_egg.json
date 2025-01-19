@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dragonoidsexpanded:item/spawn_eggs/manticore_spawn_egg"
+    }
+}

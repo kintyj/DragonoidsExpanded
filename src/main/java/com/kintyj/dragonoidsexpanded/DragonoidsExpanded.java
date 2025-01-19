@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 
 import com.kintyj.dragonoidsexpanded.block.SlimyBlock;
 import com.kintyj.dragonoidsexpanded.client.renderer.entity.FrilledDrakeRenderer;
+import com.kintyj.dragonoidsexpanded.client.renderer.entity.ManticoreRenderer;
 import com.kintyj.dragonoidsexpanded.effect.Mortis;
 import com.kintyj.dragonoidsexpanded.entity.FrilledDrake;
+import com.kintyj.dragonoidsexpanded.entity.Manticore;
 import com.kintyj.dragonoidsexpanded.item.DrakelordsMace;
 import com.mojang.logging.LogUtils;
 
@@ -58,7 +60,7 @@ public class DragonoidsExpanded {
 	// #region Registers
 	public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
-	public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT,MODID);
+	public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, MODID);
 	public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT,
 			MODID);
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
@@ -80,10 +82,10 @@ public class DragonoidsExpanded {
 					ResourceLocation.fromNamespaceAndPath(MODID, "entity.frilled_drake.alert")));
 	// #endregion
 
-	//#region Effects
+	// #region Effects
 	public static final DeferredHolder<MobEffect, MobEffect> MORTIS = EFFECTS
 			.register("mortis", Mortis::new);
-	//#endregion
+	// #endregion
 
 	// #region Entities
 	public static final DeferredHolder<EntityType<?>, EntityType<FrilledDrake>> FRILLED_DRAKE = ENTITY_TYPES
@@ -92,6 +94,13 @@ public class DragonoidsExpanded {
 	public static final DeferredItem<SpawnEggItem> FRILLED_DRAKE_SPAWN_EGG = ITEMS.register(
 			"frilled_drake_spawn_egg",
 			() -> new DeferredSpawnEggItem(FRILLED_DRAKE, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
+
+	public static final DeferredHolder<EntityType<?>, EntityType<Manticore>> MANTICORE = ENTITY_TYPES
+			.register("manticore", () -> EntityType.Builder.of(Manticore::new, MobCategory.MONSTER)
+					.sized(1.3F, 1.3F).clientTrackingRange(10).build("manticore"));
+	public static final DeferredItem<SpawnEggItem> MANTICORE_SPAWN_EGG = ITEMS.register(
+			"manticore_spawn_egg",
+			() -> new DeferredSpawnEggItem(MANTICORE, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
 	// #endregion
 
 	public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block",
@@ -296,15 +305,20 @@ public class DragonoidsExpanded {
 			event.accept(SLIMY_MOSSY_COBBLESTONE_ITEM);
 		} else if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
 			event.accept(FRILLED_DRAKE_SPAWN_EGG);
+			event.accept(MANTICORE_SPAWN_EGG);
 		}
 	}
 
 	public void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
 		event.registerEntityRenderer(FRILLED_DRAKE.get(), FrilledDrakeRenderer::new);
+		event.registerEntityRenderer(MANTICORE.get(), ManticoreRenderer::new);
 	}
 
 	public void registerEntityAttributes(EntityAttributeCreationEvent event) {
-		event.put(FRILLED_DRAKE.get(), FrilledDrake.createMobAttributes().build());
+		event.put(FRILLED_DRAKE.get(), FrilledDrake.createMobAttributes().build()); // Launch.json is eternal, Boom
+																					// eternal.
+		event.put(MANTICORE.get(), Manticore.createMobAttributes().build()); // LIKE THAT WILL EVER HAPPEN (Shrek clip
+																				// here)
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call
