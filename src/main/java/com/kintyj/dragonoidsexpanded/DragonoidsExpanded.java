@@ -97,7 +97,7 @@ public class DragonoidsExpanded {
 
 	public static final DeferredHolder<EntityType<?>, EntityType<Manticore>> MANTICORE = ENTITY_TYPES
 			.register("manticore", () -> EntityType.Builder.of(Manticore::new, MobCategory.MONSTER)
-					.sized(1.3F, 1.3F).clientTrackingRange(10).build("manticore"));
+					.sized(1.5F, 1.8F).clientTrackingRange(10).build("manticore"));
 	public static final DeferredItem<SpawnEggItem> MANTICORE_SPAWN_EGG = ITEMS.register(
 			"manticore_spawn_egg",
 			() -> new DeferredSpawnEggItem(MANTICORE, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
