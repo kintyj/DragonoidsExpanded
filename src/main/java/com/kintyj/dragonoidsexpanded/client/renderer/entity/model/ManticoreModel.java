@@ -29,31 +29,11 @@ public class ManticoreModel extends GeoModel<Manticore> {
 
 	@Override
 	public ResourceLocation getTextureResource(Manticore object) {
-		if (object.getGrowthScore() > FrilledDrake.DrakeAge.ELDER.getAge()) {
-			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
-					? FrilledDrakeModel.closedTexture[object.getColor()][4]
-					: FrilledDrakeModel.texture[object.getColor()][4]; // 401-402 days - Elder
-		} else if (object.getGrowthScore() > FrilledDrake.DrakeAge.ADULT.getAge()) {
-			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
-					? FrilledDrakeModel.closedTexture[object.getColor()][3]
-					: FrilledDrakeModel.texture[object.getColor()][3]; // 301-400 days - Adult
-		} else if (object.getGrowthScore() > FrilledDrake.DrakeAge.TEEN.getAge()) {
-			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
-					? FrilledDrakeModel.closedTexture[object.getColor()][2]
-					: FrilledDrakeModel.texture[object.getColor()][2]; // 101-300 days - Teen
-		} else if (object.getGrowthScore() > FrilledDrake.DrakeAge.DRAKELING.getAge()) {
-			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
-					? FrilledDrakeModel.closedTexture[object.getColor()][1]
-					: FrilledDrakeModel.texture[object.getColor()][1]; // 021-100 days - Drakeling
-		} else {
-			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
-					? FrilledDrakeModel.closedTexture[object.getColor()][0]
-					: FrilledDrakeModel.texture[object.getColor()][0]; // 000-020 days - Hatchling
-		}
+		return ManticoreModel.texture; // You have to sync to update github. Otherwise it's just on your computer. >:(
 	}
 
 	@Override
-	public ResourceLocation getAnimationResource(FrilledDrake object) {
-		return FrilledDrakeModel.animation;
+	public ResourceLocation getAnimationResource(Manticore object) {
+		return ManticoreModel.animation;
 	}
 }
