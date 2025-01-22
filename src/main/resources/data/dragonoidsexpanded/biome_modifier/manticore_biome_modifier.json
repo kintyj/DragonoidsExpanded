@@ -1,0 +1,14 @@
+{
+    "type": "neoforge:add_spawns",
+    "biomes": ["savanna",
+    "savanna_plateau",
+    "windswept_savanna",
+    "badlands"
+    ],
+    "spawners": {
+      "type": "dragonoidsexpanded:manticore",
+      "weight": 1,
+      "minCount": 1,
+      "maxCount": 1
+    }
+  }
