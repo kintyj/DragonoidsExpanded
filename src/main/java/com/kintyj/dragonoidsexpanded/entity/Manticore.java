@@ -55,6 +55,8 @@ public class Manticore extends TamableAnimal
         return null;
     }
 
+
+    // #region Animations
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     @Override
@@ -68,6 +70,7 @@ public class Manticore extends TamableAnimal
             return PlayState.CONTINUE;
         }).triggerableAnim("right_strike", RawAnimation.begin().thenPlay("animation.Manticore.right_strike")));
     }
+    //#endregion
 
     @Override
     public List<ExtendedSensor<? extends Manticore>> getSensors() {

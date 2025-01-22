@@ -168,6 +168,8 @@ public class FrilledDrake extends TamableAnimal
     private static final float BASE_MOVEMENT_SPEED = 0.3f;
     private static final float BASE_SCALE = 1f;
     private static final float BASE_HEALTH = 225f;
+    private static final float ARMOR = 6;
+    private static final float KNOCKBACK_RESIST = 25;
     private static final float BASE_JUMP_STRENGTH = 1.5f;
     private static final float BASE_ATTACK_RANGE = 2.5f;
 
@@ -243,10 +245,13 @@ public class FrilledDrake extends TamableAnimal
         this.getAttribute(Attributes.ATTACK_SPEED).setBaseValue(BASE_ATTACK_SPEED * (0.5f + scale * (1.5f - 0.5f)));
         this.getAttribute(Attributes.ATTACK_KNOCKBACK)
                 .setBaseValue(BASE_ATTACK_KNOCKBACK * (0.15f + scale * (1.25f - 0.15f)));
+        setAttackRange(BASE_ATTACK_RANGE * (0.5f + scale * (1.5f - 0.5f)));
         this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(BASE_STEP_HEIGHT * (0.5f + scale * (2f - 0.5f)));
         this.getAttribute(Attributes.MOVEMENT_SPEED)
                 .setBaseValue(BASE_MOVEMENT_SPEED * (0.85f + scale * (1.5f - 0.85f)));
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_HEALTH * (0.25f + scale * (2f - 0.25f)));
+        this.getAttribute(Attributes.ARMOR).setBaseValue(ARMOR * (0.1f + scale * (1f - 0.1f)));
+        this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(KNOCKBACK_RESIST * (0.1f + scale * (1f - 0.1f)));
         this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(BASE_JUMP_STRENGTH * (0.25f + scale * (2f - 0.25f)));
         this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getBaseValue());
 
@@ -272,7 +277,7 @@ public class FrilledDrake extends TamableAnimal
         return child;
     }
 
-    // #region Animationsa
+    // #region Animations
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     @Override
