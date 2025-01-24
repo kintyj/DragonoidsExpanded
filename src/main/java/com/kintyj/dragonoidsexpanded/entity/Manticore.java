@@ -58,6 +58,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class Manticore extends TamableAnimal
         implements Enemy, GeoEntity, SmartBrainOwner<Manticore>, InventoryCarrier {
     
+    //#region Base Stats        
     private final SimpleContainer inventory = new SimpleContainer(1);
     public static AttributeSupplier.Builder createMobAttributes() {
         return Mob.createMobAttributes()
@@ -68,6 +69,7 @@ public class Manticore extends TamableAnimal
                 .add(Attributes.FOLLOW_RANGE, 50.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4);
     }
+    //#endregion
 
     @VisibleForDebug
     @Override
@@ -113,7 +115,7 @@ public class Manticore extends TamableAnimal
             }
 
         }));
-        controllers.add(new AnimationController<>(this, "bodyController", 20, event -> {
+        controllers.add(new AnimationController<>(this, "bodyController", 10, event -> {
             if (event.isMoving()) {
                 if (this.isAggressive()) {
                     return event.setAndContinue((RawAnimation.begin().thenLoop("animation.manticore.sprint")));
@@ -127,6 +129,7 @@ public class Manticore extends TamableAnimal
     }
     //#endregion
 
+    //#region Sensors
     @Override
     public List<ExtendedSensor<? extends Manticore>> getSensors() {
         return ObjectArrayList.of(
@@ -135,6 +138,7 @@ public class Manticore extends TamableAnimal
                 new HurtBySensor<>(),
                 new NearbyItemsSensor<>());
     }
+    //#endregion
 
     @Override
     protected void customServerAiStep() {
