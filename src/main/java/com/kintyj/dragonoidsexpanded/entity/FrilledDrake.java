@@ -158,6 +158,7 @@ public class FrilledDrake extends TamableAnimal
         }
     }
 
+    //#region Base Stats
     protected boolean isJumping;
     protected float playerJumpPendingScale;
 
@@ -168,8 +169,11 @@ public class FrilledDrake extends TamableAnimal
     private static final float BASE_MOVEMENT_SPEED = 0.3f;
     private static final float BASE_SCALE = 1f;
     private static final float BASE_HEALTH = 225f;
+    private static final float ARMOR = 6;
+    private static final float KNOCKBACK_RESIST = 25;
     private static final float BASE_JUMP_STRENGTH = 1.5f;
     private static final float BASE_ATTACK_RANGE = 2.5f;
+    //#endregion
 
     public int getGrowthScore() {
         return this.entityData.get(GROWTH_SCORE);
@@ -232,6 +236,7 @@ public class FrilledDrake extends TamableAnimal
         this.targetYaw = this.getYHeadRot();
     }
 
+    //#region Stat Growth
     private void updateScale(int growth) {
         float scale = (growth / (float) DrakeAge.MAX_GROWTH.getAge());
         this.setScale(scale);
@@ -243,16 +248,20 @@ public class FrilledDrake extends TamableAnimal
         this.getAttribute(Attributes.ATTACK_SPEED).setBaseValue(BASE_ATTACK_SPEED * (0.5f + scale * (1.5f - 0.5f)));
         this.getAttribute(Attributes.ATTACK_KNOCKBACK)
                 .setBaseValue(BASE_ATTACK_KNOCKBACK * (0.15f + scale * (1.25f - 0.15f)));
+        setAttackRange(BASE_ATTACK_RANGE * (0.5f + scale * (1.5f - 0.5f)));
         this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(BASE_STEP_HEIGHT * (0.5f + scale * (2f - 0.5f)));
         this.getAttribute(Attributes.MOVEMENT_SPEED)
                 .setBaseValue(BASE_MOVEMENT_SPEED * (0.85f + scale * (1.5f - 0.85f)));
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_HEALTH * (0.25f + scale * (2f - 0.25f)));
+        this.getAttribute(Attributes.ARMOR).setBaseValue(ARMOR * (0.1f + scale * (1f - 0.1f)));
+        this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(KNOCKBACK_RESIST * (0.1f + scale * (1f - 0.1f)));
         this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(BASE_JUMP_STRENGTH * (0.25f + scale * (2f - 0.25f)));
         this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getBaseValue());
 
         this.getAttribute(Attributes.SCALE).setBaseValue(BASE_SCALE * (0.25f + scale * (5.0f - 0.25f)));
         this.refreshDimensions();
     }
+    //#endregion
 
     public void setColor(int color) {
         this.entityData.set(COLOR, color);
@@ -272,7 +281,7 @@ public class FrilledDrake extends TamableAnimal
         return child;
     }
 
-    // #region Animationsa
+    // #region Animations
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     @Override
@@ -361,6 +370,7 @@ public class FrilledDrake extends TamableAnimal
     }
     // #endregion
 
+    //#region Drake Meal
     @SuppressWarnings("null")
     @Override
     public InteractionResult interactAt(@Nonnull Player player, @Nonnull Vec3 vec, @Nonnull InteractionHand hand) {
@@ -410,7 +420,9 @@ public class FrilledDrake extends TamableAnimal
             return InteractionResult.PASS;
         }
     }
+    //#endregion
 
+    //#region ?
     @Override
     public SpawnGroupData finalizeSpawn(@Nonnull ServerLevelAccessor level, @Nonnull DifficultyInstance difficulty,
             @Nonnull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
@@ -419,8 +431,9 @@ public class FrilledDrake extends TamableAnimal
         setGrowthScore(0);
         return spawnGroupDataInternal;
     }
+    //#endregion
 
-    // #region Immunities & Vulnerabilities
+    // #region Immunities
     @Override
     public boolean hurt(@Nonnull DamageSource source, float amount) {
         if (source.is(DamageTypes.DROWN) || source.is(DamageTypes.FALL))
@@ -537,23 +550,22 @@ public class FrilledDrake extends TamableAnimal
             tickBrain(this);
     }
 
+    //#region Sensors
     @Override
     public List<ExtendedSensor<? extends FrilledDrake>> getSensors() {
         return ObjectArrayList.of(
-                // #region Sad region for sad people: Attacks
                 new NearbyLivingEntitySensor<FrilledDrake>()
                         .setPredicate((target,
                                 entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())), // This
                 new NearbyAdultSensor<>(),
-                // #endregion
                 new HurtBySensor<>(),
                 new InWaterSensor<>()); // This tracks the last damage source and attacker
-
     }
+    //#endregion
 
+    //#region Tasks
     @Override
-    public BrainActivityGroup<? extends FrilledDrake> getCoreTasks() { // These are the tasks that run all the time
-                                                                       // (usually)
+    public BrainActivityGroup<? extends FrilledDrake> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                 new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 6)
                         .runFor((entity) -> 1200).whenStarting((entity) -> {
@@ -624,6 +636,7 @@ public class FrilledDrake extends TamableAnimal
 
                 ));
     }
+    //#endregion
 
     @Override
     public boolean isFood(@Nonnull ItemStack stack) {

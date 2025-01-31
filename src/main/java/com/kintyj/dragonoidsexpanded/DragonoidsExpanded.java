@@ -102,6 +102,7 @@ public class DragonoidsExpanded {
 			() -> new DeferredSpawnEggItem(MANTICORE, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
 	// #endregion
 
+	//#region Blocks
 	public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block",
 			BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
 	public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block",
@@ -179,9 +180,9 @@ public class DragonoidsExpanded {
 	public static final DeferredItem<BlockItem> SLIMY_CHISELED_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_chiseled_stone_bricks",
 			SLIMY_CHISELED_STONE_BRICKS);
+	//#endregion
 
-	// Creates a new food item with the id "examplemod:example_id", nutrition 1 and
-	// saturation 2
+	//#region Items
 	public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item",
 			new Item.Properties().food(new FoodProperties.Builder()
 					.alwaysEdible().nutrition(1).saturationModifier(2f).build()));
@@ -216,7 +217,7 @@ public class DragonoidsExpanded {
 	public static final DeferredItem<Item> DRAKE_LORDS_MACE = ITEMS.registerItem(
 			"drake_lords_mace", DrakelordsMace::new,
 			new Item.Properties());
-
+	//#endregion
 	// Creates a creative tab with the id "examplemod:example_tab" for the example
 	// item, that is placed after the combat tab
 	public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DRAGONOIDS_EXPANDED_ITEMS_TAB = CREATIVE_MODE_TABS
