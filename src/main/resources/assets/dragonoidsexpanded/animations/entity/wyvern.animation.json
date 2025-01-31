@@ -1,0 +1,48 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.wyvern.wings": {
+			"loop": true,
+			"bones": {
+				"full_left_wing": {
+					"rotation": {
+						"vector": [0, -70, 20]
+					}
+				},
+				"left_bridge_membranes": {
+					"rotation": {
+						"vector": [0, 115, 0]
+					},
+					"position": {
+						"vector": [0, 0, -2]
+					},
+					"scale": {
+						"vector": [1, 1, 0.3]
+					}
+				},
+				"left_fore_arm": {
+					"rotation": {
+						"vector": [0, 60, 0]
+					},
+					"position": {
+						"vector": [-1.5, -0.1, 1.4]
+					}
+				},
+				"left_shoulder_membrane": {
+					"scale": {
+						"vector": [1, 1, 0.2]
+					}
+				},
+				"left_membrane_5": {
+					"position": {
+						"vector": [0, 0, 0]
+					},
+					"scale": {
+						"vector": [1, 1, 0.3]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}
