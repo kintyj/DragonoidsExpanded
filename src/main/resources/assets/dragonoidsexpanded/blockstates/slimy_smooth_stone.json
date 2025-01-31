@@ -1,16 +1,16 @@
 {
     "variants": {
         "slimy_state=0":{
-            "model": "dragonoidsexpanded:block/slimy_smooth_stone"
+            "model": "dragonoidsexpanded:block/slimy_smooth_stone_1"
         },
         "slimy_state=1":{
-            "model": "dragonoidsexpanded:block/slimy_smooth_stone"
+            "model": "dragonoidsexpanded:block/slimy_smooth_stone_2"
         },
         "slimy_state=2":{
-            "model": "dragonoidsexpanded:block/slimy_smooth_stone"
+            "model": "dragonoidsexpanded:block/slimy_smooth_stone_3"
         },
         "slimy_state=3":{
-            "model": "dragonoidsexpanded:block/slimy_smooth_stone"
+            "model": "dragonoidsexpanded:block/slimy_smooth_stone_4"
         }
     }
 }
