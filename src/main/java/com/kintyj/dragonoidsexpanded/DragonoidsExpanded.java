@@ -331,8 +331,7 @@ public class DragonoidsExpanded {
 																					// eternal.
 		event.put(MANTICORE.get(), Manticore.createMobAttributes().build()); // LIKE THAT WILL EVER HAPPEN (Shrek clip
 																				// here)
-		event.put(WYVERN.get(), Wyvern.createMobAttributes().build()); // LIKE THAT WILL EVER HAPPEN (Shrek clip
-																				// here)
+		event.put(WYVERN.get(), Wyvern.createMobAttributes().build());
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call

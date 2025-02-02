@@ -1,6 +1,7 @@
 package com.kintyj.dragonoidsexpanded.entity;
 
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,8 +63,8 @@ public class Wyvern extends TamableAnimal
     private final SimpleContainer inventory = new SimpleContainer(1);
     public static AttributeSupplier.Builder createMobAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 60.0)
-                .add(Attributes.ATTACK_DAMAGE, 6.0)
+                .add(Attributes.MAX_HEALTH, 50.0)
+                .add(Attributes.ATTACK_DAMAGE, 5.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.0)
                 .add(Attributes.ATTACK_SPEED, 2.4)
                 .add(Attributes.FOLLOW_RANGE, 50.0)
@@ -89,6 +90,34 @@ public class Wyvern extends TamableAnimal
         return null;
     }
 
+    //#region Colors
+    //@Override
+    //protected void defineSynchedData() {
+        //super.defineSynchedData();
+        //this.entityData.define(COLOR, getRandomColor());
+    //}
+
+    private int getRandomColor() {
+        // Define multiple colors (RGB values)
+        int[] possibleColors = {
+            0xFF0000, // Red
+            0x00FF00, // Green
+            0x0000FF, // Blue
+            0xFFFF00, // Yellow
+            0xFF00FF, // Magenta
+            0x00FFFF  // Cyan
+        };
+        return possibleColors[new Random().nextInt(possibleColors.length)];
+    }
+
+    //public int getColor() {
+        //return this.entityData.get(COLOR);
+    //}
+
+    //public void setColor(int color) {
+        //this.entityData.set(COLOR, color);
+    //}
+    //#endregion\
 
     // #region Animations
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -113,9 +142,9 @@ public class Wyvern extends TamableAnimal
         controllers.add(new AnimationController<>(this, "bodyController", 10, event -> {
             if (event.isMoving()) {
                 if (this.isAggressive()) {
-                    return event.setAndContinue((RawAnimation.begin().thenLoop("animation.wyvern.idle_1")));
+                    return event.setAndContinue((RawAnimation.begin().thenLoop("animation.wyvern.walk_1")));
                 } else {
-                    return event.setAndContinue((RawAnimation.begin().thenLoop("animation.wyvern.idle_1")));   
+                    return event.setAndContinue((RawAnimation.begin().thenLoop("animation.wyvern.walk_1")));   
                 }
             } else { 
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.idle_1"));
