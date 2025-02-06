@@ -19,7 +19,6 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +39,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAtt
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
-import net.tslat.smartbrainlib.api.core.navigation.SmoothAmphibiousPathNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyItemsSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
@@ -57,7 +55,17 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Manticore extends TamableAnimal
         implements Enemy, GeoEntity, SmartBrainOwner<Manticore>, InventoryCarrier {
-    
+    //private static final int roarDelay = 200;
+    //private static final int blinkDelay = 300;
+    //private static final int blinkTime = 25;
+
+    //public int blinkTimer;
+    //public boolean blinking = true;
+
+    //public boolean isBlinking() {
+        //return blinking;
+
+
     //#region Base Stats        
     private final SimpleContainer inventory = new SimpleContainer(1);
     public static AttributeSupplier.Builder createMobAttributes() {
@@ -104,7 +112,8 @@ public class Manticore extends TamableAnimal
             return PlayState.CONTINUE;
         }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.manticore.bite"))
         .triggerableAnim("leftStrike", RawAnimation.begin().thenPlay("animation.manticore.left_strike"))
-        .triggerableAnim("rightStrike", RawAnimation.begin().thenPlay("animation.manticore.right_strike")));
+        .triggerableAnim("rightStrike", RawAnimation.begin().thenPlay("animation.manticore.right_strike"))
+            .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.manticore.roar")));
         
         controllers.add(new AnimationController<>(this, "tailController", 20, event -> {
             if (event.isMoving()) {
@@ -152,18 +161,6 @@ public class Manticore extends TamableAnimal
     }
 
     @Override
-    protected PathNavigation createNavigation(@Nonnull Level pLevel) {
-        SmoothAmphibiousPathNavigation navigation = new SmoothAmphibiousPathNavigation(this, pLevel) {
-            @Override
-            public boolean prefersShallowSwimming() {
-                return false;
-            }
-        };
-
-        return navigation;
-    }
-
-    @Override
     public BrainActivityGroup<? extends Manticore> getCoreTasks() { // These are the tasks that run all the time
                                                                        // (usually)
         return BrainActivityGroup.coreTasks(
@@ -183,7 +180,7 @@ public class Manticore extends TamableAnimal
                 new FirstApplicableBehaviour<>(
                         new TargetOrRetaliate<>(),
                         new SetPlayerLookTarget<>(),
-                        new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
+                        new FollowOwner<>().teleportToTargetAfter(32).stopFollowingWithin(12)),
                 new OneRandomBehaviour<>(
                         new SetRandomWalkTarget<Manticore>().speedModifier(0.5f),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));

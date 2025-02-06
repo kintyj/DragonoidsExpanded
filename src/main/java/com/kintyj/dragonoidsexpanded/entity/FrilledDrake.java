@@ -499,6 +499,7 @@ public class FrilledDrake extends TamableAnimal
 
     private int timer = 0;
 
+    //#region Ai Step
     @Override
     public void aiStep() {
         if (getGrowthScore() >= DrakeAge.HATCHLING.getAge()) {
@@ -550,6 +551,7 @@ public class FrilledDrake extends TamableAnimal
         if (getGrowthScore() >= DrakeAge.HATCHLING.getAge())
             tickBrain(this);
     }
+    //#endregion
 
     // #region Sensors
     @Override

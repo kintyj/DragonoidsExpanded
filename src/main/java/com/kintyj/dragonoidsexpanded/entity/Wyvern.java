@@ -13,6 +13,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.VisibleForDebug;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -59,6 +61,17 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class Wyvern extends TamableAnimal
         implements Enemy, GeoEntity, SmartBrainOwner<Wyvern>, InventoryCarrier {
     
+    private static final int yawnDelay = 177;
+    //private static final int blinkDelay = 300;
+    //private static final int blinkTime = 25;
+        
+    //public int blinkTimer;
+    //public boolean blinking = true;
+        
+    //public boolean isBlinking() {
+        //return blinking;
+    //}
+
     //#region Base Stats        
     private final SimpleContainer inventory = new SimpleContainer(1);
     public static AttributeSupplier.Builder createMobAttributes() {
@@ -139,6 +152,7 @@ public class Wyvern extends TamableAnimal
             }
 
         }));
+        
         controllers.add(new AnimationController<>(this, "bodyController", 10, event -> {
             if (event.isMoving()) {
                 if (this.isAggressive()) {
@@ -150,6 +164,40 @@ public class Wyvern extends TamableAnimal
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.idle_1"));
             }
         }));
+        
+        controllers.add(new AnimationController<>(this, "attackController", event -> {
+            return PlayState.CONTINUE;
+        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.wyvern.bite"))
+                .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.wyvern.yawn")));
+        
+        //controllers.add(new AnimationController<>(this,"turnController", event -> {
+
+    }
+    //#endregion
+
+    // #region Immunities
+    @Override
+    public boolean hurt(@Nonnull DamageSource source, float amount) {
+        if (source.is(DamageTypes.FALL))
+            return false;
+        return super.hurt(source, amount);
+    }
+    // #endregion
+
+    //#region Ai Step
+
+    private int timer = 0;
+
+    @Override
+    public void aiStep() {
+                    
+        if (timer > yawnDelay) {
+            timer = 0;
+            triggerAnim("attackController", "yawn");
+            playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get());
+            }
+        
+        super.aiStep();
     }
     //#endregion
 
@@ -209,10 +257,43 @@ public class Wyvern extends TamableAnimal
                         new SetPlayerLookTarget<>(),
                         new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
                 new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<Wyvern>().speedModifier(0.5f),
+                        new SetRandomWalkTarget<Wyvern>().speedModifier(0.6f),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
     }
 
+    @SuppressWarnings({ "unchecked", "null" })
+    @Override
+    public BrainActivityGroup<? extends Wyvern> getFightTasks() { // These are the tasks that handle fighting
+        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), // Cancel fighting if the
+                                                                             // target is
+                // no
+                // longer valid
+                new SetWalkTargetToAttackTarget<>(),
+                new FirstApplicableBehaviour<>(
+                        new LeapAtTarget<>(0)
+                                .verticalJumpStrength(((mob, entity) -> {
+                                    float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
+                                    return 0.5f + distanceToEntity / 6f;
+                                }))
+                                .leapRange((mob, entity) -> 25f)
+                                .jumpStrength(((mob, entity) -> {
+                                    return (float) entity.getAttribute(Attributes.JUMP_STRENGTH).getBaseValue();
+                                }))
+                                .whenStarting(entity -> {
+                                    setAggressive(true);
+                                    // triggerAnim("defaultController", "jump"); (No SFX)
+                                })
+                                .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
+                                    return (BrainUtils.getTargetOfEntity(entity) != null
+                                            && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 7);
+                                }).cooldownFor((entity) -> 120), // Set the walk target to the attack target
+                        new AnimatableMeleeAttack<>(12).whenStarting(entity -> {
+                            setAggressive(true);
+                            triggerAnim("attackController", "bite");
+                        }).whenStopping(entity -> setAggressive(false))
+
+                ));
+    }
     //#endregion
 
     @Override
