@@ -550,7 +550,23 @@ public class FrilledDrake extends TamableAnimal
     protected void customServerAiStep() {
         if (getGrowthScore() >= DrakeAge.HATCHLING.getAge())
             tickBrain(this);
-    }
+        if (getState() != DrakeState.SLEEPING.getState()) {
+            blinkTimer++;
+
+            if (blinking) {
+                if (blinkTimer > blinkTime) {
+                    DragonoidsExpanded.LOGGER.info("I have stopped blinking.");
+                    blinkTimer = 0;
+                    blinking = false;
+                    DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
+                }
+            } else if (blinkTimer > blinkDelay) {
+                DragonoidsExpanded.LOGGER.info("I have started blinking.");
+                blinkTimer = 0;
+                blinking = true;
+                DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
+            }
+        }}
     //#endregion
 
     // #region Sensors

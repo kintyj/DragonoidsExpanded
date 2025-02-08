@@ -165,7 +165,7 @@ public class Wyvern extends TamableAnimal
             }
         }));
         
-        controllers.add(new AnimationController<>(this, "attackController", event -> {
+        controllers.add(new AnimationController<>(this, "attackController",10, event -> {
             return PlayState.CONTINUE;
         }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.wyvern.bite"))
                 .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.wyvern.yawn")));
