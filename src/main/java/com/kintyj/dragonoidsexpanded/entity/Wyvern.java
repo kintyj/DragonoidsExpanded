@@ -157,6 +157,11 @@ public class Wyvern extends TamableAnimal
 
         }));
 
+        controllers.add(new AnimationController<>(this, "attackController", 10, event -> {
+            return PlayState.CONTINUE;
+        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.wyvern.bite"))
+                .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.wyvern.yawn")));
+
         controllers.add(new AnimationController<>(this, "bodyController", 10, event -> {
             if (event.isMoving()) {
                 if (this.isAggressive()) {
@@ -168,11 +173,6 @@ public class Wyvern extends TamableAnimal
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.idle_1"));
             }
         }));
-
-        controllers.add(new AnimationController<>(this, "attackController", 10, event -> {
-            return PlayState.CONTINUE;
-        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.wyvern.bite"))
-                .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.wyvern.yawn")));
 
         // controllers.add(new AnimationController<>(this,"turnController", event -> {
 
@@ -198,9 +198,11 @@ public class Wyvern extends TamableAnimal
         if (timer > yawnDelay) {
             timer = 0;
             triggerAnim("attackController", "yawn");
-            playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get());
-        }
+            playSound(DragonoidsExpanded.WYVERN_CALL.get());
 
+        } else {
+            timer++;
+        }
         super.aiStep();
     }
     // #endregion
@@ -306,7 +308,6 @@ public class Wyvern extends TamableAnimal
 
     public class WyvernType {
         public String name;
-        
 
         public WyvernType() {
 
@@ -318,4 +319,8 @@ public class Wyvern extends TamableAnimal
 
         }
     }
+
 }
+
+
+        
