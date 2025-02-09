@@ -525,7 +525,7 @@ public class FrilledDrake extends TamableAnimal
             }
 
             if (getState() != DrakeState.SLEEPING.getState()) {
-                timer--
+                timer--;
 
                 if (timer <= 0) {
                     timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);

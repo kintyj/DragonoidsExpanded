@@ -2,6 +2,7 @@ package com.kintyj.dragonoidsexpanded.client.renderer.entity;
 
 import com.kintyj.dragonoidsexpanded.client.renderer.entity.model.WyvernModel;
 import com.kintyj.dragonoidsexpanded.entity.Wyvern;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,5 +19,6 @@ public class WyvernRenderer extends GeoEntityRenderer<Wyvern> {
             MultiBufferSource bufferSource, int packedLight) {
         entityYaw = entity.getYRot();
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        RenderSystem.setShader(() -> );
     }
 }
