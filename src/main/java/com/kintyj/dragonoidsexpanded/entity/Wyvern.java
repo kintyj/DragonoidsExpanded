@@ -76,9 +76,9 @@ public class Wyvern extends TamableAnimal
     // }
 
     private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData
-            .defineId(FrilledDrake.class, EntityDataSerializers.INT);
+            .defineId(Wyvern.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData
-            .defineId(FrilledDrake.class, EntityDataSerializers.INT);
+            .defineId(Wyvern.class, EntityDataSerializers.INT);
 
     // #region Base Stats
     private final SimpleContainer inventory = new SimpleContainer(1);
