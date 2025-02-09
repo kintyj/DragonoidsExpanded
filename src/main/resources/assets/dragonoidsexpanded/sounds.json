@@ -16,5 +16,17 @@
             "dragonoidsexpanded:entity/frilled_drake/alert"
         ],
         "subtitle": "subtitles.dragonoidsexpanded.entity.frilled_drake.alert"
+    },
+    "entity.wyvern.call": {
+        "sounds": [
+            "dragonoidsexpanded:entity/wyvern/call"
+        ],
+        "subtitle": "subtitles.dragonoidsexpanded.entity.wyvern.call"
+    },
+    "entity.manticore.m_roar": {
+        "sounds": [
+        "dragonoidsexpanded:entity/manticore/m_roar"
+        ],
+        "subtitle": "subtitles.dragonoidsexpanded.entity.manticore.m_roar"
     }
 }

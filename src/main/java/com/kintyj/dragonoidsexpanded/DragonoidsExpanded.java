@@ -43,7 +43,6 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -82,6 +81,12 @@ public class DragonoidsExpanded {
 	public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_ALERT = SOUND_EVENTS
 			.register("entity.frilled_drake.alert", () -> SoundEvent.createVariableRangeEvent(
 					ResourceLocation.fromNamespaceAndPath(MODID, "entity.frilled_drake.alert")));
+	public static final DeferredHolder<SoundEvent, SoundEvent> WYVERN_CALL = SOUND_EVENTS
+			.register("entity.wyvern.call", () -> SoundEvent.createVariableRangeEvent(
+					ResourceLocation.fromNamespaceAndPath(MODID, "entity.wyvern.call")));
+	public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_ROAR = SOUND_EVENTS
+			.register("entity.manticore.m_roar", () -> SoundEvent.createVariableRangeEvent(
+					ResourceLocation.fromNamespaceAndPath(MODID, "entity.manticore.m_roar")));					
 	// #endregion
 
 	// #region Effects

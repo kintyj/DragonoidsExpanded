@@ -2125,9 +2125,6 @@
 			"bones": {
 				"front_end": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0]
-						},
 						"0.25": {
 							"vector": [-10, 0, 0]
 						},
@@ -2141,11 +2138,8 @@
 				},
 				"head_neck": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0]
-						},
 						"0.25": {
-							"vector": [5, 0, 0]
+							"vector": [-10, 0, 0]
 						},
 						"0.5": {
 							"vector": [5, 0, 0]
@@ -2157,9 +2151,6 @@
 				},
 				"middle_neck": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0]
-						},
 						"0.25": {
 							"vector": [-15, 0, 0]
 						},
@@ -2169,18 +2160,31 @@
 						"0.75": {
 							"vector": [0, 0, 0]
 						}
+					},
+					"position": {
+						"0.5": {
+							"vector": [0, 0, 0.2]
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						}
 					}
 				},
 				"top_neck": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0]
-						},
 						"0.25": {
 							"vector": [-22.5, 0, 0]
 						},
 						"0.5": {
 							"vector": [-30, 0, 0]
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.5": {
+							"vector": [0, 0, 0.3]
 						},
 						"0.75": {
 							"vector": [0, 0, 0]
@@ -2261,6 +2265,44 @@
 						"0.75": {
 							"vector": [0, 0, 0]
 						}
+					}
+				}
+			}
+		},
+		"animation.wyvern.baby": {
+			"loop": true,
+			"bones": {
+				"root": {
+					"position": {
+						"vector": [0, -11.65, 0]
+					},
+					"scale": {
+						"vector": [0.5, 0.5, 0.5]
+					}
+				},
+				"head_neck": {
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				},
+				"full_head": {
+					"scale": {
+						"vector": [1.3, 1.3, 0.9]
+					}
+				},
+				"full_left_wing": {
+					"scale": {
+						"vector": [0.5, 1, 0.5]
+					}
+				},
+				"full_right_wing": {
+					"scale": {
+						"vector": [0.5, 1, 0.5]
+					}
+				},
+				"stinger": {
+					"scale": {
+						"vector": [0.5, 0.5, 0.5]
 					}
 				}
 			}

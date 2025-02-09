@@ -55,7 +55,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Manticore extends TamableAnimal
         implements Enemy, GeoEntity, SmartBrainOwner<Manticore>, InventoryCarrier {
-    //private static final int roarDelay = 200;
+    private static final int roarDelay = 500;
     //private static final int blinkDelay = 300;
     //private static final int blinkTime = 25;
 
@@ -113,7 +113,7 @@ public class Manticore extends TamableAnimal
         }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.manticore.bite"))
         .triggerableAnim("leftStrike", RawAnimation.begin().thenPlay("animation.manticore.left_strike"))
         .triggerableAnim("rightStrike", RawAnimation.begin().thenPlay("animation.manticore.right_strike"))
-            .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.manticore.roar")));
+            .triggerableAnim("roar", RawAnimation.begin().thenPlay("animation.manticore.roar")));
         
         controllers.add(new AnimationController<>(this, "tailController", 20, event -> {
             if (event.isMoving()) {
@@ -135,6 +135,24 @@ public class Manticore extends TamableAnimal
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.manticore.idle"));
             }
         }));
+    }
+    //#endregion
+
+    //#region Ai Step
+    private int timer = 0;
+
+    @Override
+    public void aiStep() {
+                    
+        if (timer > roarDelay) {
+            timer = 0;
+            triggerAnim("attackController", "roar");
+            playSound(DragonoidsExpanded.MANTICORE_ROAR.get());
+        
+        } else {
+            timer++;
+        }
+        super.aiStep();
     }
     //#endregion
 
