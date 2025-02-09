@@ -19,6 +19,6 @@ public class WyvernRenderer extends GeoEntityRenderer<Wyvern> {
             MultiBufferSource bufferSource, int packedLight) {
         entityYaw = entity.getYRot();
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-        RenderSystem.setShader(() -> );
+        // RenderSystem.setShader(() -> );
     }
 }
