@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 
 import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
 import com.kintyj.dragonoidsexpanded.brain.behaviour.LeapAtTarget;
+import com.kintyj.dragonoidsexpanded.entity.FrilledDrake.DrakeAge;
+import com.kintyj.dragonoidsexpanded.entity.FrilledDrake.DrakeState;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -79,7 +81,8 @@ import software.bernie.geckolib.animation.RawAnimation;
 
 public class FrilledDrake extends TamableAnimal
         implements Enemy, GeoEntity, PlayerRideableJumping, SmartBrainOwner<FrilledDrake> {
-    private static final int yawnDelay = 200;
+    private static final int yawnDelayMin = 200;
+    private static final int yawnDelayMax = 1200;
     private static final int blinkDelay = 300;
     private static final int blinkTime = 30;
 
@@ -499,7 +502,7 @@ public class FrilledDrake extends TamableAnimal
 
     private int timer = 0;
 
-    //#region Ai Step
+    // #region Ai Step
     @Override
     public void aiStep() {
         if (getGrowthScore() >= DrakeAge.HATCHLING.getAge()) {
@@ -522,10 +525,10 @@ public class FrilledDrake extends TamableAnimal
             }
 
             if (getState() != DrakeState.SLEEPING.getState()) {
-                timer++;
+                timer--
 
-                if (timer > yawnDelay) {
-                    timer = 0;
+                if (timer <= 0) {
+                    timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);
                     triggerAnim("attackController", "yawn");
                     playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get(),
                             (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
@@ -566,8 +569,9 @@ public class FrilledDrake extends TamableAnimal
                 blinking = true;
                 DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
             }
-        }}
-    //#endregion
+        }
+    }
+    // #endregion
 
     // #region Sensors
     @Override

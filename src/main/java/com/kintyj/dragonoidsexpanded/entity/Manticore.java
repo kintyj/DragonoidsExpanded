@@ -55,19 +55,20 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Manticore extends TamableAnimal
         implements Enemy, GeoEntity, SmartBrainOwner<Manticore>, InventoryCarrier {
-    private static final int roarDelay = 500;
-    //private static final int blinkDelay = 300;
-    //private static final int blinkTime = 25;
+    private static final int roarDelayMin = 500;
+    private static final int roarDelayMax = 1500;
+    // private static final int blinkDelay = 300;
+    // private static final int blinkTime = 25;
 
-    //public int blinkTimer;
-    //public boolean blinking = true;
+    // public int blinkTimer;
+    // public boolean blinking = true;
 
-    //public boolean isBlinking() {
-        //return blinking;
+    // public boolean isBlinking() {
+    // return blinking;
 
-
-    //#region Base Stats        
+    // #region Base Stats
     private final SimpleContainer inventory = new SimpleContainer(1);
+
     public static AttributeSupplier.Builder createMobAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 60.0)
@@ -77,7 +78,7 @@ public class Manticore extends TamableAnimal
                 .add(Attributes.FOLLOW_RANGE, 50.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4);
     }
-    //#endregion
+    // #endregion
 
     @VisibleForDebug
     @Override
@@ -97,7 +98,6 @@ public class Manticore extends TamableAnimal
         return null;
     }
 
-
     // #region Animations
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -111,14 +111,14 @@ public class Manticore extends TamableAnimal
         controllers.add(new AnimationController<>(this, "attackController", event -> {
             return PlayState.CONTINUE;
         }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.manticore.bite"))
-        .triggerableAnim("leftStrike", RawAnimation.begin().thenPlay("animation.manticore.left_strike"))
-        .triggerableAnim("rightStrike", RawAnimation.begin().thenPlay("animation.manticore.right_strike"))
-            .triggerableAnim("roar", RawAnimation.begin().thenPlay("animation.manticore.roar")));
-        
+                .triggerableAnim("leftStrike", RawAnimation.begin().thenPlay("animation.manticore.left_strike"))
+                .triggerableAnim("rightStrike", RawAnimation.begin().thenPlay("animation.manticore.right_strike"))
+                .triggerableAnim("roar", RawAnimation.begin().thenPlay("animation.manticore.roar")));
+
         controllers.add(new AnimationController<>(this, "tailController", 20, event -> {
             if (event.isMoving()) {
                 return event.setAndContinue(
-                (RawAnimation.begin().thenLoop("animation.manticore.walk_stinger")));
+                        (RawAnimation.begin().thenLoop("animation.manticore.walk_stinger")));
             } else { // Turning left
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.manticore.idle_stinger"));
             }
@@ -129,34 +129,34 @@ public class Manticore extends TamableAnimal
                 if (this.isAggressive()) {
                     return event.setAndContinue((RawAnimation.begin().thenLoop("animation.manticore.sprint")));
                 } else {
-                    return event.setAndContinue((RawAnimation.begin().thenLoop("animation.manticore.walk")));   
+                    return event.setAndContinue((RawAnimation.begin().thenLoop("animation.manticore.walk")));
                 }
-            } else { 
+            } else {
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.manticore.idle"));
             }
         }));
     }
-    //#endregion
+    // #endregion
 
-    //#region Ai Step
+    // #region Ai Step
     private int timer = 0;
 
     @Override
     public void aiStep() {
-                    
-        if (timer > roarDelay) {
-            timer = 0;
+
+        if (timer <= 0) {
+            timer = getRandom().nextIntBetweenInclusive(roarDelayMin, roarDelayMax);
             triggerAnim("attackController", "roar");
             playSound(DragonoidsExpanded.MANTICORE_ROAR.get());
-        
+
         } else {
-            timer++;
+            timer--;
         }
         super.aiStep();
     }
-    //#endregion
+    // #endregion
 
-    //#region Sensors
+    // #region Sensors
     @Override
     public List<ExtendedSensor<? extends Manticore>> getSensors() {
         return ObjectArrayList.of(
@@ -165,14 +165,14 @@ public class Manticore extends TamableAnimal
                 new HurtBySensor<>(),
                 new NearbyItemsSensor<>());
     }
-    //#endregion
+    // #endregion
 
     @Override
     protected void customServerAiStep() {
         tickBrain(this);
     }
 
-    //#region Brains
+    // #region Brains
     @Override
     protected Brain.Provider<?> brainProvider() {
         return new SmartBrainProvider<>(this);
@@ -180,11 +180,11 @@ public class Manticore extends TamableAnimal
 
     @Override
     public BrainActivityGroup<? extends Manticore> getCoreTasks() { // These are the tasks that run all the time
-                                                                       // (usually)
+                                                                    // (usually)
         return BrainActivityGroup.coreTasks(
 
                 new LookAtTarget<Manticore>(),
-                    
+
                 new MoveToWalkTarget<>()); // Walk towards
                                            // the current
                                            // walk target
@@ -193,7 +193,7 @@ public class Manticore extends TamableAnimal
     @SuppressWarnings({ "unchecked", "null" })
     @Override
     public BrainActivityGroup<? extends Manticore> getIdleTasks() { // These are the tasks that run when the mob
-                                                                       // isn't doing anything else (usually)
+                                                                    // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<>(
                         new TargetOrRetaliate<>(),
@@ -233,7 +233,7 @@ public class Manticore extends TamableAnimal
                         new AnimatableMeleeAttack<>(7).whenStarting(entity -> {
                             setAggressive(true);
                             int attackOption = this.getRandom().nextInt(0, 3);
-                            switch (attackOption){
+                            switch (attackOption) {
                                 case 0:
                                     triggerAnim("attackController", "bite");
                                     DragonoidsExpanded.LOGGER.debug("bite");
@@ -247,12 +247,11 @@ public class Manticore extends TamableAnimal
                                     DragonoidsExpanded.LOGGER.debug("rightStrike");
                                     break;
                             }
-                            
+
                         }).whenStopping(entity -> setAggressive(false))
-                        .cooldownFor(entity -> 10)
-                ));
+                                .cooldownFor(entity -> 10)));
     }
-    //#endregion
+    // #endregion
 
     @Override
     public boolean wantsToPickUp(ItemStack stack) {

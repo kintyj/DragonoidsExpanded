@@ -63,7 +63,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class Wyvern extends TamableAnimal
         implements Enemy, GeoEntity, SmartBrainOwner<Wyvern>, InventoryCarrier {
 
-    private static final int yawnDelay = 177;
+    private static final int yawnDelayMin = 177;
+    private static final int yawnDelayMax = 1036;
     // private static final int blinkDelay = 300;
     // private static final int blinkTime = 25;
 
@@ -172,14 +173,16 @@ public class Wyvern extends TamableAnimal
             }
         }));
 
-        //controllers.add(new AnimationController<>(this,"turnController", event -> {
-            //if (event.isTurning()) {
-                
-                //return event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.turn_right"));
-            //} else {
-                //return event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.turn_left"));
-            //}
-        //}));
+        // controllers.add(new AnimationController<>(this,"turnController", event -> {
+        // if (event.isTurning()) {
+
+        // return
+        // event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.turn_right"));
+        // } else {
+        // return
+        // event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.turn_left"));
+        // }
+        // }));
     }
     // #endregion
 
@@ -199,13 +202,13 @@ public class Wyvern extends TamableAnimal
     @Override
     public void aiStep() {
 
-        if (timer > yawnDelay) {
-            timer = 0;
+        if (timer <= 0) {
+            timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);
             triggerAnim("attackController", "yawn");
             playSound(DragonoidsExpanded.WYVERN_CALL.get());
 
         } else {
-            timer++;
+            timer--;
         }
         super.aiStep();
     }
