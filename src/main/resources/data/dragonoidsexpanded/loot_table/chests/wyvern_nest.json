@@ -10,26 +10,6 @@
           "name": "minecraft:acacia_sign",
           "weight": 12,
           "quality": 2
-        },
-        {
-          "type": "minecraft:tag",
-          "name": "minecraft:enchantable/head_armor",
-          "expand": true,
-          "weight": 1,
-          "quality": 1,
-          "functions": [
-            {
-              "function": "minecraft:set_name",
-              "entity": "this",
-              "name": {
-                "text": "Moog Helmet",
-                "type": "text",
-                "color": "#d24646",
-                "shadow_color": 6955040,
-                "font": "minecraft:illageralt"
-              }
-            }
-          ]
         }
       ]
     },
@@ -52,8 +32,7 @@
               "function": "minecraft:set_components",
               "components": {
                 "minecraft:rarity": "epic"
-              },
-              "conditions": []
+              }
             },
             {
               "function": "minecraft:enchant_with_levels",
@@ -62,24 +41,6 @@
                 "min": 15,
                 "max": 120
               }
-            },
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:knockback_resistance",
-                  "id": "minecraft:headsplitter_knockback",
-                  "amount": 2,
-                  "operation": "add_multiplied_base",
-                  "slot": "hand"
-                }
-              ],
-              "replace": false
-            },
-            {
-              "function": "minecraft:set_damage",
-              "damage": 5,
-              "add": true
             },
             {
               "function": "minecraft:set_name",
@@ -92,5 +53,5 @@
       ]
     }
   ],
-  "functions": []
+  "random_sequence": "dragonoidsexpanded:chests/wyvern_nest"
 }
