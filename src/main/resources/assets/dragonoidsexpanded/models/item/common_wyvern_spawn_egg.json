@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dragonoidsexpanded:item/spawn_eggs/wyvern_spawn_egg"
+    }
+}
