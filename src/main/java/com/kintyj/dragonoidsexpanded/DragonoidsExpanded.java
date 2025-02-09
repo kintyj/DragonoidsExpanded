@@ -14,8 +14,10 @@ import com.kintyj.dragonoidsexpanded.item.DrakelordsMace;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
@@ -46,6 +48,7 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -58,6 +61,13 @@ public class DragonoidsExpanded {
 	public static final String MODID = "dragonoidsexpanded";
 	// Directly reference a slf4j logger
 	public static final Logger LOGGER = LogUtils.getLogger();
+
+	// #region Doot A Packs
+	public static final ResourceKey<Registry<Wyvern.WyvernColor>> WYVERN_COLOR_REGISTRY_KEY = ResourceKey
+			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_colors"));
+	public static final ResourceKey<Registry<Wyvern.WyvernType>> WYVERN_TYPE_REGISTRY_KEY = ResourceKey
+			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_types"));
+	// #endregion
 
 	// #region Registers
 	public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
@@ -103,13 +113,13 @@ public class DragonoidsExpanded {
 	public static final DeferredItem<SpawnEggItem> MANTICORE_SPAWN_EGG = ITEMS.register(
 			"manticore_spawn_egg",
 			() -> new DeferredSpawnEggItem(MANTICORE, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
-	
+
 	public static final DeferredHolder<EntityType<?>, EntityType<Wyvern>> WYVERN = ENTITY_TYPES
 			.register("wyvern", () -> EntityType.Builder.of(Wyvern::new, MobCategory.MONSTER)
 					.sized(1.5F, 1.8F).clientTrackingRange(10).build("wyvern"));
 	public static final DeferredItem<SpawnEggItem> WYVERN_SPAWN_EGG = ITEMS.register(
 			"wyvern_spawn_egg",
-			() -> new DeferredSpawnEggItem(WYVERN, 0xDFDFDF, 0x99CFE8, new Item.Properties()));	
+			() -> new DeferredSpawnEggItem(WYVERN, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
 	// #endregion
 
 	// #region Blocks
@@ -323,7 +333,7 @@ public class DragonoidsExpanded {
 	public void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
 		event.registerEntityRenderer(FRILLED_DRAKE.get(), FrilledDrakeRenderer::new);
 		event.registerEntityRenderer(MANTICORE.get(), ManticoreRenderer::new);
-		event.registerEntityRenderer(WYVERN.get(), WyvernRenderer::new);		
+		event.registerEntityRenderer(WYVERN.get(), WyvernRenderer::new);
 	}
 
 	public void registerEntityAttributes(EntityAttributeCreationEvent event) {
@@ -332,6 +342,12 @@ public class DragonoidsExpanded {
 		event.put(MANTICORE.get(), Manticore.createMobAttributes().build()); // LIKE THAT WILL EVER HAPPEN (Shrek clip
 																				// here)
 		event.put(WYVERN.get(), Wyvern.createMobAttributes().build());
+	}
+
+	@SubscribeEvent
+	public static void registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
+		// event.dataPackRegistry(WYVERN_TYPE_REGISTRY_KEY, Wyvern.WyvernType.CODEC,
+		// Wyvern.WyvernType.CODEC);
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call

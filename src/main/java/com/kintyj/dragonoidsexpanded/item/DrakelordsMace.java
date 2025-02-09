@@ -3,6 +3,8 @@ package com.kintyj.dragonoidsexpanded.item;
 import java.util.List;
 import java.util.function.Predicate;
 
+import javax.annotation.Nonnull;
+
 import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
 
 import net.minecraft.core.BlockPos;
@@ -31,6 +33,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
+@SuppressWarnings("unused")
 public class DrakelordsMace extends Item {
     private static final int DEFAULT_ATTACK_DAMAGE = 5;
     private static final float DEFAULT_ATTACK_SPEED = -3.4F;
@@ -61,7 +64,8 @@ public class DrakelordsMace extends Item {
     }
 
     @Override
-    public boolean canAttackBlock(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer) {
+    public boolean canAttackBlock(@Nonnull BlockState pState, @Nonnull Level pLevel, @Nonnull BlockPos pPos,
+            @Nonnull Player pPlayer) {
         return !pPlayer.isCreative();
     }
 
@@ -74,8 +78,10 @@ public class DrakelordsMace extends Item {
      * Current implementations of this method in child classes do not use the entry
      * argument beside ev. They just raise the damage on the stack.
      */
+    @SuppressWarnings("null")
     @Override
-    public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
+    public boolean hurtEnemy(@Nonnull ItemStack pStack, @Nonnull LivingEntity pTarget,
+            @Nonnull LivingEntity pAttacker) {
         if (pAttacker instanceof ServerPlayer serverplayer && canSmashAttack(serverplayer)) {
             ServerLevel serverlevel = (ServerLevel) pAttacker.level();
             if (serverplayer.isIgnoringFallDamageFromCurrentImpulse() && serverplayer.currentImpulseImpactPos != null) {
@@ -109,7 +115,8 @@ public class DrakelordsMace extends Item {
     }
 
     @Override
-    public void postHurtEnemy(ItemStack p_345716_, LivingEntity p_345817_, LivingEntity p_346003_) {
+    public void postHurtEnemy(@Nonnull ItemStack p_345716_, @Nonnull LivingEntity p_345817_,
+            @Nonnull LivingEntity p_346003_) {
         p_345716_.hurtAndBreak(1, p_346003_, EquipmentSlot.MAINHAND);
         if (canSmashAttack(p_346003_)) {
             p_346003_.resetFallDistance();
@@ -120,18 +127,16 @@ public class DrakelordsMace extends Item {
      * Return whether this item is repairable in an anvil.
      */
     @Override
-    public boolean isValidRepairItem(ItemStack pStack, ItemStack pRepairCandidate) {
+    public boolean isValidRepairItem(@Nonnull ItemStack pStack, @Nonnull ItemStack pRepairCandidate) {
         return pRepairCandidate.is(DragonoidsExpanded.DRAKE_HEART_SCALE);
     }
 
     @Override
-    public float getAttackDamageBonus(Entity p_344900_, float p_335575_, DamageSource p_344972_) {
+    public float getAttackDamageBonus(@Nonnull Entity p_344900_, float p_335575_, @Nonnull DamageSource p_344972_) {
         if (p_344972_.getDirectEntity() instanceof LivingEntity livingentity) {
             if (!canSmashAttack(livingentity)) {
                 return 0.0F;
             } else {
-                float f3 = 3.0F;
-                float f = 8.0F;
                 float f1 = livingentity.fallDistance;
                 float f2;
                 if (f1 <= 3.0F) {

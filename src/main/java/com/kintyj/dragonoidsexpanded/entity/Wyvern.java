@@ -1,7 +1,6 @@
 package com.kintyj.dragonoidsexpanded.entity;
 
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,6 +9,9 @@ import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
 import com.kintyj.dragonoidsexpanded.brain.behaviour.LeapAtTarget;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.VisibleForDebug;
 import net.minecraft.world.SimpleContainer;
@@ -44,6 +46,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttack
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
 import net.tslat.smartbrainlib.api.core.navigation.SmoothAmphibiousPathNavigation;
+import net.tslat.smartbrainlib.api.core.navigation.SmoothFlyingPathNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyItemsSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
@@ -60,20 +63,26 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Wyvern extends TamableAnimal
         implements Enemy, GeoEntity, SmartBrainOwner<Wyvern>, InventoryCarrier {
-    
-    private static final int yawnDelay = 177;
-    //private static final int blinkDelay = 300;
-    //private static final int blinkTime = 25;
-        
-    //public int blinkTimer;
-    //public boolean blinking = true;
-        
-    //public boolean isBlinking() {
-        //return blinking;
-    //}
 
-    //#region Base Stats        
+    private static final int yawnDelay = 177;
+    // private static final int blinkDelay = 300;
+    // private static final int blinkTime = 25;
+
+    // public int blinkTimer;
+    // public boolean blinking = true;
+
+    // public boolean isBlinking() {
+    // return blinking;
+    // }
+
+    private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData
+            .defineId(FrilledDrake.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData
+            .defineId(FrilledDrake.class, EntityDataSerializers.INT);
+
+    // #region Base Stats
     private final SimpleContainer inventory = new SimpleContainer(1);
+
     public static AttributeSupplier.Builder createMobAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 50.0)
@@ -83,7 +92,7 @@ public class Wyvern extends TamableAnimal
                 .add(Attributes.FOLLOW_RANGE, 50.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4);
     }
-    //#endregion
+    // #endregion
 
     @VisibleForDebug
     @Override
@@ -98,39 +107,34 @@ public class Wyvern extends TamableAnimal
 
     @Override
     @Nullable
-    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        // TODO Auto-generated method stub
+    public AgeableMob getBreedOffspring(@Nonnull ServerLevel level, @Nonnull AgeableMob otherParent) {
         return null;
     }
 
-    //#region Colors
-    //@Override
-    //protected void defineSynchedData() {
-        //super.defineSynchedData();
-        //this.entityData.define(COLOR, getRandomColor());
-    //}
-
-    private int getRandomColor() {
-        // Define multiple colors (RGB values)
-        int[] possibleColors = {
-            0xFF0000, // Red
-            0x00FF00, // Green
-            0x0000FF, // Blue
-            0xFFFF00, // Yellow
-            0xFF00FF, // Magenta
-            0x00FFFF  // Cyan
-        };
-        return possibleColors[new Random().nextInt(possibleColors.length)];
+    // #region Colors
+    @Override
+    protected void defineSynchedData(@Nonnull SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TYPE, DrakeColor.BLUE.getColor());
+        builder.define(COLOR, WyvernColor.);
     }
 
-    //public int getColor() {
-        //return this.entityData.get(COLOR);
-    //}
+    public int getWyvernType() {
+        return this.entityData.get(TYPE);
+    }
 
-    //public void setColor(int color) {
-        //this.entityData.set(COLOR, color);
-    //}
-    //#endregion\
+    public void setWyvernType(int type) {
+        this.entityData.set(TYPE, type);
+    }
+
+    public int getColor() {
+        return this.entityData.get(COLOR);
+    }
+
+    public void setColor(int color) {
+        this.entityData.set(COLOR, color);
+    }
+    // #endregion\
 
     // #region Animations
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -142,38 +146,38 @@ public class Wyvern extends TamableAnimal
 
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
-        
+
         controllers.add(new AnimationController<>(this, "wingController", 20, event -> {
             if (event.isMoving()) {
                 return event.setAndContinue(
-                (RawAnimation.begin().thenLoop("animation.wyvern.wings_folded")));
+                        (RawAnimation.begin().thenLoop("animation.wyvern.wings_folded")));
             } else { // Turning left
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.wings_folded"));
             }
 
         }));
-        
+
         controllers.add(new AnimationController<>(this, "bodyController", 10, event -> {
             if (event.isMoving()) {
                 if (this.isAggressive()) {
                     return event.setAndContinue((RawAnimation.begin().thenLoop("animation.wyvern.walk_1")));
                 } else {
-                    return event.setAndContinue((RawAnimation.begin().thenLoop("animation.wyvern.walk_1")));   
+                    return event.setAndContinue((RawAnimation.begin().thenLoop("animation.wyvern.walk_1")));
                 }
-            } else { 
+            } else {
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.idle_1"));
             }
         }));
-        
-        controllers.add(new AnimationController<>(this, "attackController",10, event -> {
+
+        controllers.add(new AnimationController<>(this, "attackController", 10, event -> {
             return PlayState.CONTINUE;
         }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.wyvern.bite"))
                 .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.wyvern.yawn")));
-        
-        //controllers.add(new AnimationController<>(this,"turnController", event -> {
+
+        // controllers.add(new AnimationController<>(this,"turnController", event -> {
 
     }
-    //#endregion
+    // #endregion
 
     // #region Immunities
     @Override
@@ -184,24 +188,24 @@ public class Wyvern extends TamableAnimal
     }
     // #endregion
 
-    //#region Ai Step
+    // #region Ai Step
 
     private int timer = 0;
 
     @Override
     public void aiStep() {
-                    
+
         if (timer > yawnDelay) {
             timer = 0;
             triggerAnim("attackController", "yawn");
             playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get());
-            }
-        
+        }
+
         super.aiStep();
     }
-    //#endregion
+    // #endregion
 
-    //#region Sensors
+    // #region Sensors
     @Override
     public List<ExtendedSensor<? extends Wyvern>> getSensors() {
         return ObjectArrayList.of(
@@ -210,14 +214,14 @@ public class Wyvern extends TamableAnimal
                 new HurtBySensor<>(),
                 new NearbyItemsSensor<>());
     }
-    //#endregion
+    // #endregion
 
     @Override
     protected void customServerAiStep() {
         tickBrain(this);
     }
 
-    //#region Brains
+    // #region Brains
     @Override
     protected Brain.Provider<?> brainProvider() {
         return new SmartBrainProvider<>(this);
@@ -225,23 +229,18 @@ public class Wyvern extends TamableAnimal
 
     @Override
     protected PathNavigation createNavigation(@Nonnull Level pLevel) {
-        SmoothAmphibiousPathNavigation navigation = new SmoothAmphibiousPathNavigation(this, pLevel) {
-            @Override
-            public boolean prefersShallowSwimming() {
-                return false;
-            }
-        };
+        SmoothFlyingPathNavigation navigation = new SmoothFlyingPathNavigation(this, pLevel);
 
         return navigation;
     }
 
     @Override
     public BrainActivityGroup<? extends Wyvern> getCoreTasks() { // These are the tasks that run all the time
-                                                                       // (usually)
+                                                                 // (usually)
         return BrainActivityGroup.coreTasks(
 
                 new LookAtTarget<Wyvern>(),
-                    
+
                 new MoveToWalkTarget<>()); // Walk towards
                                            // the current
                                            // walk target
@@ -250,7 +249,7 @@ public class Wyvern extends TamableAnimal
     @SuppressWarnings({ "unchecked", "null" })
     @Override
     public BrainActivityGroup<? extends Wyvern> getIdleTasks() { // These are the tasks that run when the mob
-                                                                       // isn't doing anything else (usually)
+                                                                 // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<>(
                         new TargetOrRetaliate<>(),
@@ -294,14 +293,29 @@ public class Wyvern extends TamableAnimal
 
                 ));
     }
-    //#endregion
+    // #endregion
 
     @Override
-    public boolean wantsToPickUp(ItemStack stack) {
+    public boolean wantsToPickUp(@Nonnull ItemStack stack) {
         return stack.is(Items.IRON_INGOT);
     }
 
     public Wyvern(EntityType<? extends Wyvern> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+    }
+
+    public class WyvernType {
+        public String name;
+        
+
+        public WyvernType() {
+
+        }
+    }
+
+    public class WyvernColor {
+        public WyvernColor() {
+
+        }
     }
 }
