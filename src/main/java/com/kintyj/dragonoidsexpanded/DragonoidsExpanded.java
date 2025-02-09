@@ -96,7 +96,7 @@ public class DragonoidsExpanded {
 					ResourceLocation.fromNamespaceAndPath(MODID, "entity.wyvern.call")));
 	public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_ROAR = SOUND_EVENTS
 			.register("entity.manticore.m_roar", () -> SoundEvent.createVariableRangeEvent(
-					ResourceLocation.fromNamespaceAndPath(MODID, "entity.manticore.m_roar")));					
+					ResourceLocation.fromNamespaceAndPath(MODID, "entity.manticore.m_roar")));
 	// #endregion
 
 	// #region Effects
@@ -349,13 +349,14 @@ public class DragonoidsExpanded {
 		event.put(WYVERN.get(), Wyvern.createMobAttributes().build());
 	}
 
+	/* 
 	@SubscribeEvent
 	public static void registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
 		// event.dataPackRegistry(WYVERN_TYPE_REGISTRY_KEY, Wyvern.WyvernType.CODEC,
 		// Wyvern.WyvernType.CODEC);
-	}
-
-	// You can use SubscribeEvent and let the Event Bus discover methods to call
+	}*/
+ 
+	 / You can use SubscribeEvent and let the Event Bus discover methods to call
 	@SubscribeEvent
 	public void onServerStarting(ServerStartingEvent event) {
 		// Do something when the server starts
