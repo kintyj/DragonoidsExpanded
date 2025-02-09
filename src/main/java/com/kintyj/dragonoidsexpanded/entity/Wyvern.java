@@ -45,7 +45,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAtt
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
-import net.tslat.smartbrainlib.api.core.navigation.SmoothAmphibiousPathNavigation;
 import net.tslat.smartbrainlib.api.core.navigation.SmoothFlyingPathNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyItemsSensor;
@@ -151,10 +150,9 @@ public class Wyvern extends TamableAnimal
             if (event.isMoving()) {
                 return event.setAndContinue(
                         (RawAnimation.begin().thenLoop("animation.wyvern.wings_folded")));
-            } else { // Turning left
+            } else {
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.wings_folded"));
             }
-
         }));
 
         controllers.add(new AnimationController<>(this, "attackController", 10, event -> {
@@ -174,8 +172,14 @@ public class Wyvern extends TamableAnimal
             }
         }));
 
-        // controllers.add(new AnimationController<>(this,"turnController", event -> {
-
+        //controllers.add(new AnimationController<>(this,"turnController", event -> {
+            //if (event.isTurning()) {
+                
+                //return event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.turn_right"));
+            //} else {
+                //return event.setAndContinue(RawAnimation.begin().thenPlay("animation.wyvern.turn_left"));
+            //}
+        //}));
     }
     // #endregion
 
