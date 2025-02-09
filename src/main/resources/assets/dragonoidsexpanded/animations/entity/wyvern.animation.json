@@ -1836,6 +1836,9 @@
 				}
 			}
 		},
+		"animation.wyvern.turn_neutral": {
+			"loop": true
+		},
 		"animation.wyvern.turn_left": {
 			"animation_length": 0.5,
 			"bones": {
@@ -2139,10 +2142,10 @@
 				"head_neck": {
 					"rotation": {
 						"0.25": {
-							"vector": [-10, 0, 0]
+							"vector": [-5, 0, 0]
 						},
 						"0.5": {
-							"vector": [5, 0, 0]
+							"vector": [-12.5, 0, 0]
 						},
 						"0.75": {
 							"vector": [0, 0, 0]
@@ -2155,7 +2158,7 @@
 							"vector": [-15, 0, 0]
 						},
 						"0.5": {
-							"vector": [-20, 0, 0]
+							"vector": [-22.5, 0, 0]
 						},
 						"0.75": {
 							"vector": [0, 0, 0]
@@ -2176,7 +2179,7 @@
 							"vector": [-22.5, 0, 0]
 						},
 						"0.5": {
-							"vector": [-30, 0, 0]
+							"vector": [-35, 0, 0]
 						},
 						"0.75": {
 							"vector": [0, 0, 0]
