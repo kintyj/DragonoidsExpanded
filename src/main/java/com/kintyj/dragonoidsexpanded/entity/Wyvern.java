@@ -114,8 +114,8 @@ public class Wyvern extends TamableAnimal
     @Override
     protected void defineSynchedData(@Nonnull SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        // builder.define(TYPE, WyvernType.);
-        // builder.define(COLOR, WyvernColor.);
+        builder.define(TYPE, 0);
+        builder.define(COLOR, 0);
     }
 
     public int getWyvernType() {
