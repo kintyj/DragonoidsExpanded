@@ -271,11 +271,8 @@ public class Wyvern extends TamableAnimal
 
     @SuppressWarnings({ "unchecked", "null" })
     @Override
-    public BrainActivityGroup<? extends Wyvern> getFightTasks() { // These are the tasks that handle fighting
-        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), // Cancel fighting if the
-                                                                             // target is
-                // no
-                // longer valid
+    public BrainActivityGroup<? extends Wyvern> getFightTasks() {
+        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>(),
                 new FirstApplicableBehaviour<>(
                         new LeapAtTarget<>(0)
@@ -283,13 +280,8 @@ public class Wyvern extends TamableAnimal
                                     float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
                                     return 0.5f + distanceToEntity / 6f;
                                 }))
-                                .leapRange((mob, entity) -> 25f)
-                                .jumpStrength(((mob, entity) -> {
-                                    return (float) entity.getAttribute(Attributes.JUMP_STRENGTH).getBaseValue();
-                                }))
                                 .whenStarting(entity -> {
                                     setAggressive(true);
-                                    // triggerAnim("defaultController", "jump"); (No SFX)
                                 })
                                 .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
                                     return (BrainUtils.getTargetOfEntity(entity) != null
