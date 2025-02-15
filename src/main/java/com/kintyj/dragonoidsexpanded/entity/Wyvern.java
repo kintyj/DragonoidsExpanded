@@ -19,12 +19,15 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.GlowSquid;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.item.ItemStack;
@@ -260,6 +263,14 @@ public class Wyvern extends TamableAnimal
     public BrainActivityGroup<? extends Wyvern> getIdleTasks() { // These are the tasks that run when the mob
                                                                  // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
+            new FirstApplicableBehaviour<>(
+                new TargetOrRetaliate<>().attackablePredicate(
+                        (target) -> !(target instanceof Wyvern
+                                || target instanceof Creeper
+                                || target instanceof Bat
+                                || target instanceof GlowSquid
+                                || (this.getOwner() != null && this.getOwner().is(target))
+                                || (this.getOwner() != null && !(target instanceof Mob))))),
                 new FirstApplicableBehaviour<>(
                         new TargetOrRetaliate<>(),
                         new SetPlayerLookTarget<>(),
