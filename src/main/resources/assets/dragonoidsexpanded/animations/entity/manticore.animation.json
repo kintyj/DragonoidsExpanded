@@ -2406,6 +2406,44 @@
 				}
 			}
 		},
+		"animation.manticore.left_strike": {
+			"animation_length": 0.5,
+			"bones": {
+				"front_left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.1667": {
+							"vector": [-77.5, -55, 0]
+						},
+						"0.3333": {
+							"vector": [-70.58452, -7.88428, 53.21556]
+						},
+						"0.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.1667": {
+							"vector": [0, 0.5, -1]
+						},
+						"0.3333": {
+							"vector": [0, -5, -2]
+						},
+						"0.4167": {
+							"vector": [3, -2.5, -1]
+						},
+						"0.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		},
 		"animation.manticore.bite": {
 			"animation_length": 0.5,
 			"bones": {

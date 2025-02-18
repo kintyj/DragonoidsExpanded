@@ -19,17 +19,21 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.GlowSquid;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.neoforged.api.distmarker.Dist;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -202,13 +206,15 @@ public class Wyvern extends TamableAnimal
     @Override
     public void aiStep() {
 
-        if (timer <= 0) {
-            timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);
-            triggerAnim("attackController", "yawn");
-            playSound(DragonoidsExpanded.WYVERN_CALL.get());
+        if (!level().isClientSide){ 
+            if (timer <= 0) {
+                timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);
+                triggerAnim("attackController", "yawn");
+                playSound(DragonoidsExpanded.WYVERN_CALL.get());
 
-        } else {
-            timer--;
+            } else {
+                timer--;
+            }
         }
         super.aiStep();
     }
@@ -260,6 +266,14 @@ public class Wyvern extends TamableAnimal
     public BrainActivityGroup<? extends Wyvern> getIdleTasks() { // These are the tasks that run when the mob
                                                                  // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
+            new FirstApplicableBehaviour<>(
+                new TargetOrRetaliate<>().attackablePredicate(
+                        (target) -> !(target instanceof Wyvern
+                                || target instanceof Creeper
+                                || target instanceof Bat
+                                || target instanceof GlowSquid
+                                || (this.getOwner() != null && this.getOwner().is(target))
+                                || (this.getOwner() != null && !(target instanceof Mob))))),
                 new FirstApplicableBehaviour<>(
                         new TargetOrRetaliate<>(),
                         new SetPlayerLookTarget<>(),
@@ -271,11 +285,8 @@ public class Wyvern extends TamableAnimal
 
     @SuppressWarnings({ "unchecked", "null" })
     @Override
-    public BrainActivityGroup<? extends Wyvern> getFightTasks() { // These are the tasks that handle fighting
-        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), // Cancel fighting if the
-                                                                             // target is
-                // no
-                // longer valid
+    public BrainActivityGroup<? extends Wyvern> getFightTasks() {
+        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>(),
                 new FirstApplicableBehaviour<>(
                         new LeapAtTarget<>(0)
@@ -283,13 +294,8 @@ public class Wyvern extends TamableAnimal
                                     float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
                                     return 0.5f + distanceToEntity / 6f;
                                 }))
-                                .leapRange((mob, entity) -> 25f)
-                                .jumpStrength(((mob, entity) -> {
-                                    return (float) entity.getAttribute(Attributes.JUMP_STRENGTH).getBaseValue();
-                                }))
                                 .whenStarting(entity -> {
                                     setAggressive(true);
-                                    // triggerAnim("defaultController", "jump"); (No SFX)
                                 })
                                 .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
                                     return (BrainUtils.getTargetOfEntity(entity) != null
