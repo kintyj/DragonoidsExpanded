@@ -1,4 +1,4 @@
-package data.dragonoidsexpanded.worldgen;
+package assets.dragonoidsexpanded.worldgen;
 
 public class DragonoidExpandedWorldGen {
     
