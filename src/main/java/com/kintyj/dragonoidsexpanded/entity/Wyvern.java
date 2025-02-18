@@ -33,6 +33,7 @@ import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.neoforged.api.distmarker.Dist;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -205,13 +206,15 @@ public class Wyvern extends TamableAnimal
     @Override
     public void aiStep() {
 
-        if (timer <= 0) {
-            timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);
-            triggerAnim("attackController", "yawn");
-            playSound(DragonoidsExpanded.WYVERN_CALL.get());
+        if (!level().isClientSide){ 
+            if (timer <= 0) {
+                timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);
+                triggerAnim("attackController", "yawn");
+                playSound(DragonoidsExpanded.WYVERN_CALL.get());
 
-        } else {
-            timer--;
+            } else {
+                timer--;
+            }
         }
         super.aiStep();
     }

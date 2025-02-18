@@ -144,13 +144,15 @@ public class Manticore extends TamableAnimal
     @Override
     public void aiStep() {
 
-        if (timer <= 0) {
-            timer = getRandom().nextIntBetweenInclusive(roarDelayMin, roarDelayMax);
-            triggerAnim("attackController", "roar");
-            playSound(DragonoidsExpanded.MANTICORE_ROAR.get());
+        if (!level().isClientSide){ 
+            if (timer <= 0) {
+                timer = getRandom().nextIntBetweenInclusive(roarDelayMin, roarDelayMax);
+                triggerAnim("attackController", "roar");
+                playSound(DragonoidsExpanded.MANTICORE_ROAR.get());
 
-        } else {
-            timer--;
+            } else {
+                timer--;
+            }
         }
         super.aiStep();
     }
