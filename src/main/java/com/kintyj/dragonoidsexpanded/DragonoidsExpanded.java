@@ -389,9 +389,4 @@ public class DragonoidsExpanded {
 		 * }
 		 */
 	}
-
-	public @interface EventBusSubscriber {
-
-        String bus();
-	}
 }
