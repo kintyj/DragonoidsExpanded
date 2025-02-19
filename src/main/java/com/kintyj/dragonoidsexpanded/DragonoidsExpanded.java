@@ -349,13 +349,15 @@ public class DragonoidsExpanded {
 		event.put(WYVERN.get(), Wyvern.createMobAttributes().build());
 	}
 
-	/* 
-	@SubscribeEvent
-	public static void registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
-		// event.dataPackRegistry(WYVERN_TYPE_REGISTRY_KEY, Wyvern.WyvernType.CODEC,
-		// Wyvern.WyvernType.CODEC);
-	}*/
- 
+	/*
+	 * @SubscribeEvent
+	 * public static void
+	 * registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
+	 * // event.dataPackRegistry(WYVERN_TYPE_REGISTRY_KEY, Wyvern.WyvernType.CODEC,
+	 * // Wyvern.WyvernType.CODEC);
+	 * }
+	 */
+
 	// You can use SubscribeEvent and let the Event Bus discover methods to call
 	@SubscribeEvent
 	public void onServerStarting(ServerStartingEvent event) {
@@ -388,10 +390,5 @@ public class DragonoidsExpanded {
 		 * }
 		 * }
 		 */
-	}
-
-	public @interface EventBusSubscriber {
-
-        String bus();
 	}
 }
