@@ -321,6 +321,9 @@ public class Wyvern extends TamableAnimal
 
     public class WyvernType {
         public String name;
+        public float scale;
+        public int hp;
+        public int attack;
 
         public WyvernType() {
 
