@@ -47,6 +47,11 @@
               "entity": "this",
               "name": "Headsplitter",
               "target": "item_name"
+            },
+            {
+              "function": "minecraft:set_damage",
+              "damage": 5,
+              "add": true
             }
           ]
         }

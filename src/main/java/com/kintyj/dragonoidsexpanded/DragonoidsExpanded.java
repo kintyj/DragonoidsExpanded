@@ -64,9 +64,9 @@ public class DragonoidsExpanded {
 
 	// #region Doot A Packs
 	public static final ResourceKey<Registry<Wyvern.WyvernColor>> WYVERN_COLOR_REGISTRY_KEY = ResourceKey
-			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_colors"));
+			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_color"));
 	public static final ResourceKey<Registry<WyvernType>> WYVERN_TYPE_REGISTRY_KEY = ResourceKey
-			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_types"));
+			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_type"));
 	// #endregion
 
 	// #region Registers
