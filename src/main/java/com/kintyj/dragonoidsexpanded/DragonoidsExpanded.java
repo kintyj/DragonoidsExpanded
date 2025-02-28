@@ -351,7 +351,7 @@ public class DragonoidsExpanded {
 	}
 
 	@SubscribeEvent
-	public static void registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
+	public void registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
 		event.dataPackRegistry(WYVERN_TYPE_REGISTRY_KEY, WyvernType.Serializer.CODEC.codec(),
 				WyvernType.Serializer.CODEC.codec());
 	}
