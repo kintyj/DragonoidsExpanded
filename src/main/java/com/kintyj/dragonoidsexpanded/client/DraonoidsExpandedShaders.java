@@ -9,11 +9,5 @@ public class DraonoidsExpandedShaders {
 
     public static void loadShaders() {
         Minecraft mc = Minecraft.getInstance();
-        try {
-            TINT_SHADER = mc.gameRenderer
-                    .loadEffect(ResourceLocation.fromNamespaceAndPath("modid", "shaders/tint_red"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

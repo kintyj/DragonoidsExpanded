@@ -10,6 +10,7 @@ import com.kintyj.dragonoidsexpanded.effect.Mortis;
 import com.kintyj.dragonoidsexpanded.entity.FrilledDrake;
 import com.kintyj.dragonoidsexpanded.entity.Manticore;
 import com.kintyj.dragonoidsexpanded.entity.Wyvern;
+import com.kintyj.dragonoidsexpanded.entity.wyvern.WyvernType;
 import com.kintyj.dragonoidsexpanded.item.DrakelordsMace;
 import com.mojang.logging.LogUtils;
 
@@ -64,7 +65,7 @@ public class DragonoidsExpanded {
 	// #region Doot A Packs
 	public static final ResourceKey<Registry<Wyvern.WyvernColor>> WYVERN_COLOR_REGISTRY_KEY = ResourceKey
 			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_colors"));
-	public static final ResourceKey<Registry<Wyvern.WyvernType>> WYVERN_TYPE_REGISTRY_KEY = ResourceKey
+	public static final ResourceKey<Registry<WyvernType>> WYVERN_TYPE_REGISTRY_KEY = ResourceKey
 			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_types"));
 	// #endregion
 
@@ -349,14 +350,11 @@ public class DragonoidsExpanded {
 		event.put(WYVERN.get(), Wyvern.createMobAttributes().build());
 	}
 
-	/*
-	 * @SubscribeEvent
-	 * public static void
-	 * registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
-	 * // event.dataPackRegistry(WYVERN_TYPE_REGISTRY_KEY, Wyvern.WyvernType.CODEC,
-	 * // Wyvern.WyvernType.CODEC);
-	 * }
-	 */
+	@SubscribeEvent
+	public static void registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
+		event.dataPackRegistry(WYVERN_TYPE_REGISTRY_KEY, WyvernType.Serializer.CODEC.codec(),
+				WyvernType.Serializer.CODEC.codec());
+	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call
 	@SubscribeEvent

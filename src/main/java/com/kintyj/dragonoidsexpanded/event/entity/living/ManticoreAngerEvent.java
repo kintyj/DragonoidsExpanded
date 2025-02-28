@@ -6,7 +6,7 @@ import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 
 public class ManticoreAngerEvent extends LivingEvent implements ICancellableEvent{
-private final Player player;
+    private final Player player;
 
     public ManticoreAngerEvent(EnderMan enderman, Player player) {
         super(enderman);

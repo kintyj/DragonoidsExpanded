@@ -7,12 +7,19 @@ import javax.annotation.Nullable;
 
 import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
 import com.kintyj.dragonoidsexpanded.brain.behaviour.LeapAtTarget;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.VisibleForDebug;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -32,8 +39,12 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.common.util.FriendlyByteBufUtil;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -206,7 +217,7 @@ public class Wyvern extends TamableAnimal
     @Override
     public void aiStep() {
 
-        if (!level().isClientSide){ 
+        if (!level().isClientSide) {
             if (timer <= 0) {
                 timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);
                 triggerAnim("attackController", "yawn");
@@ -266,14 +277,14 @@ public class Wyvern extends TamableAnimal
     public BrainActivityGroup<? extends Wyvern> getIdleTasks() { // These are the tasks that run when the mob
                                                                  // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
-            new FirstApplicableBehaviour<>(
-                new TargetOrRetaliate<>().attackablePredicate(
-                        (target) -> !(target instanceof Wyvern
-                                || target instanceof Creeper
-                                || target instanceof Bat
-                                || target instanceof GlowSquid
-                                || (this.getOwner() != null && this.getOwner().is(target))
-                                || (this.getOwner() != null && !(target instanceof Mob))))),
+                new FirstApplicableBehaviour<>(
+                        new TargetOrRetaliate<>().attackablePredicate(
+                                (target) -> !(target instanceof Wyvern
+                                        || target instanceof Creeper
+                                        || target instanceof Bat
+                                        || target instanceof GlowSquid
+                                        || (this.getOwner() != null && this.getOwner().is(target))
+                                        || (this.getOwner() != null && !(target instanceof Mob))))),
                 new FirstApplicableBehaviour<>(
                         new TargetOrRetaliate<>(),
                         new SetPlayerLookTarget<>(),
@@ -317,17 +328,6 @@ public class Wyvern extends TamableAnimal
 
     public Wyvern(EntityType<? extends Wyvern> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-    }
-
-    public class WyvernType {
-        public String name;
-        public float scale;
-        public int hp;
-        public int attack;
-
-        public WyvernType() {
-
-        }
     }
 
     public class WyvernColor {
