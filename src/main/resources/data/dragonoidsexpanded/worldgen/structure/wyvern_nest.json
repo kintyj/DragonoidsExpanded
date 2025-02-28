@@ -7,7 +7,7 @@
 
   "max_distance_from_center": 80,
 
-  "biomes": "minecraft:plains",
+  "biomes": "dragonoidsexpanded:has_structure/wyvern_nest_biomes",
 
   "step": "surface_structures",
 
