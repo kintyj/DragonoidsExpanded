@@ -297,6 +297,7 @@ public class DragonoidsExpanded {
 		// Register the item to a creative tab
 		modEventBus.addListener(this::addCreative);
 		modEventBus.addListener(this::registerEntityAttributes);
+		modEventBus.addListener(this::registerDatapackRegistries);
 
 		// Register our mod's ModConfigSpec so that FML can create and load the config
 		// file for us
@@ -350,10 +351,9 @@ public class DragonoidsExpanded {
 		event.put(WYVERN.get(), Wyvern.createMobAttributes().build());
 	}
 
-	@SubscribeEvent
 	public void registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
 		event.dataPackRegistry(WYVERN_TYPE_REGISTRY_KEY, WyvernType.Serializer.CODEC.codec(),
-				WyvernType.Serializer.CODEC.codec());
+				WyvernType.Serializer.CODEC.codec(), builder -> builder.maxId(256));
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call
