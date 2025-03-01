@@ -144,7 +144,7 @@ public class Manticore extends TamableAnimal
     @Override
     public void aiStep() {
 
-        if (!level().isClientSide){ 
+        if (!level().isClientSide) {
             if (timer <= 0) {
                 timer = getRandom().nextIntBetweenInclusive(roarDelayMin, roarDelayMax);
                 triggerAnim("attackController", "roar");
@@ -198,7 +198,11 @@ public class Manticore extends TamableAnimal
                                                                     // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<>(
-                        new TargetOrRetaliate<>(),
+                        new TargetOrRetaliate<>().attackablePredicate(
+                                (target) -> !(target instanceof Manticore
+                                        || (this.getOwner() != null && this.getOwner().is(target))
+                                        || (this.getOwner() != null && !(target instanceof Mob))
+                                        || (target instanceof Player && ((Player) target).isCreative()))),
                         new SetPlayerLookTarget<>(),
                         new FollowOwner<>().teleportToTargetAfter(32).stopFollowingWithin(12)),
                 new OneRandomBehaviour<>(

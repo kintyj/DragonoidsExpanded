@@ -1,9 +1,13 @@
 package com.kintyj.dragonoidsexpanded.entity.wyvern;
 
+import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.util.ExtraCodecs;
 
 public class WyvernType {
@@ -17,6 +21,9 @@ public class WyvernType {
         this.scale = scale;
         this.hp = hp;
         this.attack = attack;
+
+        // Minecraft.getInstance().level.registryAccess().registry(Registries.ENTITY_TYPE).get().getTag(DragonoidsExpanded.DRAGONOID_TAG_KEY).stream().anyMatch(holder
+        // -> holder.is());
     }
 
     public void setName(String name) {

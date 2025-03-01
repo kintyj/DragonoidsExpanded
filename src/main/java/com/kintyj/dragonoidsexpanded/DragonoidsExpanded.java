@@ -12,6 +12,7 @@ import com.kintyj.dragonoidsexpanded.entity.Manticore;
 import com.kintyj.dragonoidsexpanded.entity.Wyvern;
 import com.kintyj.dragonoidsexpanded.entity.wyvern.WyvernType;
 import com.kintyj.dragonoidsexpanded.item.DrakelordsMace;
+import com.kintyj.dragonoidsexpanded.world.structure.WyvernNest;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.Minecraft;
@@ -31,8 +32,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -69,6 +72,16 @@ public class DragonoidsExpanded {
 			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_type"));
 	// #endregion
 
+	// #region Tags
+	public static final TagKey<EntityType<?>> DRAGONOID_TAG_KEY = TagKey.create(
+			// The registry key. The type of the registry must match the generic type of the
+			// tag.
+			Registries.ENTITY_TYPE,
+			// The location of the tag. This example will put our tag at
+			// data/examplemod/tags/blocks/example_tag.json.
+			ResourceLocation.fromNamespaceAndPath(MODID, "dragonoid"));
+	// #endregion
+
 	// #region Registers
 	public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
@@ -80,6 +93,8 @@ public class DragonoidsExpanded {
 			MODID);
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister
 			.create(Registries.CREATIVE_MODE_TAB, MODID);
+	public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES = DeferredRegister
+			.create(Registries.STRUCTURE_TYPE, MODID);
 	// #endregion
 
 	// #region Sounds
@@ -98,6 +113,11 @@ public class DragonoidsExpanded {
 	public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_ROAR = SOUND_EVENTS
 			.register("entity.manticore.m_roar", () -> SoundEvent.createVariableRangeEvent(
 					ResourceLocation.fromNamespaceAndPath(MODID, "entity.manticore.m_roar")));
+	// #endregion
+
+	// #region Structure Types
+	public static final DeferredHolder<StructureType<?>, StructureType<WyvernNest>> WYVERN_NEST = STRUCTURE_TYPES
+			.register("wyvern_nest", () -> () -> WyvernNest.CODEC);
 	// #endregion
 
 	// #region Effects
@@ -285,6 +305,7 @@ public class DragonoidsExpanded {
 		ENTITY_TYPES.register(modEventBus);
 		CREATIVE_MODE_TABS.register(modEventBus);
 		SOUND_EVENTS.register(modEventBus);
+		STRUCTURE_TYPES.register(modEventBus);
 		// #endregion
 
 		// Register ourselves for server and other game events we are interested in.
@@ -353,7 +374,7 @@ public class DragonoidsExpanded {
 
 	public void registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
 		event.dataPackRegistry(WYVERN_TYPE_REGISTRY_KEY, WyvernType.Serializer.CODEC.codec(),
-				WyvernType.Serializer.CODEC.codec(), builder -> builder.maxId(256));
+				WyvernType.Serializer.CODEC.codec());
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call

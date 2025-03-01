@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:jigsaw",
+  "type": "dragonoidsexpanded:wyvern_nest",
   "biomes": "#dragonoidsexpanded:has_structure/wyvern_nest_biomes",
   "step": "surface_structures",
   "terrain_adaptation": "beard_box",
