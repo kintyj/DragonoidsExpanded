@@ -6,17 +6,21 @@ import com.kintyj.dragonoidsexpanded.block.SlimyBlock;
 import com.kintyj.dragonoidsexpanded.client.renderer.entity.FrilledDrakeRenderer;
 import com.kintyj.dragonoidsexpanded.client.renderer.entity.ManticoreRenderer;
 import com.kintyj.dragonoidsexpanded.client.renderer.entity.WyvernRenderer;
+import com.kintyj.dragonoidsexpanded.component.WhipStateComponent;
 import com.kintyj.dragonoidsexpanded.effect.Mortis;
 import com.kintyj.dragonoidsexpanded.entity.FrilledDrake;
 import com.kintyj.dragonoidsexpanded.entity.Manticore;
 import com.kintyj.dragonoidsexpanded.entity.Wyvern;
 import com.kintyj.dragonoidsexpanded.entity.wyvern.WyvernType;
 import com.kintyj.dragonoidsexpanded.item.DrakelordsMace;
+import com.kintyj.dragonoidsexpanded.item.Whip;
 import com.kintyj.dragonoidsexpanded.world.structure.WyvernNest;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -30,6 +34,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -72,14 +77,16 @@ public class DragonoidsExpanded {
 			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_type"));
 	// #endregion
 
-	// #region Tags
+	// #region Tag Keys
 	public static final TagKey<EntityType<?>> DRAGONOID_TAG_KEY = TagKey.create(
-			// The registry key. The type of the registry must match the generic type of the
-			// tag.
 			Registries.ENTITY_TYPE,
-			// The location of the tag. This example will put our tag at
-			// data/examplemod/tags/blocks/example_tag.json.
 			ResourceLocation.fromNamespaceAndPath(MODID, "dragonoid"));
+	public static final TagKey<Block> WHIP_EFFICIENT_TAG_KEY = TagKey.create(
+			Registries.BLOCK,
+			ResourceLocation.fromNamespaceAndPath("c", "whip_efficient"));
+	// #endregion
+
+	// #region Tags
 	// #endregion
 
 	// #region Registers
@@ -95,6 +102,20 @@ public class DragonoidsExpanded {
 			.create(Registries.CREATIVE_MODE_TAB, MODID);
 	public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES = DeferredRegister
 			.create(Registries.STRUCTURE_TYPE, MODID);
+	public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MODID);
+
+
+	// #endregion
+
+	// #region Data Components
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<WhipStateComponent>> WHIP_STATE = DATA_COMPONENTS.registerComponentType(
+		"whip_state",
+		builder -> builder
+			// The codec to read/write the data to disk
+			.persistent(WhipStateComponent.BASIC_CODEC)
+			// The codec to read/write the data across the network
+			.networkSynchronized(WhipStateComponent.BASIC_STREAM_CODEC)
+	);
 	// #endregion
 
 	// #region Sounds
@@ -263,6 +284,9 @@ public class DragonoidsExpanded {
 	public static final DeferredItem<Item> DRAKE_LORDS_MACE = ITEMS.registerItem(
 			"drake_lords_mace", DrakelordsMace::new,
 			new Item.Properties().attributes(DrakelordsMace.createAttributes()));
+	public static final DeferredItem<Item> LEATHER_WHIP = ITEMS.registerItem(
+			"leather_whip", (prop) -> new Whip(Tiers.WOOD,
+			new Item.Properties().attributes(Whip.createAttributes(Tiers.WOOD, 1.0f, 1.0f))));
 	// #endregion
 	// Creates a creative tab with the id "examplemod:example_tab" for the example
 	// item, that is placed after the combat tab
@@ -306,6 +330,7 @@ public class DragonoidsExpanded {
 		CREATIVE_MODE_TABS.register(modEventBus);
 		SOUND_EVENTS.register(modEventBus);
 		STRUCTURE_TYPES.register(modEventBus);
+		DATA_COMPONENTS.register(modEventBus);
 		// #endregion
 
 		// Register ourselves for server and other game events we are interested in.
@@ -393,6 +418,18 @@ public class DragonoidsExpanded {
 			// Some client setup code
 			LOGGER.info("HELLO FROM CLIENT SETUP");
 			LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+			event.enqueueWork(() -> { // ItemProperties#register is not threadsafe, so we need to call it on the main thread
+				ItemProperties.register(
+					// The item to apply the property to.
+					DragonoidsExpanded.LEATHER_WHIP.get(),
+					// The id of the property.
+					ResourceLocation.fromNamespaceAndPath(MODID, "whip_state"),
+					// A reference to a method that calculates the override value.
+					// Parameters are the used item stack, the level context, the player using the item,
+					// and a random seed you can use.
+					(stack, level, player, seed) -> stack.get(DragonoidsExpanded.WHIP_STATE).state()
+				);
+			});
 		}
 
 		/*

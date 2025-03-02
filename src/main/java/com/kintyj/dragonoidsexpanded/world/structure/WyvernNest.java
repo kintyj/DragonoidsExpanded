@@ -147,15 +147,15 @@ public class WyvernNest extends Structure {
     @Override
     public void afterPlace(WorldGenLevel level, StructureManager structureManager, ChunkGenerator chunkGenerator,
             RandomSource random, BoundingBox boundingBox, ChunkPos chunkPos, PiecesContainer pieces) {
-        Wyvern wyvern = DragonoidsExpanded.WYVERN.get().create(level.getLevel(), (wyver) -> {
-        }, boundingBox.getCenter(), MobSpawnType.CHUNK_GENERATION, false, false);
 
+
+        Wyvern wyvern = DragonoidsExpanded.WYVERN.get().create(level.getLevel(), (wyver) -> {
+        }, boundingBox.getCenter(), MobSpawnType.STRUCTURE, true, false);
         Registry<WyvernType> reg = level.getLevel().registryAccess()
                 .registry(DragonoidsExpanded.WYVERN_TYPE_REGISTRY_KEY).get();
-
-        DragonoidsExpanded.LOGGER.info("" + reg.getId(reg.getRandom(random).get().value()));
-
-        wyvern.setWyvernType(reg.getId(reg.getRandom(random).get().value()));
+        wyvern.setPersistenceRequired();
+		wyvern.finalizeSpawn(level, level.getCurrentDifficultyAt(boundingBox.getCenter()), MobSpawnType.STRUCTURE, null);
+        //wyvern.setWyvernType(reg.getId(reg.getRandom(random).get().value()));
 
         level.addFreshEntity(wyvern);
     }

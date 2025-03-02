@@ -1,6 +1,7 @@
 package com.kintyj.dragonoidsexpanded.event.entity.living;
 
-import net.minecraft.world.entity.monster.EnderMan;
+import com.kintyj.dragonoidsexpanded.entity.Manticore;
+
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
@@ -8,8 +9,8 @@ import net.neoforged.neoforge.event.entity.living.LivingEvent;
 public class ManticoreAngerEvent extends LivingEvent implements ICancellableEvent{
     private final Player player;
 
-    public ManticoreAngerEvent(EnderMan enderman, Player player) {
-        super(enderman);
+    public ManticoreAngerEvent(Manticore manticore, Player player) {
+        super(manticore);
         this.player = player;
     }
 
@@ -21,7 +22,7 @@ public class ManticoreAngerEvent extends LivingEvent implements ICancellableEven
     }
 
     @Override
-    public EnderMan getEntity() {
-        return (EnderMan) super.getEntity();
+    public Manticore getEntity() {
+        return (Manticore) super.getEntity();
     }
 }

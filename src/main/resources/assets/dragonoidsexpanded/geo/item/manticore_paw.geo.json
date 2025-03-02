@@ -1,0 +1,88 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 16,
+				"texture_height": 16,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "wrist",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-3, 0, -1], "size": [6, 6, 2], "uv": [-2, 0]}
+					]
+				},
+				{
+					"name": "pointer_finger",
+					"parent": "wrist",
+					"pivot": [2, 6, 0],
+					"cubes": [
+						{"origin": [1, 6, -1], "size": [2, 6, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "pointer_finger_end",
+					"parent": "pointer_finger",
+					"pivot": [2, 12, 0],
+					"cubes": [
+						{"origin": [1, 12, -1], "size": [2, 4, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "thumb",
+					"parent": "wrist",
+					"pivot": [3, 0, 0],
+					"cubes": [
+						{"origin": [3, 0, -1], "size": [2, 4, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "thumb_end",
+					"parent": "thumb",
+					"pivot": [4, 4, 0],
+					"cubes": [
+						{"origin": [3, 4, -1], "size": [2, 4, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "middle_finger",
+					"parent": "wrist",
+					"pivot": [0, 6, 0],
+					"cubes": [
+						{"origin": [-1, 6, -1], "size": [2, 6, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "middle_finger_end",
+					"parent": "middle_finger",
+					"pivot": [0, 12, 0],
+					"cubes": [
+						{"origin": [-1, 12, -1], "size": [2, 6, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "pinkie_finger",
+					"parent": "wrist",
+					"pivot": [-2, 6, 0],
+					"cubes": [
+						{"origin": [-3, 6, -1], "size": [2, 4, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "pinkie_finger_end",
+					"parent": "pinkie_finger",
+					"pivot": [-2, 10, 0],
+					"cubes": [
+						{"origin": [-3, 10, -1], "size": [2, 4, 2], "uv": [0, 0]}
+					]
+				}
+			]
+		}
+	]
+}

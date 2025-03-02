@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "dragonoidsexpanded:item/leather_whip_2"
+    }
+}
