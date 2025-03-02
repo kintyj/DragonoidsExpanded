@@ -20,10 +20,10 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
-    maven {url 'https://dl.cloudsmith.io/public/tslat/sbl/maven/'}
+    maven {url = 'https://dl.cloudsmith.io/public/tslat/sbl/maven/'}
     maven {
         name = 'GeckoLib'
-        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
         content {
             includeGroup("software.bernie.geckolib")
         }
@@ -165,7 +165,7 @@ publishing {
     }
     repositories {
         maven {
-            url "file://${project.projectDir}/repo"
+            url = "file://${project.projectDir}/repo"
         }
     }
 }

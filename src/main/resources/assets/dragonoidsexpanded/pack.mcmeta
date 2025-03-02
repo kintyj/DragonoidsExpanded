@@ -1,3 +1,6 @@
-pack:
-  pack_format: 26
-  description: 'Dragonoids Expanded resource pack'
+{
+  "pack": {
+    "description": "Dragonoids Expanded resource pack",
+    "pack_format": 61
+  }
+}
