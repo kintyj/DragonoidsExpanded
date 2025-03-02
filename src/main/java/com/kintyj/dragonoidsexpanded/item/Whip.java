@@ -114,10 +114,8 @@ public class Whip extends TieredItem {
     @Nonnull InteractionHand usedHand) {
 
         if (stack.get(DragonoidsExpanded.WHIP_STATE.get()).state() == WhipState.COILED.state) {
-            DragonoidsExpanded.LOGGER.info("Whipped.");
             stack.set(DragonoidsExpanded.WHIP_STATE.get(), new WhipStateComponent(WhipState.IDLE.state));
             player.getItemInHand(usedHand).set(DragonoidsExpanded.WHIP_STATE.get(), new WhipStateComponent(WhipState.IDLE.state));
-            DragonoidsExpanded.LOGGER.info("W: " + stack.get(DragonoidsExpanded.WHIP_STATE.get()).state());
             return InteractionResult.SUCCESS;
         } else if (stack.get(DragonoidsExpanded.WHIP_STATE.get()).state() == WhipState.COILED.state) {
             DragonoidsExpanded.LOGGER.info("Didn't decompress.");
@@ -141,10 +139,8 @@ public class Whip extends TieredItem {
     @Override
     public ItemStack finishUsingItem(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull LivingEntity livingEntity) {
         if (stack.get(DragonoidsExpanded.WHIP_STATE.get()).state() == WhipState.IDLE.state) {
-            DragonoidsExpanded.LOGGER.info("Coiled.");
             stack.set(DragonoidsExpanded.WHIP_STATE.get(), new WhipStateComponent(WhipState.COILED.state));
         } else if (stack.get(DragonoidsExpanded.WHIP_STATE.get()).state() == WhipState.DECOMPRESS.state) {
-            DragonoidsExpanded.LOGGER.info("Uncoiled.");
             stack.set(DragonoidsExpanded.WHIP_STATE.get(), new WhipStateComponent(WhipState.IDLE.state));
         } else {
             DragonoidsExpanded.LOGGER.info("Already coiled.");
