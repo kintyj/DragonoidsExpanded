@@ -18,7 +18,6 @@ import com.kintyj.dragonoidsexpanded.world.structure.WyvernNest;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -27,6 +26,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
@@ -34,7 +34,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -51,7 +51,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
@@ -77,16 +77,9 @@ public class DragonoidsExpanded {
 			.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MODID, "wyvern_type"));
 	// #endregion
 
-	// #region Tag Keys
-	public static final TagKey<EntityType<?>> DRAGONOID_TAG_KEY = TagKey.create(
-			Registries.ENTITY_TYPE,
-			ResourceLocation.fromNamespaceAndPath(MODID, "dragonoid"));
-	public static final TagKey<Block> WHIP_EFFICIENT_TAG_KEY = TagKey.create(
-			Registries.BLOCK,
-			ResourceLocation.fromNamespaceAndPath("c", "whip_efficient"));
-	// #endregion
-
 	// #region Tags
+	public static final TagKey<EntityType<?>> DRAGONOID_TAG_KEY = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, "dragonoid"));
+	public static final TagKey<Block> WHIP_EFFICIENT_TAG_KEY = TagKey.create( Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", "whip_efficient"));
 	// #endregion
 
 	// #region Registers
@@ -119,21 +112,19 @@ public class DragonoidsExpanded {
 	// #endregion
 
 	// #region Sounds
-	public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_YAWN = SOUND_EVENTS
-			.register("entity.frilled_drake.yawn", () -> SoundEvent.createVariableRangeEvent(
-					ResourceLocation.fromNamespaceAndPath(MODID, "entity.frilled_drake.yawn")));
-	public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_ROAR = SOUND_EVENTS
-			.register("entity.frilled_drake.roar", () -> SoundEvent.createVariableRangeEvent(
-					ResourceLocation.fromNamespaceAndPath(MODID, "entity.frilled_drake.roar")));
-	public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_ALERT = SOUND_EVENTS
-			.register("entity.frilled_drake.alert", () -> SoundEvent.createVariableRangeEvent(
-					ResourceLocation.fromNamespaceAndPath(MODID, "entity.frilled_drake.alert")));
-	public static final DeferredHolder<SoundEvent, SoundEvent> WYVERN_CALL = SOUND_EVENTS
-			.register("entity.wyvern.call", () -> SoundEvent.createVariableRangeEvent(
-					ResourceLocation.fromNamespaceAndPath(MODID, "entity.wyvern.call")));
-	public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_ROAR = SOUND_EVENTS
-			.register("entity.manticore.m_roar", () -> SoundEvent.createVariableRangeEvent(
-					ResourceLocation.fromNamespaceAndPath(MODID, "entity.manticore.m_roar")));
+	public static DeferredHolder<SoundEvent, SoundEvent> registerSound(String name) {
+		return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, name)));
+	}
+
+	public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_YAWN = registerSound("entity.frilled_drake.yawn");
+	public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_ROAR = registerSound("entity.frilled_drake.roar");
+	public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_ALERT = registerSound("entity.frilled_drake.alert");
+	public static final DeferredHolder<SoundEvent, SoundEvent> WYVERN_CALL = registerSound("entity.wyvern.call");
+	public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_ROAR = registerSound("entity.manticore.m_roar");
+	public static final DeferredHolder<SoundEvent, SoundEvent> WHIP_CRACK = registerSound("item.whip_crack");
+	public static final DeferredHolder<SoundEvent, SoundEvent> WHIP_START = registerSound("item.whip_start");
+	public static final DeferredHolder<SoundEvent, SoundEvent> WHIP_MIDDLE = registerSound("item.whip_mid");
+	public static final DeferredHolder<SoundEvent, SoundEvent> WHIP_END = registerSound("item.whip_end");
 	// #endregion
 
 	// #region Structure Types
@@ -147,26 +138,29 @@ public class DragonoidsExpanded {
 	// #endregion
 
 	// #region Entities
+	private static ResourceKey<EntityType<?>> entityPrefix(String path) {
+        return ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, path));
+    }
+
+	private static <T extends Mob> DeferredItem<SpawnEggItem> registerSpawnEgg(DeferredHolder<EntityType<?>, EntityType<T>> entityType, String name, Item.Properties properties) {
+		return ITEMS.register(name,
+			() -> new SpawnEggItem(entityType.get(), properties.setId(itemPrefix(name))));
+	}
+
 	public static final DeferredHolder<EntityType<?>, EntityType<FrilledDrake>> FRILLED_DRAKE = ENTITY_TYPES
 			.register("frilled_drake", () -> EntityType.Builder.of(FrilledDrake::new, MobCategory.MONSTER)
-					.sized(1.5F, 1.3F).clientTrackingRange(10).build("frilled_drake"));
-	public static final DeferredItem<SpawnEggItem> FRILLED_DRAKE_SPAWN_EGG = ITEMS.register(
-			"frilled_drake_spawn_egg",
-			() -> new DeferredSpawnEggItem(FRILLED_DRAKE, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
+					.sized(1.5F, 1.3F).clientTrackingRange(10).build(entityPrefix("frilled_drake")));
+	public static final DeferredItem<SpawnEggItem> FRILLED_DRAKE_SPAWN_EGG = registerSpawnEgg(FRILLED_DRAKE, "frilled_drake_spawn_egg", new Item.Properties());
 
 	public static final DeferredHolder<EntityType<?>, EntityType<Manticore>> MANTICORE = ENTITY_TYPES
 			.register("manticore", () -> EntityType.Builder.of(Manticore::new, MobCategory.MONSTER)
-					.sized(1.5F, 1.8F).clientTrackingRange(10).build("manticore"));
-	public static final DeferredItem<SpawnEggItem> MANTICORE_SPAWN_EGG = ITEMS.register(
-			"manticore_spawn_egg",
-			() -> new DeferredSpawnEggItem(MANTICORE, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
+					.sized(1.5F, 1.8F).clientTrackingRange(10).build(entityPrefix("manticore")));
+	public static final DeferredItem<SpawnEggItem> MANTICORE_SPAWN_EGG = registerSpawnEgg(MANTICORE, "manticore_spawn_egg", new Item.Properties());
 
 	public static final DeferredHolder<EntityType<?>, EntityType<Wyvern>> WYVERN = ENTITY_TYPES
 			.register("wyvern", () -> EntityType.Builder.of(Wyvern::new, MobCategory.MONSTER)
-					.sized(1.5F, 1.8F).clientTrackingRange(10).build("wyvern"));
-	public static final DeferredItem<SpawnEggItem> WYVERN_SPAWN_EGG = ITEMS.register(
-			"wyvern_spawn_egg",
-			() -> new DeferredSpawnEggItem(WYVERN, 0xDFDFDF, 0x99CFE8, new Item.Properties()));
+					.sized(1.5F, 1.8F).clientTrackingRange(10).build(entityPrefix("wyvern")));
+	public static final DeferredItem<SpawnEggItem> WYVERN_SPAWN_EGG = registerSpawnEgg(WYVERN, "wyvern_spawn_egg", new Item.Properties());
 	// #endregion
 
 	// #region Blocks
@@ -250,9 +244,16 @@ public class DragonoidsExpanded {
 	// #endregion
 
 	// #region Items
+	private static ResourceKey<Item> itemPrefix(String path) {
+        return ResourceKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, path));
+    }
+
 	public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item",
-			new Item.Properties().food(new FoodProperties.Builder()
-					.alwaysEdible().nutrition(1).saturationModifier(2f).build()));
+			new Item.Properties()
+				.food(new FoodProperties.Builder()
+					.alwaysEdible()
+					.nutrition(1)
+					.saturationModifier(2f).build()));
 	public static final DeferredItem<Item> DRAKE_HEART_SCALE = ITEMS.registerSimpleItem("drake_heart_scale",
 			new Item.Properties());
 	public static final DeferredItem<Item> DRAKE_MEAL = ITEMS.registerSimpleItem("drake_meal",
@@ -283,20 +284,18 @@ public class DragonoidsExpanded {
 			new Item.Properties());
 	public static final DeferredItem<Item> DRAKE_LORDS_MACE = ITEMS.registerItem(
 			"drake_lords_mace", DrakelordsMace::new,
-			new Item.Properties().attributes(DrakelordsMace.createAttributes()));
+			new Item.Properties()
+				.attributes(DrakelordsMace.createAttributes())
+				.enchantable(15));
 	public static final DeferredItem<Item> LEATHER_WHIP = ITEMS.registerItem(
-			"leather_whip", (prop) -> new Whip(Tiers.WOOD,
-			new Item.Properties().attributes(Whip.createAttributes(Tiers.WOOD, 1.0f, 1.0f))));
+			"leather_whip", (prop) -> new Whip(ToolMaterial.WOOD,
+			prop, 1.0f, 1.0f));
 	// #endregion
 	// Creates a creative tab with the id "examplemod:example_tab" for the example
 	// item, that is placed after the combat tab
 	public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DRAGONOIDS_EXPANDED_ITEMS_TAB = CREATIVE_MODE_TABS
 			.register("dragonoids_expanded_items_tab", () -> CreativeModeTab.builder()
-					.title(Component.translatable("itemGroup.dragonoidsexpanded")) // The language
-																					// key for the
-																					// title of
-																					// your
-																					// CreativeModeTab
+					.title(Component.translatable("itemGroup.dragonoidsexpanded.dragonoids_expanded_items_tab"))
 					.withTabsBefore(CreativeModeTabs.COMBAT)
 					.icon(() -> EXAMPLE_ITEM.get().getDefaultInstance())
 					.displayItems((parameters, output) -> {
@@ -348,6 +347,9 @@ public class DragonoidsExpanded {
 		// Register our mod's ModConfigSpec so that FML can create and load the config
 		// file for us
 		modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+		// #region Setup
+		// #endregion
 
 		if (dist == Dist.CLIENT) {
 			modEventBus.addListener(this::registerEntityRenderers);
@@ -418,33 +420,16 @@ public class DragonoidsExpanded {
 			// Some client setup code
 			LOGGER.info("HELLO FROM CLIENT SETUP");
 			LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-			event.enqueueWork(() -> { // ItemProperties#register is not threadsafe, so we need to call it on the main thread
-				ItemProperties.register(
-					// The item to apply the property to.
-					DragonoidsExpanded.LEATHER_WHIP.get(),
-					// The id of the property.
-					ResourceLocation.fromNamespaceAndPath(MODID, "whip_state"),
-					// A reference to a method that calculates the override value.
-					// Parameters are the used item stack, the level context, the player using the item,
-					// and a random seed you can use.
-					(stack, level, player, seed) -> stack.get(DragonoidsExpanded.WHIP_STATE).state()
-				);
-			});
 		}
 
-		/*
-		 * public static void onRenderLevel(RenderLevelStageEvent event) {
-		 * Minecraft mc = Minecraft.getInstance();
-		 * if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS &&
-		 * true && mc.player != null
-		 * && mc.level != null) {
-		 * mc.level.entitiesForRendering().forEach(entity -> {
-		 * PathfindingDebugRenderer.render(entity, event.getPoseStack(),
-		 * mc.renderBuffers().bufferSource(),
-		 * event.getPartialTick().getGameTimeDeltaTicks());
-		 * });
-		 * }
-		 * }
-		 */
+		@SubscribeEvent
+		public static void registerRangeProperties(RegisterRangeSelectItemModelPropertyEvent event) {
+			event.register(
+				// The name to reference as the type
+				ResourceLocation.fromNamespaceAndPath(MODID, "whip_state"),
+				// The property type
+				com.kintyj.dragonoidsexpanded.item.property.WhipState.MAP_CODEC
+			);
+		}
 	}
 }

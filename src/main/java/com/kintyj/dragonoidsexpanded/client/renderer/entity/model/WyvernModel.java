@@ -5,6 +5,7 @@ import com.kintyj.dragonoidsexpanded.entity.Wyvern;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 public class WyvernModel extends GeoModel<Wyvern> {
 	// Models must be stored in assets/<modid>/geo with subfolders supported inside
@@ -22,12 +23,12 @@ public class WyvernModel extends GeoModel<Wyvern> {
 			"animations/entity/wyvern.animation.json");
 
 	@Override
-	public ResourceLocation getModelResource(Wyvern object) {
+	public ResourceLocation getModelResource(Wyvern object, GeoRenderer<Wyvern> renderer) {
 		return WyvernModel.model;
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(Wyvern object) {
+	public ResourceLocation getTextureResource(Wyvern object, GeoRenderer<Wyvern> renderer) {
 		return WyvernModel.texture;
 	}
 

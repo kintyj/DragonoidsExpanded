@@ -1,13 +1,9 @@
 package com.kintyj.dragonoidsexpanded.entity.wyvern;
 
-import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.util.ExtraCodecs;
 
 public class WyvernType {

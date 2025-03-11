@@ -5,6 +5,7 @@ import com.kintyj.dragonoidsexpanded.entity.Manticore;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 public class ManticoreModel extends GeoModel<Manticore> {
 	// Models must be stored in assets/<modid>/geo with subfolders supported inside
@@ -22,12 +23,12 @@ public class ManticoreModel extends GeoModel<Manticore> {
 			"animations/entity/manticore.animation.json");
 
 	@Override
-	public ResourceLocation getModelResource(Manticore object) {
+	public ResourceLocation getModelResource(Manticore object, GeoRenderer<Manticore> renderer) {
 		return ManticoreModel.model;
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(Manticore object) {
+	public ResourceLocation getTextureResource(Manticore object, GeoRenderer<Manticore> renderer) {
 		return ManticoreModel.texture;
 	}
 

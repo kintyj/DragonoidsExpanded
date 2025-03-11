@@ -2,9 +2,8 @@ package com.kintyj.dragonoidsexpanded.client.renderer.debug;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
@@ -41,7 +40,6 @@ public class PathfindingDebugRenderer {
         float green = isNext ? 0.0f : 0.5f;
         float blue = 0.0f;
 
-        LevelRenderer.renderLineBox(poseStack, bufferSource.getBuffer(RenderType.DEBUG_FILLED_BOX),
-                new AABB(x - 0.25, y - 0.25, z - 0.25, x + 0.25, y + 0.25, z + 0.25), red, green, blue, 1.0f);
+        DebugRenderer.renderFilledBox(poseStack, bufferSource, new AABB(x - 0.25, y - 0.25, z - 0.25, x + 0.25, y + 0.25, z + 0.25), red, green, blue, 0.5f);
     }
 }

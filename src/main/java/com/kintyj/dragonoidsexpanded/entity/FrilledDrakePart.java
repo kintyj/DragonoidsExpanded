@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerEntity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -57,8 +58,8 @@ public class FrilledDrakePart extends PartEntity<FrilledDrake> {
      * Called when the entity is attacked.
      */
     @Override
-    public boolean hurt(@Nonnull DamageSource source, float amount) {
-        return this.isInvulnerableTo(source) ? false : this.parentMob.hurt(source, amount);
+    public boolean hurtServer(@Nonnull ServerLevel level, @Nonnull DamageSource source, float amount) {
+        return this.isInvulnerableToBase(source) ? false : this.parentMob.hurtServer(level, source, amount);
     }
 
     /**

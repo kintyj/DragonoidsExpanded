@@ -28,5 +28,29 @@
         "dragonoidsexpanded:entity/manticore/m_roar"
         ],
         "subtitle": "subtitles.dragonoidsexpanded.entity.manticore.m_roar"
+    },
+    "item.whip_crack": {
+        "sounds": [
+        "dragonoidsexpanded:item/whip_crack"
+        ],
+        "subtitle": "subtitles.dragonoidsexpanded.item.whip_crack"
+    },
+    "item.whip_start": {
+        "sounds": [
+        "dragonoidsexpanded:item/whip_start"
+        ],
+        "subtitle": "subtitles.dragonoidsexpanded.item.whip_start"
+    },
+    "item.whip_mid": {
+        "sounds": [
+        "dragonoidsexpanded:item/whip_mid"
+        ],
+        "subtitle": "subtitles.dragonoidsexpanded.item.whip_mid"
+    },
+    "item.whip_end": {
+        "sounds": [
+        "dragonoidsexpanded:item/whip_end"
+        ],
+        "subtitle": "subtitles.dragonoidsexpanded.item.whip_end"
     }
 }

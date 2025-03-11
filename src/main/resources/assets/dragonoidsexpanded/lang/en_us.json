@@ -52,5 +52,14 @@
     "entity.dragonoidsexpanded.frilled_drake_adult": "Frilled Drake Adult",
     "entity.dragonoidsexpanded.frilled_drake_elder": "Frilled Drake Elder",
     "itemGroup.dragonoidsexpanded.dragonoids_expanded_items_tab": "Dragonoids Expanded Items",
-    "enchantment.dragonoidsexpanded.dragon_slayer": "Dragon Slayer"
+    "enchantment.dragonoidsexpanded.dragon_slayer": "Dragon Slayer",
+    "subtitles.dragonoidsexpanded.entity.frilled_drake.yawn": "Frilled Drake Yawn",
+    "subtitles.dragonoidsexpanded.entity.frilled_drake.roar": "Frilled Drake Roar",
+    "subtitles.dragonoidsexpanded.entity.frilled_drake.alert": "Frilled Drake Alert",
+    "subtitles.dragonoidsexpanded.entity.wyvern.call": "Wyvern Call",
+    "subtitles.dragonoidsexpanded.entity.manticore.m_roar": "Manticore Roar",
+    "subtitles.dragonoidsexpanded.item.whip_crack": "Whip Crack",
+    "subtitles.dragonoidsexpanded.item.whip_start": "Whip Start",
+    "subtitles.dragonoidsexpanded.item.whip_mid": "Whip Middle",
+    "subtitles.dragonoidsexpanded.item.whip_end": "Whip End"
 }

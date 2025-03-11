@@ -6,6 +6,7 @@ import com.kintyj.dragonoidsexpanded.entity.FrilledDrake.DrakeState;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 public class FrilledDrakeModel extends GeoModel<FrilledDrake> {
 	// Models must be stored in assets/<modid>/geo with subfolders supported inside
@@ -121,12 +122,12 @@ public class FrilledDrakeModel extends GeoModel<FrilledDrake> {
 			"animations/entity/frilled_drake.animation.json");
 
 	@Override
-	public ResourceLocation getModelResource(FrilledDrake object) {
+	public ResourceLocation getModelResource(FrilledDrake object, GeoRenderer<FrilledDrake> renderer) {
 		return FrilledDrakeModel.model;
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(FrilledDrake object) {
+	public ResourceLocation getTextureResource(FrilledDrake object, GeoRenderer<FrilledDrake> renderer) {
 		if (object.getGrowthScore() > FrilledDrake.DrakeAge.ELDER.getAge()) {
 			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
 					? FrilledDrakeModel.closedTexture[object.getColor()][4]

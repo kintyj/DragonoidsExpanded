@@ -2,7 +2,7 @@ package com.kintyj.dragonoidsexpanded.world.structure;
 
 import java.util.Optional;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import javax.annotation.Nonnull;
 
 import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
 import com.kintyj.dragonoidsexpanded.entity.Wyvern;
@@ -16,7 +16,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
@@ -34,7 +34,6 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
-import net.neoforged.neoforge.common.world.ModifiableStructureInfo;
 
 public class WyvernNest extends Structure {
 
@@ -89,7 +88,7 @@ public class WyvernNest extends Structure {
     }
 
     @Override
-    public Optional<Structure.GenerationStub> findGenerationPoint(Structure.GenerationContext context) {
+    public Optional<Structure.GenerationStub> findGenerationPoint(@Nonnull Structure.GenerationContext context) {
         // Set's our spawning blockpos's y offset to be 60 blocks up.
         // Since we are going to have heightmap/terrain height spawning set to true
         // further down, this will make it so we spawn 60 blocks above terrain.
@@ -144,17 +143,18 @@ public class WyvernNest extends Structure {
                                                      // to chunks
     }
 
-    @Override
-    public void afterPlace(WorldGenLevel level, StructureManager structureManager, ChunkGenerator chunkGenerator,
-            RandomSource random, BoundingBox boundingBox, ChunkPos chunkPos, PiecesContainer pieces) {
+    @SuppressWarnings("null")
+@Override
+    public void afterPlace(@Nonnull WorldGenLevel level, @Nonnull StructureManager structureManager, @Nonnull ChunkGenerator chunkGenerator,
+    @Nonnull RandomSource random, @Nonnull BoundingBox boundingBox, @Nonnull ChunkPos chunkPos, @Nonnull PiecesContainer pieces) {
 
 
         Wyvern wyvern = DragonoidsExpanded.WYVERN.get().create(level.getLevel(), (wyver) -> {
-        }, boundingBox.getCenter(), MobSpawnType.STRUCTURE, true, false);
-        Registry<WyvernType> reg = level.getLevel().registryAccess()
-                .registry(DragonoidsExpanded.WYVERN_TYPE_REGISTRY_KEY).get();
+                }, boundingBox.getCenter(), EntitySpawnReason.STRUCTURE, true, false);
+        Registry<WyvernType> reg = level.getLevel().registryAccess().lookup(DragonoidsExpanded.WYVERN_TYPE_REGISTRY_KEY).get();
         wyvern.setPersistenceRequired();
-		wyvern.finalizeSpawn(level, level.getCurrentDifficultyAt(boundingBox.getCenter()), MobSpawnType.STRUCTURE, null);
+	wyvern.finalizeSpawn(level, level.getCurrentDifficultyAt(boundingBox.getCenter()), EntitySpawnReason.STRUCTURE, null);
+        wyvern.setWyvernType(reg.getId(reg.getRandom(random).get().value()));
         //wyvern.setWyvernType(reg.getId(reg.getRandom(random).get().value()));
 
         level.addFreshEntity(wyvern);

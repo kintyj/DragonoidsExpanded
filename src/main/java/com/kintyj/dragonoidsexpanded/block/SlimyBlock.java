@@ -7,7 +7,7 @@ import com.kintyj.dragonoidsexpanded.block.state.properties.ModBlockStatePropert
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -52,15 +52,10 @@ public class SlimyBlock extends Block {
         }
     }
 
-    /**
-     * Called when an Entity lands on this Block.
-     * This method is responsible for doing any modification on the motion of the
-     * entity that should result from the landing.
-     */
     @Override
-    public void updateEntityAfterFallOn(@Nonnull BlockGetter level, @Nonnull Entity entity) {
+    public void updateEntityMovementAfterFallOn(@Nonnull BlockGetter level, @Nonnull Entity entity) {
         if (entity.isSuppressingBounce()) {
-            super.updateEntityAfterFallOn(level, entity);
+            super.updateEntityMovementAfterFallOn(level, entity);
         } else {
             this.bounceUp(entity);
         }
@@ -86,9 +81,8 @@ public class SlimyBlock extends Block {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level,
-            @Nonnull BlockPos pos,
-            @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(@Nonnull ItemStack stack, @Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player,
+            @Nonnull InteractionHand hand, @Nonnull BlockHitResult hitResult) {
         if (stack.is(Items.GLASS_BOTTLE) && state.getValue(SLIME_STATE) > 0) {
             stack.shrink(1);
             player.addItem(new ItemStack(Items.HONEY_BOTTLE, 1));

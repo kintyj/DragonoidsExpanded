@@ -1,10 +1,11 @@
 package com.kintyj.dragonoidsexpanded.effect;
 
-import java.text.AttributedCharacterIterator.Attribute;
+import javax.annotation.Nonnull;
 
 import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,7 +22,7 @@ public class Mortis extends MobEffect {
             "no_idea_what_this_is");
 
     @Override
-    public boolean applyEffectTick(LivingEntity p_294484_, int p_294672_) {
+    public boolean applyEffectTick(@Nonnull ServerLevel level, @Nonnull LivingEntity p_294484_, int p_294672_) {
         return true;
     }
 
@@ -31,7 +32,7 @@ public class Mortis extends MobEffect {
     }
 
     @Override
-    public void onEffectStarted(LivingEntity p_294820_, int p_295222_) {
+    public void onEffectStarted(@Nonnull LivingEntity p_294820_, int p_295222_) {
         super.onEffectStarted(p_294820_, p_295222_);
     }
 }

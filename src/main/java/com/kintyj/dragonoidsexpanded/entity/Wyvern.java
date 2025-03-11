@@ -6,21 +6,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
-import com.kintyj.dragonoidsexpanded.brain.behaviour.LeapAtTarget;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.VisibleForDebug;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -38,21 +29,16 @@ import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.npc.InventoryCarrier;
-import net.minecraft.world.entity.vehicle.Minecart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.common.util.FriendlyByteBufUtil;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FollowOwner;
@@ -68,7 +54,7 @@ import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyItemsSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyAdultSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
@@ -206,10 +192,10 @@ public class Wyvern extends TamableAnimal
 
     // #region Immunities
     @Override
-    public boolean hurt(@Nonnull DamageSource source, float amount) {
+    public boolean hurtServer(@Nonnull ServerLevel level, @Nonnull DamageSource source, float amount) {
         if (source.is(DamageTypes.FALL))
             return false;
-        return super.hurt(source, amount);
+        return super.hurtServer(level, source, amount);
     }
     // #endregion
 
@@ -246,7 +232,7 @@ public class Wyvern extends TamableAnimal
     // #endregion
 
     @Override
-    protected void customServerAiStep() {
+    protected void customServerAiStep(@Nonnull ServerLevel level) {
         tickBrain(this);
     }
 
@@ -312,8 +298,8 @@ public class Wyvern extends TamableAnimal
                                     setAggressive(true);
                                 })
                                 .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
-                                    return (BrainUtils.getTargetOfEntity(entity) != null
-                                            && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 7);
+                                    return (BrainUtil.getTargetOfEntity(entity) != null
+                                            && BrainUtil.getTargetOfEntity(entity).distanceTo(entity) > 7);
                                 }).cooldownFor((entity) -> 120), // Set the walk target to the attack target
                         new AnimatableMeleeAttack<>(12).whenStarting(entity -> {
                             setAggressive(true);
@@ -323,11 +309,6 @@ public class Wyvern extends TamableAnimal
                 ));
     }
     // #endregion
-
-    @Override
-    public boolean wantsToPickUp(@Nonnull ItemStack stack) {
-        return stack.is(Items.IRON_INGOT);
-    }
 
     public Wyvern(EntityType<? extends Wyvern> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);

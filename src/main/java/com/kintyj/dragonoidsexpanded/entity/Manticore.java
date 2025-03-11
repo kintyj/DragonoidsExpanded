@@ -6,7 +6,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
-import com.kintyj.dragonoidsexpanded.brain.behaviour.LeapAtTarget;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerLevel;
@@ -31,6 +30,7 @@ import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FollowOwner;
@@ -45,7 +45,7 @@ import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyItemsSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyAdultSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
@@ -94,7 +94,7 @@ public class Manticore extends TamableAnimal
 
     @Override
     @Nullable
-    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
+    public AgeableMob getBreedOffspring(@Nonnull ServerLevel level, @Nonnull AgeableMob otherParent) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -171,7 +171,7 @@ public class Manticore extends TamableAnimal
     // #endregion
 
     @Override
-    protected void customServerAiStep() {
+    protected void customServerAiStep(@Nonnull ServerLevel level) {
         tickBrain(this);
     }
 
@@ -234,8 +234,8 @@ public class Manticore extends TamableAnimal
                                     // triggerAnim("defaultController", "jump"); (No SFX)
                                 })
                                 .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
-                                    return (BrainUtils.getTargetOfEntity(entity) != null
-                                            && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 7);
+                                    return (BrainUtil.getTargetOfEntity(entity) != null
+                                            && BrainUtil.getTargetOfEntity(entity).distanceTo(entity) > 7);
                                 }).cooldownFor((entity) -> 120), // Set the walk target to the attack target
                         new AnimatableMeleeAttack<>(7).whenStarting(entity -> {
                             setAggressive(true);
@@ -261,7 +261,7 @@ public class Manticore extends TamableAnimal
     // #endregion
 
     @Override
-    public boolean wantsToPickUp(ItemStack stack) {
+    public boolean wantsToPickUp(@Nonnull ServerLevel level, @Nonnull ItemStack stack) {
         return stack.is(Items.IRON_INGOT);
     }
 

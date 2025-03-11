@@ -2,19 +2,5 @@
     "parent": "minecraft:item/handheld",
     "textures": {
         "layer0": "dragonoidsexpanded:item/leather_whip_0"
-    },
-    "overrides": [
-        {
-            "predicate": {
-                "dragonoidsexpanded:whip_state": 1
-            },
-            "model": "dragonoidsexpanded:item/leather_whip_1"
-        },
-        {
-            "predicate": {
-                "dragonoidsexpanded:whip_state": 2
-            },
-            "model": "dragonoidsexpanded:item/leather_whip_2"
-        }
-    ]
+    }
 }

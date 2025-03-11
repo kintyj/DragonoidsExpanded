@@ -6,9 +6,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
-import com.kintyj.dragonoidsexpanded.brain.behaviour.LeapAtTarget;
-import com.kintyj.dragonoidsexpanded.entity.FrilledDrake.DrakeAge;
-import com.kintyj.dragonoidsexpanded.entity.FrilledDrake.DrakeState;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -24,11 +21,11 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.GlowSquid;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PlayerRideableJumping;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.TamableAnimal;
@@ -54,6 +51,7 @@ import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.BreedWithPartner;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -70,7 +68,7 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.InWaterSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyAdultSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimationController;
@@ -277,7 +275,7 @@ public class FrilledDrake extends TamableAnimal
 
     @Override
     public AgeableMob getBreedOffspring(@Nonnull ServerLevel serverLevel, @Nonnull AgeableMob partner) {
-        FrilledDrake child = (FrilledDrake) this.getType().create(serverLevel);
+        FrilledDrake child = (FrilledDrake) this.getType().create(serverLevel, null, blockPosition(), EntitySpawnReason.BREEDING, true, false);
         if (child != null) {
             child.setGrowthScore(0);
             child.setColor(this.getColor());
@@ -415,7 +413,7 @@ public class FrilledDrake extends TamableAnimal
             doPlayerRide(player);
             return InteractionResult.SUCCESS;
         } else if (getGrowthScore() >= DrakeAge.HATCHLING.getAge()) {
-            player.hurt(damageSources().mobAttack(this), 15f);
+            player.hurtServer(level().getServer().getLevel(level().dimension()), damageSources().mobAttack(this), 15f);
             if (level().isClientSide) {
                 triggerAnim("attackController", "bite");
             }
@@ -429,8 +427,8 @@ public class FrilledDrake extends TamableAnimal
     // #region ?
     @Override
     public SpawnGroupData finalizeSpawn(@Nonnull ServerLevelAccessor level, @Nonnull DifficultyInstance difficulty,
-            @Nonnull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        SpawnGroupData spawnGroupDataInternal = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+            @Nonnull EntitySpawnReason spawnReason, @Nullable SpawnGroupData spawnGroupData) {
+        SpawnGroupData spawnGroupDataInternal = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData);
         this.setColor(level().getRandom().nextInt(0, 4));
         setGrowthScore(0);
         return spawnGroupDataInternal;
@@ -439,10 +437,10 @@ public class FrilledDrake extends TamableAnimal
 
     // #region Immunities
     @Override
-    public boolean hurt(@Nonnull DamageSource source, float amount) {
+    public boolean hurtServer(@Nonnull ServerLevel level, @Nonnull DamageSource source, float amount) {
         if (source.is(DamageTypes.DROWN) || source.is(DamageTypes.FALL))
             return false;
-        return super.hurt(source, amount);
+        return super.hurtServer(level, source, amount);
     }
     // #endregion
 
@@ -552,7 +550,7 @@ public class FrilledDrake extends TamableAnimal
     }
 
     @Override
-    protected void customServerAiStep() {
+    protected void customServerAiStep(@Nonnull ServerLevel level) {
         if (getGrowthScore() >= DrakeAge.HATCHLING.getAge())
             tickBrain(this);
         if (getState() != DrakeState.SLEEPING.getState()) {
@@ -651,8 +649,8 @@ public class FrilledDrake extends TamableAnimal
                                     // triggerAnim("defaultController", "jump"); (No SFX)
                                 })
                                 .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
-                                    return (BrainUtils.getTargetOfEntity(entity) != null
-                                            && BrainUtils.getTargetOfEntity(entity).distanceTo(entity) > 7);
+                                    return (BrainUtil.getTargetOfEntity(entity) != null
+                                            && BrainUtil.getTargetOfEntity(entity).distanceTo(entity) > 7);
                                 }).cooldownFor((entity) -> 120), // Set the walk target to the attack target
                         new AnimatableMeleeAttack<>(12).whenStarting(entity -> {
                             setAggressive(true);
