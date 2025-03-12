@@ -11,8 +11,10 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.VisibleForDebug;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.Brain;
@@ -30,6 +32,7 @@ import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.ConditionlessAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -58,6 +61,9 @@ public class Manticore extends TamableAnimal
         implements Enemy, GeoEntity, SmartBrainOwner<Manticore>, InventoryCarrier {
     private static final int roarDelayMin = 500;
     private static final int roarDelayMax = 1500;
+
+    private static final float STING_DAMAGE = 10.0f;
+
     // private static final int blinkDelay = 300;
     // private static final int blinkTime = 25;
 
@@ -255,8 +261,22 @@ public class Manticore extends TamableAnimal
                                     break;
                             }
 
-                        }).whenStopping(entity -> setAggressive(false))
-                                .cooldownFor(entity -> 10)));
+                        }).whenStopping(entity -> setAggressive(false)).cooldownFor(entity -> 10),
+                        new ConditionlessAttack<>(7).whenStarting(entity -> {
+                            setAggressive(true);
+                            triggerAnim("attackController", "leftStrike");
+                            LivingEntity target = BrainUtil.getTargetOfEntity(entity);
+                            if (entity.level() instanceof ServerLevel serverLevel) {
+                                target.hurtServer(serverLevel, damageSources().mobAttack(entity), STING_DAMAGE);
+                                target.addEffect(new MobEffectInstance(DragonoidsExpanded.MORTIS, 60, target.hasEffect(DragonoidsExpanded.MORTIS) ? Math.clamp(target.getEffect(DragonoidsExpanded.MORTIS).getAmplifier() + 1, 1, 5) : 1));
+                            }
+                        })
+                        .whenStopping(entity -> setAggressive(false))
+                        .cooldownFor(entity -> 80))
+                        .startCondition((entity) -> {
+                            LivingEntity target = BrainUtil.getTargetOfEntity(entity);
+                            return target != null && entity.distanceTo(target) < 4;
+                        }));
     }
     // #endregion
 
