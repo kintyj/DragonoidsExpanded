@@ -1,6 +1,9 @@
 {
     "model": {
-        "type": "minecraft:model",
-        "model": "dragonoidsexpanded:item/manticore_paw"
+        "type": "minecraft:special",
+        "base": "dragonoidsexpanded:item/manticore_paw",
+        "model": {
+          "type": "geckolib:geckolib"
+        }
     }
 }

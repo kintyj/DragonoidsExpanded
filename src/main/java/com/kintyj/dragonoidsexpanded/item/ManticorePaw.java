@@ -33,7 +33,7 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class ManticorePaw extends Item implements GeoItem {
-    private static final RawAnimation POPUP_ANIM = RawAnimation.begin().thenPlay("use.popup");
+    private static final RawAnimation USE_ANIM = RawAnimation.begin().thenPlay("use");
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public static final int COOLDOWN_TIME = 1200;
@@ -50,7 +50,7 @@ public class ManticorePaw extends Item implements GeoItem {
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "manticore_paw", 20, state -> PlayState.STOP)
-				.triggerableAnim("use", POPUP_ANIM));
+				.triggerableAnim("use", USE_ANIM));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ManticorePaw extends Item implements GeoItem {
             switch (level.random.nextInt(5)) {
                 case 0:
                     target.kill(serverLevel);
-                    serverLevel.playSound(target, target.blockPosition(), SoundEvents.DECORATED_POT_SHATTER, SoundSource.PLAYERS,  1, 1.5f);
+                    serverLevel.playSound(null, target.blockPosition(), SoundEvents.DECORATED_POT_SHATTER, SoundSource.PLAYERS,  1, 1.5f);
                     break;
                 case 1:
                     MobEffectInstance weaknessInstance = new MobEffectInstance(MobEffects.WEAKNESS, 300, 8);
@@ -94,11 +94,11 @@ public class ManticorePaw extends Item implements GeoItem {
                     } else if (target instanceof Player player) {
                         player.addEffect(weaknessInstance);
                     }
-                    serverLevel.playSound(target, target.blockPosition(), SoundEvents.DECORATED_POT_SHATTER, SoundSource.PLAYERS,  1, 1);
+                    serverLevel.playSound(null, target.blockPosition(), SoundEvents.DECORATED_POT_SHATTER, SoundSource.PLAYERS,  1, 1);
                     break;
                 case 2:
                     target.push(new Vec3(0, 5, 0));
-                    serverLevel.playSound(target, target.blockPosition(), SoundEvents.DROWNED_AMBIENT, SoundSource.PLAYERS,  1, 1);
+                    serverLevel.playSound(null, target.blockPosition(), SoundEvents.DROWNED_AMBIENT, SoundSource.PLAYERS,  1, 1);
                     break;
                 case 3:
                     if (target instanceof Mob mob) {
@@ -106,7 +106,7 @@ public class ManticorePaw extends Item implements GeoItem {
                     } else if (target instanceof Player player) {
                         player.setHealth(player.getHealth() / 2);
                     }
-                    serverLevel.playSound(target, target.blockPosition(), SoundEvents.WARDEN_AGITATED, SoundSource.PLAYERS,  1, 0.25f);
+                    serverLevel.playSound(null, target.blockPosition(), SoundEvents.WARDEN_AGITATED, SoundSource.PLAYERS,  1, 0.25f);
                     break;
                 case 4:
                     target.extinguishFire();
@@ -115,10 +115,10 @@ public class ManticorePaw extends Item implements GeoItem {
                     } else if (target instanceof Player player) {
                         player.heal(player.getMaxHealth());
                     }
-                    serverLevel.playSound(target, target.blockPosition(), SoundEvents.ZOMBIE_INFECT, SoundSource.PLAYERS,  1, 1.75f);
+                    serverLevel.playSound(null, target.blockPosition(), SoundEvents.ZOMBIE_INFECT, SoundSource.PLAYERS,  1, 1.75f);
                     break;
                 default:
-                    serverLevel.playSound(target, target.blockPosition(), SoundEvents.EVOKER_PREPARE_WOLOLO, SoundSource.PLAYERS, 1, 1);
+                    serverLevel.playSound(null, target.blockPosition(), SoundEvents.EVOKER_PREPARE_WOLOLO, SoundSource.PLAYERS, 1, 1);
                     break;
             }
         }
