@@ -29,6 +29,12 @@
         ],
         "subtitle": "subtitles.dragonoidsexpanded.entity.manticore.m_roar"
     },
+    "entity.manticore.manticore_chew": {
+        "sounds": [
+        "dragonoidsexpanded:entity/manticore/manticore_chew"
+        ],
+        "subtitle": "subtitles.dragonoidsexpanded.entity.manticore.manticore_chew"
+    },
     "item.whip_crack": {
         "sounds": [
         "dragonoidsexpanded:item/whip_crack"

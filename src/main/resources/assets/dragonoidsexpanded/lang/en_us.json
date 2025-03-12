@@ -15,6 +15,7 @@
     "item.dragonoidsexpanded.wyvern_spawn_egg": "Wyvern Spawn Egg",
     "item.dragonoidsexpanded.drake_lords_mace": "Drake Lords Mace",
     "item.dragonoidsexpanded.manticore_paw": "Manticore Paw",
+    "item.dragonoidsexpanded.leather_whip": "Leather Whip",
     
     "item.dragonoidsexpanded.example_block": "Pringle Block",
     "block.dragonoidsexpanded.example_block": "Pringle Block",
@@ -89,6 +90,7 @@
     "subtitles.dragonoidsexpanded.entity.frilled_drake.alert": "Frilled Drake Alert",
     "subtitles.dragonoidsexpanded.entity.wyvern.call": "Wyvern Call",
     "subtitles.dragonoidsexpanded.entity.manticore.m_roar": "Manticore Roar",
+    "subtitles.dragonoidsexpanded.entity.manticore.manticore_chew": "Manticore Chew",
     "subtitles.dragonoidsexpanded.item.whip_crack": "Whip Crack",
     "subtitles.dragonoidsexpanded.item.whip_start": "Whip Start",
     "subtitles.dragonoidsexpanded.item.whip_mid": "Whip Middle",

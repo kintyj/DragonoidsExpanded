@@ -36,12 +36,12 @@ import net.minecraft.world.phys.Vec3;
 
 @SuppressWarnings("unused")
 public class DrakelordsMace extends Item {
-    private static final int DEFAULT_ATTACK_DAMAGE = 5;
+    private static final int DEFAULT_ATTACK_DAMAGE = 9;
     private static final float DEFAULT_ATTACK_SPEED = -3.4F;
     public static final float SMASH_ATTACK_FALL_THRESHOLD = 1.5F;
     private static final float SMASH_ATTACK_HEAVY_THRESHOLD = 5.0F;
-    public static final float SMASH_ATTACK_KNOCKBACK_RADIUS = 3.5F;
-    private static final float SMASH_ATTACK_KNOCKBACK_POWER = 0.7F;
+    public static final float SMASH_ATTACK_KNOCKBACK_RADIUS = 5.5F;
+    private static final float SMASH_ATTACK_KNOCKBACK_POWER = 1.7F;
 
     public DrakelordsMace(Item.Properties p_333796_) {
         super(p_333796_);
@@ -50,10 +50,10 @@ public class DrakelordsMace extends Item {
     public static ItemAttributeModifiers createAttributes() {
         return ItemAttributeModifiers.builder()
             .add(
-                Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, 5.0, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND
+                Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, DEFAULT_ATTACK_DAMAGE, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND
             )
             .add(
-                Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, -3.4F, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND
+                Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, DEFAULT_ATTACK_SPEED, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND
             )
             .build();
     }
@@ -83,11 +83,11 @@ public class DrakelordsMace extends Item {
                     serverplayer1.setSpawnExtraParticlesOnFall(true);
                 }
 
-                SoundEvent soundevent = p_333812_.fallDistance > 5.0F ? SoundEvents.MACE_SMASH_GROUND_HEAVY : SoundEvents.MACE_SMASH_GROUND;
-                serverlevel.playSound(null, p_333812_.getX(), p_333812_.getY(), p_333812_.getZ(), soundevent, p_333812_.getSoundSource(), 1.0F, 1.0F);
+                SoundEvent soundevent = p_333812_.fallDistance > SMASH_ATTACK_HEAVY_THRESHOLD ? SoundEvents.MACE_SMASH_GROUND_HEAVY : SoundEvents.MACE_SMASH_GROUND;
+                serverlevel.playSound(null, p_333812_.getX(), p_333812_.getY(), p_333812_.getZ(), soundevent, p_333812_.getSoundSource(), 1.0F, 0.8F);
             } else {
                 serverlevel.playSound(
-                    null, p_333812_.getX(), p_333812_.getY(), p_333812_.getZ(), SoundEvents.MACE_SMASH_AIR, p_333812_.getSoundSource(), 1.0F, 1.0F
+                    null, p_333812_.getX(), p_333812_.getY(), p_333812_.getZ(), SoundEvents.MACE_SMASH_AIR, p_333812_.getSoundSource(), 1.0F, 1.2F
                 );
             }
 
@@ -120,8 +120,6 @@ public class DrakelordsMace extends Item {
             if (!canSmashAttack(livingentity)) {
                 return 0.0F;
             } else {
-                float f3 = 3.0F;
-                float f = 8.0F;
                 float f1 = livingentity.fallDistance;
                 float f2;
                 if (f1 <= 3.0F) {
@@ -143,13 +141,13 @@ public class DrakelordsMace extends Item {
 
     private static void knockback(Level level, Entity attacker, Entity target) {
         level.levelEvent(2013, target.getOnPos(), 750);
-        level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(3.5), knockbackPredicate(attacker, target))
+        level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(SMASH_ATTACK_KNOCKBACK_RADIUS), knockbackPredicate(attacker, target))
             .forEach(p_347296_ -> {
                 Vec3 vec3 = p_347296_.position().subtract(target.position());
                 double d0 = getKnockbackPower(attacker, p_347296_, vec3);
                 Vec3 vec31 = vec3.normalize().scale(d0);
                 if (d0 > 0.0) {
-                    p_347296_.push(vec31.x, 0.7F, vec31.z);
+                    p_347296_.push(vec31.x, SMASH_ATTACK_KNOCKBACK_POWER, vec31.z);
                     if (p_347296_ instanceof ServerPlayer serverplayer) {
                         serverplayer.connection.send(new ClientboundSetEntityMotionPacket(serverplayer));
                     }
@@ -187,20 +185,20 @@ public class DrakelordsMace extends Item {
             }
 
             boolean flag4 = flag6;
-            boolean flag5 = target.distanceToSqr(p_344407_) <= Math.pow(3.5, 2.0);
+            boolean flag5 = target.distanceToSqr(p_344407_) <= Math.pow(SMASH_ATTACK_KNOCKBACK_RADIUS, 2.0);
             return flag && flag1 && flag2 && flag3 && flag4 && flag5;
         };
     }
 
     private static double getKnockbackPower(Entity attacker, LivingEntity entity, Vec3 offset) {
-        return (3.5 - offset.length())
-            * 0.7F
-            * (double)(attacker.fallDistance > 5.0F ? 2 : 1)
+        return (SMASH_ATTACK_KNOCKBACK_RADIUS - offset.length())
+            * SMASH_ATTACK_KNOCKBACK_POWER
+            * (double)(attacker.fallDistance > SMASH_ATTACK_HEAVY_THRESHOLD ? 2.5 : 1)
             * (1.0 - entity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
     }
 
     public static boolean canSmashAttack(LivingEntity entity) {
-        return entity.fallDistance > 1.5F && !entity.isFallFlying();
+        return entity.fallDistance > SMASH_ATTACK_FALL_THRESHOLD && !entity.isFallFlying();
     }
 
     @Nullable

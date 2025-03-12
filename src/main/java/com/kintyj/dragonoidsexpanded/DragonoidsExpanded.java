@@ -124,6 +124,7 @@ public class DragonoidsExpanded {
 	public static final DeferredHolder<SoundEvent, SoundEvent> FRILLED_DRAKE_ALERT = registerSound("entity.frilled_drake.alert");
 	public static final DeferredHolder<SoundEvent, SoundEvent> WYVERN_CALL = registerSound("entity.wyvern.call");
 	public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_ROAR = registerSound("entity.manticore.m_roar");
+	public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_CHEW = registerSound("entity.manticore.manticore_chew");
 	public static final DeferredHolder<SoundEvent, SoundEvent> WHIP_CRACK = registerSound("item.whip_crack");
 	public static final DeferredHolder<SoundEvent, SoundEvent> WHIP_START = registerSound("item.whip_start");
 	public static final DeferredHolder<SoundEvent, SoundEvent> WHIP_MIDDLE = registerSound("item.whip_mid");

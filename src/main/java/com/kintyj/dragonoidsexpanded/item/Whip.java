@@ -19,7 +19,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -49,8 +48,6 @@ public class Whip extends Item {
      * Set to {@code true} when the crossbow is 50% charged.
      */
     private boolean midLoadSoundPlayed = false;
-    private static final float START_SOUND_PERCENT = 0.2F;
-    private static final float MID_SOUND_PERCENT = 0.5F;
     public static final float DEFAULT_WHIP_STRENGTH = 4.5f;
     private static final Whip.ChargingSounds DEFAULT_SOUNDS = new Whip.ChargingSounds(
         Optional.of(DragonoidsExpanded.WHIP_START), Optional.of(DragonoidsExpanded.WHIP_MIDDLE), Optional.of(DragonoidsExpanded.WHIP_END)

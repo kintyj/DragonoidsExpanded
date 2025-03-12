@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
+import com.kintyj.dragonoidsexpanded.brain.behaviour.DesireItem;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerLevel;
@@ -63,6 +64,14 @@ public class Manticore extends TamableAnimal
     private static final int roarDelayMax = 1500;
 
     private static final float STING_DAMAGE = 10.0f;
+    private static final int TICK_TIME = 20;
+    private static final int CHEWING_TIME = 120;
+
+    int timerTwo = 0;
+    boolean hasTarget = false;
+
+    int chewingTimer = 0;
+    boolean isChewing = true;
 
     // private static final int blinkDelay = 300;
     // private static final int blinkTime = 25;
@@ -78,12 +87,12 @@ public class Manticore extends TamableAnimal
 
     public static AttributeSupplier.Builder createMobAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 60.0)
-                .add(Attributes.ATTACK_DAMAGE, 6.0)
-                .add(Attributes.ATTACK_KNOCKBACK, 1.0)
-                .add(Attributes.ATTACK_SPEED, 2.4)
-                .add(Attributes.FOLLOW_RANGE, 50.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.4);
+            .add(Attributes.MAX_HEALTH, 60.0)
+            .add(Attributes.ATTACK_DAMAGE, 6.0)
+            .add(Attributes.ATTACK_KNOCKBACK, 1.0)
+            .add(Attributes.ATTACK_SPEED, 2.4)
+            .add(Attributes.FOLLOW_RANGE, 50.0)
+            .add(Attributes.MOVEMENT_SPEED, 0.4);
     }
     // #endregion
 
@@ -132,7 +141,9 @@ public class Manticore extends TamableAnimal
 
         }));
         controllers.add(new AnimationController<>(this, "bodyController", 10, event -> {
-            if (event.isMoving()) {
+            if (this.isChewing) {
+                return event.setAndContinue((RawAnimation.begin().thenLoop("animation.manticore.chew")));
+            } else if (event.isMoving()) {
                 if (this.isAggressive()) {
                     return event.setAndContinue((RawAnimation.begin().thenLoop("animation.manticore.sprint")));
                 } else {
@@ -150,7 +161,6 @@ public class Manticore extends TamableAnimal
 
     @Override
     public void aiStep() {
-
         if (!level().isClientSide) {
             if (timer <= 0) {
                 timer = getRandom().nextIntBetweenInclusive(roarDelayMin, roarDelayMax);
@@ -169,16 +179,27 @@ public class Manticore extends TamableAnimal
     @Override
     public List<ExtendedSensor<? extends Manticore>> getSensors() {
         return ObjectArrayList.of(
-                new NearbyLivingEntitySensor<Manticore>(),
-                new NearbyAdultSensor<>(),
-                new HurtBySensor<>(),
-                new NearbyItemsSensor<>());
+            new NearbyLivingEntitySensor<Manticore>(),
+            new NearbyAdultSensor<>(),
+            new HurtBySensor<>(),
+            new NearbyItemsSensor<>()
+        );
     }
     // #endregion
 
     @Override
     protected void customServerAiStep(@Nonnull ServerLevel level) {
-        tickBrain(this);
+        if (isChewing) {
+            if (chewingTimer == CHEWING_TIME) {
+                playSound(DragonoidsExpanded.MANTICORE_CHEW.get());
+            } else if (chewingTimer <= 0) {
+                isChewing = false;
+            } else {
+                chewingTimer--;
+            }
+        } else {
+            tickBrain(this);
+        }
     }
 
     // #region Brains
@@ -189,14 +210,10 @@ public class Manticore extends TamableAnimal
 
     @Override
     public BrainActivityGroup<? extends Manticore> getCoreTasks() { // These are the tasks that run all the time
-                                                                    // (usually)
         return BrainActivityGroup.coreTasks(
-
-                new LookAtTarget<Manticore>(),
-
-                new MoveToWalkTarget<>()); // Walk towards
-                                           // the current
-                                           // walk target
+            new LookAtTarget<Manticore>(),
+            new MoveToWalkTarget<>()
+        );
     }
 
     @SuppressWarnings({ "unchecked", "null" })
@@ -204,79 +221,119 @@ public class Manticore extends TamableAnimal
     public BrainActivityGroup<? extends Manticore> getIdleTasks() { // These are the tasks that run when the mob
                                                                     // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
-                new FirstApplicableBehaviour<>(
-                        new TargetOrRetaliate<>().attackablePredicate(
-                                (target) -> !(target instanceof Manticore
-                                        || (this.getOwner() != null && this.getOwner().is(target))
-                                        || (this.getOwner() != null && !(target instanceof Mob))
-                                        || (target instanceof Player && ((Player) target).isCreative()))),
-                        new SetPlayerLookTarget<>(),
-                        new FollowOwner<>().teleportToTargetAfter(32).stopFollowingWithin(12)),
-                new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<Manticore>().speedModifier(0.5f),
-                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
+            new FirstApplicableBehaviour<>(
+                new DesireItem<Manticore>()
+                    .success((entity) -> {
+                        entity.timerTwo = TICK_TIME;
+                        entity.hasTarget = true;
+                        return true;
+                    })
+                    .fail((entity) -> {
+                        entity.timerTwo = 0;
+                        entity.hasTarget = false;
+                        return false;
+                    })
+                    .hasItem((entity, item) -> {
+                        ItemStack stack = item.getItem();
+                        stack.shrink(1);
+                        item.setItem(stack);
+                        entity.timerTwo = 0;
+                        entity.hasTarget = false;
+                        entity.isChewing = true;
+                        entity.chewingTimer = CHEWING_TIME;
+                    }),
+                new TargetOrRetaliate<>()
+                    .attackablePredicate(
+                        (target) -> !(target instanceof Manticore
+                            || (this.getOwner() != null && this.getOwner().is(target))
+                            || (this.getOwner() != null && !(target instanceof Mob))
+                            || (target instanceof Player && ((Player) target).isCreative()))),
+                new SetPlayerLookTarget<>(),
+                new FollowOwner<>()
+                    .teleportToTargetAfter(32)
+                    .stopFollowingWithin(12)
+            ),
+            new OneRandomBehaviour<>(
+                new SetRandomWalkTarget<Manticore>()
+                    .speedModifier(0.5f),
+                new Idle<>()
+                    .runFor(entity -> entity.getRandom().nextInt(30, 60))
+            )
+        );
     }
 
     @SuppressWarnings({ "unchecked", "null" })
     @Override
     public BrainActivityGroup<? extends Manticore> getFightTasks() { // These are the tasks that handle fighting
-        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), // Cancel fighting if the
-                                                                             // target is
-                // no
-                // longer valid
-                new SetWalkTargetToAttackTarget<>(),
-                new FirstApplicableBehaviour<>(
-                        new LeapAtTarget<>(0)
-                                .verticalJumpStrength(((mob, entity) -> {
-                                    float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
-                                    return 0.5f + distanceToEntity / 6f;
-                                }))
-                                .leapRange((mob, entity) -> 25f)
-                                .jumpStrength(((mob, entity) -> {
-                                    return (float) entity.getAttribute(Attributes.JUMP_STRENGTH).getBaseValue();
-                                }))
-                                .whenStarting(entity -> {
-                                    setAggressive(true);
-                                    // triggerAnim("defaultController", "jump"); (No SFX)
-                                })
-                                .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
-                                    return (BrainUtil.getTargetOfEntity(entity) != null
-                                            && BrainUtil.getTargetOfEntity(entity).distanceTo(entity) > 7);
-                                }).cooldownFor((entity) -> 120), // Set the walk target to the attack target
-                        new AnimatableMeleeAttack<>(7).whenStarting(entity -> {
-                            setAggressive(true);
-                            int attackOption = this.getRandom().nextInt(0, 3);
-                            switch (attackOption) {
-                                case 0:
-                                    triggerAnim("attackController", "bite");
-                                    DragonoidsExpanded.LOGGER.debug("bite");
-                                    break;
-                                case 1:
-                                    triggerAnim("attackController", "leftStrike");
-                                    DragonoidsExpanded.LOGGER.debug("leftStrike");
-                                    break;
-                                case 2:
-                                    triggerAnim("attackController", "rightStrike");
-                                    DragonoidsExpanded.LOGGER.debug("rightStrike");
-                                    break;
-                            }
-
-                        }).whenStopping(entity -> setAggressive(false)).cooldownFor(entity -> 10),
-                        new ConditionlessAttack<>(7).whenStarting(entity -> {
-                            setAggressive(true);
-                            triggerAnim("attackController", "leftStrike");
-                            LivingEntity target = BrainUtil.getTargetOfEntity(entity);
-                            if (entity.level() instanceof ServerLevel serverLevel) {
-                                target.hurtServer(serverLevel, damageSources().mobAttack(entity), STING_DAMAGE);
-                                target.addEffect(new MobEffectInstance(DragonoidsExpanded.MORTIS, 60, target.hasEffect(DragonoidsExpanded.MORTIS) ? Math.clamp(target.getEffect(DragonoidsExpanded.MORTIS).getAmplifier() + 1, 1, 5) : 1));
-                            }
-                        })
-                        .whenStopping(entity -> setAggressive(false))
-                        .cooldownFor(entity -> 80))
-                        .startCondition((entity) -> {
-                            LivingEntity target = BrainUtil.getTargetOfEntity(entity);
-                            return target != null && entity.distanceTo(target) < 4;
-                        }));
+        return BrainActivityGroup.fightTasks(
+            new InvalidateAttackTarget<Manticore>()
+                .invalidateIf((manticore, target) -> {
+                    if (manticore.timerTwo <= 0) {
+                        manticore.hasTarget = false;
+                    } else {
+                        manticore.timerTwo--;
+                    }
+                    return manticore.hasTarget;
+                }),
+            new SetWalkTargetToAttackTarget<>(),
+            new FirstApplicableBehaviour<>(
+                new LeapAtTarget<>(0)
+                    .verticalJumpStrength(((mob, entity) -> {
+                        float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
+                        return 0.5f + distanceToEntity / 6f;
+                    }))
+                    .leapRange((mob, entity) -> 25f)
+                    .jumpStrength(((mob, entity) -> {
+                        return (float) entity.getAttribute(Attributes.JUMP_STRENGTH).getBaseValue();
+                    }))
+                    .whenStarting(entity -> {
+                        setAggressive(true);
+                        // triggerAnim("defaultController", "jump"); (No SFX)
+                    })
+                    .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
+                        return (BrainUtil.getTargetOfEntity(entity) != null
+                                && BrainUtil.getTargetOfEntity(entity).distanceTo(entity) > 7);
+                    })
+                    .cooldownFor((entity) -> 120), // Set the walk target to the attack target
+                new AnimatableMeleeAttack<>(7)
+                    .whenStarting(entity -> {
+                        setAggressive(true);
+                        int attackOption = this.getRandom().nextInt(0, 3);
+                        switch (attackOption) {
+                            case 0:
+                                triggerAnim("attackController", "bite");
+                                DragonoidsExpanded.LOGGER.debug("bite");
+                                break;
+                            case 1:
+                                triggerAnim("attackController", "leftStrike");
+                                DragonoidsExpanded.LOGGER.debug("leftStrike");
+                                break;
+                            case 2:
+                                triggerAnim("attackController", "rightStrike");
+                                DragonoidsExpanded.LOGGER.debug("rightStrike");
+                                break;
+                        }
+                    })
+                    .whenStopping(entity -> setAggressive(false))
+                    .cooldownFor(entity -> 10),
+                new ConditionlessAttack<>(7)
+                    .whenStarting(entity -> {
+                        setAggressive(true);
+                        triggerAnim("attackController", "leftStrike");
+                        LivingEntity target = BrainUtil.getTargetOfEntity(entity);
+                        if (entity.level() instanceof ServerLevel serverLevel) {
+                            target.hurtServer(serverLevel, damageSources().mobAttack(entity), STING_DAMAGE);
+                            target.addEffect(new MobEffectInstance(DragonoidsExpanded.MORTIS, 60, target.hasEffect(DragonoidsExpanded.MORTIS) ? Math.clamp(target.getEffect(DragonoidsExpanded.MORTIS).getAmplifier() + 1, 1, 5) : 1));
+                        }
+                    })
+                    .whenStopping(entity -> setAggressive(false))
+                    .cooldownFor(entity -> 80)
+                    .startCondition((entity) -> {
+                        LivingEntity target = BrainUtil.getTargetOfEntity(entity);
+                        return target != null && entity.distanceTo(target) < 4;
+                    })
+                )
+            );
     }
     // #endregion
 
