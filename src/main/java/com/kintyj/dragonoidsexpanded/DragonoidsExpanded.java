@@ -13,6 +13,7 @@ import com.kintyj.dragonoidsexpanded.entity.Manticore;
 import com.kintyj.dragonoidsexpanded.entity.Wyvern;
 import com.kintyj.dragonoidsexpanded.entity.wyvern.WyvernType;
 import com.kintyj.dragonoidsexpanded.item.DrakelordsMace;
+import com.kintyj.dragonoidsexpanded.item.ManticorePaw;
 import com.kintyj.dragonoidsexpanded.item.Whip;
 import com.kintyj.dragonoidsexpanded.world.structure.WyvernNest;
 import com.mojang.logging.LogUtils;
@@ -290,6 +291,7 @@ public class DragonoidsExpanded {
 	public static final DeferredItem<Item> LEATHER_WHIP = ITEMS.registerItem(
 			"leather_whip", (prop) -> new Whip(ToolMaterial.WOOD,
 			prop, 1.0f, 1.0f));
+	public static final DeferredItem<Item> MANTICORE_PAW = ITEMS.registerItem("manticore_paw", (prop) -> new ManticorePaw(prop));
 	// #endregion
 	// Creates a creative tab with the id "examplemod:example_tab" for the example
 	// item, that is placed after the combat tab
@@ -311,6 +313,8 @@ public class DragonoidsExpanded {
 						output.accept(FRILLED_DRAKE_EGG_TURQUOISE.get());
 						output.accept(FRILLED_DRAKE_EGG_GREEN.get());
 						output.accept(DRAKE_LORDS_MACE.get());
+						output.accept(LEATHER_WHIP.get());
+						output.accept(MANTICORE_PAW.get());
 					}).build());
 
 	// The constructor for the mod class is the first code that is run when your mod

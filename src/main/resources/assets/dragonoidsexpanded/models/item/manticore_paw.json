@@ -70,5 +70,8 @@
         0.68
       ]
     }
+  },
+  "textures": {
+    "particle": "dragonoidsexpanded:item/manticore_paw"
   }
 }
