@@ -28,3 +28,5 @@ repo
 .vscode/
 .vscode/launch.json
 .vscode/launch.json
+
+tools/slimy/config.json

@@ -300,6 +300,36 @@ public class DragonoidsExpanded {
 	public static final DeferredItem<BlockItem> SLIMY_CHISELED_STONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
 			"slimy_chiseled_stone_bricks",
 			SLIMY_CHISELED_STONE_BRICKS);
+	public static final DeferredBlock<Block> SLIMY_CALCITE = BLOCKS.registerBlock(
+				"slimy_calcite",
+				SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
+	public static final DeferredItem<BlockItem> SLIMY_CALCITE_ITEM = ITEMS.registerSimpleBlockItem(
+				"slimy_calcite",
+				SLIMY_CALCITE);
+	public static final DeferredBlock<Block> SLIMY_DRIPSTONE_BLOCK = BLOCKS.registerBlock(
+			"slimy_dripstone_block",
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
+	public static final DeferredItem<BlockItem> SLIMY_DRIPSTONE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
+			"slimy_dripstone_block",
+			SLIMY_DRIPSTONE_BLOCK);
+	public static final DeferredBlock<Block> SLIMY_RESIN_BLOCK = BLOCKS.registerBlock(
+				"slimy_resin_block",
+				SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
+	public static final DeferredItem<BlockItem> SLIMY_RESIN_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
+				"slimy_resin_block",
+				SLIMY_RESIN_BLOCK);
+	public static final DeferredBlock<Block> SLIMY_RESIN_BRICKS = BLOCKS.registerBlock(
+			"slimy_resin_bricks",
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
+	public static final DeferredItem<BlockItem> SLIMY_RESIN_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
+			"slimy_resin_bricks",
+			SLIMY_RESIN_BRICKS);
+	public static final DeferredBlock<Block> SLIMY_CHISELED_RESIN_BRICKS = BLOCKS.registerBlock(
+			"slimy_chiseled_resin_bricks",
+			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
+	public static final DeferredItem<BlockItem> SLIMY_CHISELED_RESIN_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(
+			"slimy_chiseled_resin_bricks",
+			SLIMY_CHISELED_RESIN_BRICKS);
 	// #endregion
 	// #endregion
 
@@ -454,6 +484,11 @@ public class DragonoidsExpanded {
 			event.accept(SLIMY_CHISELED_STONE_BRICKS_ITEM);
 			event.accept(SLIMY_COBBLESTONE_ITEM);
 			event.accept(SLIMY_MOSSY_COBBLESTONE_ITEM);
+			event.accept(SLIMY_CALCITE_ITEM);
+			event.accept(SLIMY_DRIPSTONE_BLOCK_ITEM);
+			event.accept(SLIMY_RESIN_BLOCK_ITEM);
+			event.accept(SLIMY_RESIN_BRICKS_ITEM);
+			event.accept(SLIMY_CHISELED_RESIN_BRICKS_ITEM);
 		} else if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
 			event.accept(FRILLED_DRAKE_SPAWN_EGG);
 			event.accept(MANTICORE_SPAWN_EGG);

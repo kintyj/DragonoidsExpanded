@@ -15,38 +15,33 @@
     "item.dragonoidsexpanded.wyvern_spawn_egg": "Wyvern Spawn Egg",
     "item.dragonoidsexpanded.drake_lords_mace": "Drake Lords Mace",
     "item.dragonoidsexpanded.manticore_paw": "Manticore Paw",
+    
     "item.dragonoidsexpanded.example_block": "Pringle Block",
     "block.dragonoidsexpanded.example_block": "Pringle Block",
-    
-    
     "item.dragonoidsexpanded.necrock": "Necrock",
     "block.dragonoidsexpanded.necrock": "Necrock",
     "item.dragonoidsexpanded.necrock_slab": "Necrock Slab",
     "block.dragonoidsexpanded.necrock_slab": "Necrock Slab",
     "item.dragonoidsexpanded.necrock_stairs": "Necrock Stairs",
     "block.dragonoidsexpanded.necrock_stairs": "Necrock Stairs",
-    
     "item.dragonoidsexpanded.polished_necrock": "Polished Necrock",
     "block.dragonoidsexpanded.polished_necrock": "Polished Necrock",
     "item.dragonoidsexpanded.polished_necrock_slab": "Polished Necrock Slab",
     "block.dragonoidsexpanded.polished_necrock_slab": "Polished Necrock Slab",
     "item.dragonoidsexpanded.polished_necrock_stairs": "Polished Necrock Stairs",
     "block.dragonoidsexpanded.polished_necrock_stairs": "Polished Necrock Stairs",
-    
     "item.dragonoidsexpanded.chiseled_necrock_bricks": "Chiseled Necrock Bricks",
     "block.dragonoidsexpanded.chiseled_necrock_bricks": "Chiseled Necrock Bricks",
     "item.dragonoidsexpanded.chiseled_necrock_bricks_slab": "Chiseled Necrock Bricks Slab",
     "block.dragonoidsexpanded.chiseled_necrock_bricks_slab": "Chiseled Necrock Bricks Slab",
     "item.dragonoidsexpanded.chiseled_necrock_bricks_stairs": "Chiseled Necrock Bricks Stairs",
     "block.dragonoidsexpanded.chiseled_necrock_bricks_stairs": "Chiseled Necrock Bricks Stairs",
-    
     "item.dragonoidsexpanded.necrock_bricks": "Necrock Bricks",
     "block.dragonoidsexpanded.necrock_bricks": "Necrock Bricks",
     "item.dragonoidsexpanded.necrock_bricks_slab": "Necrock Bricks Slab",
     "block.dragonoidsexpanded.necrock_bricks_slab": "Necrock Bricks Slab",
     "item.dragonoidsexpanded.necrock_bricks_stairs": "Necrock Bricks Stairs",
     "block.dragonoidsexpanded.necrock_bricks_stairs": "Necrock Bricks Stairs",
-
     "item.dragonoidsexpanded.slimy_stone": "Slimy Stone",
     "block.dragonoidsexpanded.slimy_stone": "Slimy Stone",
     "item.dragonoidsexpanded.slimy_smooth_stone": "Slimy Smooth Stone",
@@ -75,6 +70,7 @@
     "block.dragonoidsexpanded.slimy_mossy_cobblestone": "Slimy Mossy Cobblestone",
     "item.dragonoidsexpanded.slimy_cobblestone": "Slimy Cobblestone",
     "block.dragonoidsexpanded.slimy_cobblestone": "Slimy Cobblestone",
+
     "entity.dragonoidsexpanded.frilled_drake": "Frilled Drake",
     "entity.dragonoidsexpanded.manticore": "Manticore",
     "entity.dragonoidsexpanded.frilled_drake_hatchling": "Frilled Drake Hatchling",
@@ -82,8 +78,12 @@
     "entity.dragonoidsexpanded.frilled_drake_teen": "Frilled Drake Teen",
     "entity.dragonoidsexpanded.frilled_drake_adult": "Frilled Drake Adult",
     "entity.dragonoidsexpanded.frilled_drake_elder": "Frilled Drake Elder",
+
     "itemGroup.dragonoidsexpanded.dragonoids_expanded_items_tab": "Dragonoids Expanded Items",
+
     "enchantment.dragonoidsexpanded.dragon_slayer": "Dragon Slayer",
+    "enchantment.dragonoidsexpanded.slime_walker": "Slime Walker",
+
     "subtitles.dragonoidsexpanded.entity.frilled_drake.yawn": "Frilled Drake Yawn",
     "subtitles.dragonoidsexpanded.entity.frilled_drake.roar": "Frilled Drake Roar",
     "subtitles.dragonoidsexpanded.entity.frilled_drake.alert": "Frilled Drake Alert",
