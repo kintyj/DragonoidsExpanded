@@ -140,9 +140,7 @@ public class Manticore extends TamableAnimal
 
         }));
         controllers.add(new AnimationController<>(this, "bodyController", 10, event -> {
-            if (this.isChewing) {
-                return event.setAndContinue((RawAnimation.begin().thenLoop("animation.manticore.chew")));
-            } else if (event.isMoving()) {
+            if (event.isMoving()) {
                 if (this.isAggressive()) {
                     return event.setAndContinue((RawAnimation.begin().thenLoop("animation.manticore.sprint")));
                 } else {
