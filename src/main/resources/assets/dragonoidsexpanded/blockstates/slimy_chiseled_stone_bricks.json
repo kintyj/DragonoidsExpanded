@@ -1,16 +1,16 @@
 {
     "variants": {
         "slimy_state=0":{
-            "model": "dragonoidsexpanded:block/slimy_chiseled_stone_bricks_1"
+            "model": "dragonoidsexpanded:block/slimy/slimy_chiseled_stone_bricks_1"
         },
         "slimy_state=1":{
-            "model": "dragonoidsexpanded:block/slimy_chiseled_stone_bricks_2"
+            "model": "dragonoidsexpanded:block/slimy/slimy_chiseled_stone_bricks_2"
         },
         "slimy_state=2":{
-            "model": "dragonoidsexpanded:block/slimy_chiseled_stone_bricks_3"
+            "model": "dragonoidsexpanded:block/slimy/slimy_chiseled_stone_bricks_3"
         },
         "slimy_state=3":{
-            "model": "dragonoidsexpanded:block/slimy_chiseled_stone_bricks_4"
+            "model": "dragonoidsexpanded:block/slimy/slimy_chiseled_stone_bricks_4"
         }
     }
 }
