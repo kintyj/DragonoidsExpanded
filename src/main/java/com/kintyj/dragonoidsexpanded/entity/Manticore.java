@@ -71,7 +71,7 @@ public class Manticore extends TamableAnimal
     boolean hasTarget = false;
 
     int chewingTimer = 0;
-    boolean isChewing = true;
+    boolean isChewing = false;
 
     // private static final int blinkDelay = 300;
     // private static final int blinkTime = 25;
@@ -110,7 +110,6 @@ public class Manticore extends TamableAnimal
     @Override
     @Nullable
     public AgeableMob getBreedOffspring(@Nonnull ServerLevel level, @Nonnull AgeableMob otherParent) {
-        // TODO Auto-generated method stub
         return null;
     }
 
