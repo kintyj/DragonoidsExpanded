@@ -1,0 +1,13 @@
+{
+    "variants": {
+        "type=bottom": {
+            "model": "dragonoidsexpanded:block/necrock/chiseled_necrock_bricks_slab"
+        },
+        "type=double": {
+            "model": "dragonoidsexpanded:block/necrock/chiseled_necrock_bricks"
+        },
+        "type=top": {
+            "model": "dragonoidsexpanded:block/necrock/chiseled_necrock_bricks_slab_top"
+        }
+    }
+}

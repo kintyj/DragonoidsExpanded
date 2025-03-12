@@ -1,0 +1,13 @@
+{
+    "variants": {
+        "type=bottom": {
+            "model": "dragonoidsexpanded:block/necrock/necrock_slab"
+        },
+        "type=double": {
+            "model": "dragonoidsexpanded:block/necrock/necrock"
+        },
+        "type=top": {
+            "model": "dragonoidsexpanded:block/necrock/necrock_slab_top"
+        }
+    }
+}

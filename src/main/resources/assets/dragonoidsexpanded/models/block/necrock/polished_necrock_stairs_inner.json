@@ -1,0 +1,8 @@
+{
+    "parent": "block/inner_stairs",
+    "textures": {
+        "bottom": "dragonoidsexpanded:block/polished_necrock",
+        "side": "dragonoidsexpanded:block/polished_necrock",
+        "top": "dragonoidsexpanded:block/polished_necrock"
+    }
+}

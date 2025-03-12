@@ -37,6 +37,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.material.MapColor;
@@ -169,6 +171,62 @@ public class DragonoidsExpanded {
 			BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
 	public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block",
 			EXAMPLE_BLOCK);
+
+	// #region Necrock
+	public static final DeferredBlock<Block> NECROCK = BLOCKS.registerBlock("necrock",
+			Block::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE));
+	public static final DeferredItem<BlockItem> NECROCK_ITEM = ITEMS.registerSimpleBlockItem("necrock",
+			NECROCK);
+	public static final DeferredBlock<Block> NECROCK_SLAB = BLOCKS.registerBlock("necrock_slab",
+			SlabBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE));
+	public static final DeferredItem<BlockItem> NECROCK_SLAB_ITEM = ITEMS.registerSimpleBlockItem("necrock_slab",
+			NECROCK_SLAB);
+	public static final DeferredBlock<Block> NECROCK_STAIRS = BLOCKS.registerBlock("necrock_stairs",
+			(props) -> new StairBlock(NECROCK.value().defaultBlockState(), props.mapColor(MapColor.COLOR_PURPLE)));
+	public static final DeferredItem<BlockItem> NECROCK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem("necrock_stairs",
+			NECROCK_STAIRS);
+
+	public static final DeferredBlock<Block> NECROCK_BRICKS = BLOCKS.registerBlock("necrock_bricks",
+			Block::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE));
+	public static final DeferredItem<BlockItem> NECROCK_BRICKS_ITEM = ITEMS.registerSimpleBlockItem("necrock_bricks",
+			NECROCK_BRICKS);
+	public static final DeferredBlock<Block> NECROCK_BRICKS_SLAB = BLOCKS.registerBlock("necrock_bricks_slab",
+			SlabBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE));
+	public static final DeferredItem<BlockItem> NECROCK_BRICKS_SLAB_ITEM = ITEMS.registerSimpleBlockItem("necrock_bricks_slab",
+			NECROCK_BRICKS_SLAB);
+	public static final DeferredBlock<Block> NECROCK_BRICKS_STAIRS = BLOCKS.registerBlock("necrock_bricks_stairs",
+			(props) -> new StairBlock(NECROCK_BRICKS.value().defaultBlockState(), props.mapColor(MapColor.COLOR_PURPLE)));
+	public static final DeferredItem<BlockItem> NECROCK_BRICKS_STAIRS_ITEM = ITEMS.registerSimpleBlockItem("necrock_bricks_stairs",
+			NECROCK_BRICKS_STAIRS);
+	
+	public static final DeferredBlock<Block> POLISHED_NECROCK = BLOCKS.registerBlock("polished_necrock",
+			Block::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE));
+	public static final DeferredItem<BlockItem> POLISHED_NECROCK_ITEM = ITEMS.registerSimpleBlockItem("polished_necrock",
+			POLISHED_NECROCK);
+	public static final DeferredBlock<Block> POLISHED_NECROCK_SLAB = BLOCKS.registerBlock("polished_necrock_slab",
+			SlabBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE));
+	public static final DeferredItem<BlockItem> POLISHED_NECROCK_SLAB_ITEM = ITEMS.registerSimpleBlockItem("polished_necrock_slab",
+			POLISHED_NECROCK_SLAB);
+	public static final DeferredBlock<Block> POLISHED_NECROCK_STAIRS = BLOCKS.registerBlock("polished_necrock_stairs",
+			(props) -> new StairBlock(POLISHED_NECROCK.value().defaultBlockState(), props.mapColor(MapColor.COLOR_PURPLE)));
+	public static final DeferredItem<BlockItem> POLISHED_NECROCK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem("polished_necrock_stairs",
+			POLISHED_NECROCK_STAIRS);
+	
+	public static final DeferredBlock<Block> CHISELED_NECROCK_BRICKS = BLOCKS.registerBlock("chiseled_necrock_bricks",
+			Block::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE));
+	public static final DeferredItem<BlockItem> CHISELED_NECROCK_BRICKS_ITEM = ITEMS.registerSimpleBlockItem("chiseled_necrock_bricks",
+			CHISELED_NECROCK_BRICKS);
+	public static final DeferredBlock<Block> CHISELED_NECROCK_BRICKS_SLAB = BLOCKS.registerBlock("chiseled_necrock_bricks_slab",
+			SlabBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE));
+	public static final DeferredItem<BlockItem> CHISELED_NECROCK_BRICKS_SLAB_ITEM = ITEMS.registerSimpleBlockItem("chiseled_necrock_bricks_slab",
+			CHISELED_NECROCK_BRICKS_SLAB);
+	public static final DeferredBlock<Block> CHISELED_NECROCK_BRICKS_STAIRS = BLOCKS.registerBlock("chiseled_necrock_bricks_stairs",
+			(props) -> new StairBlock(CHISELED_NECROCK_BRICKS.value().defaultBlockState(), props.mapColor(MapColor.COLOR_PURPLE)));
+	public static final DeferredItem<BlockItem> CHISELED_NECROCK_BRICKS_STAIRS_ITEM = ITEMS.registerSimpleBlockItem("chiseled_necrock_bricks_stairs",
+			CHISELED_NECROCK_BRICKS_STAIRS);
+	// #endregion
+
+	// #region Slimy
 	public static final DeferredBlock<Block> SLIMY_COBBLESTONE = BLOCKS.registerBlock("slimy_cobblestone",
 			SlimyBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).friction(0.9F));
 	public static final DeferredItem<BlockItem> SLIMY_COBBLESTONE_ITEM = ITEMS.registerSimpleBlockItem(
@@ -243,6 +301,7 @@ public class DragonoidsExpanded {
 			"slimy_chiseled_stone_bricks",
 			SLIMY_CHISELED_STONE_BRICKS);
 	// #endregion
+	// #endregion
 
 	// #region Items
 	private static ResourceKey<Item> itemPrefix(String path) {
@@ -315,6 +374,19 @@ public class DragonoidsExpanded {
 						output.accept(DRAKE_LORDS_MACE.get());
 						output.accept(LEATHER_WHIP.get());
 						output.accept(MANTICORE_PAW.get());
+
+						output.accept(NECROCK_ITEM.get());
+						output.accept(NECROCK_STAIRS_ITEM.get());
+						output.accept(NECROCK_SLAB_ITEM.get());
+						output.accept(NECROCK_BRICKS_ITEM.get());
+						output.accept(NECROCK_BRICKS_STAIRS_ITEM.get());
+						output.accept(NECROCK_BRICKS_SLAB_ITEM.get());
+						output.accept(CHISELED_NECROCK_BRICKS_ITEM.get());
+						output.accept(CHISELED_NECROCK_BRICKS_STAIRS_ITEM.get());
+						output.accept(CHISELED_NECROCK_BRICKS_SLAB_ITEM.get());
+						output.accept(POLISHED_NECROCK_ITEM.get());
+						output.accept(POLISHED_NECROCK_STAIRS_ITEM.get());
+						output.accept(POLISHED_NECROCK_SLAB_ITEM.get());
 					}).build());
 
 	// The constructor for the mod class is the first code that is run when your mod

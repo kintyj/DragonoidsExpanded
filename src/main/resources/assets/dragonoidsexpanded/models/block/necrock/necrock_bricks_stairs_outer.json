@@ -1,0 +1,8 @@
+{
+    "parent": "block/outer_stairs",
+    "textures": {
+        "bottom": "dragonoidsexpanded:block/necrock_bricks",
+        "side": "dragonoidsexpanded:block/necrock_bricks",
+        "top": "dragonoidsexpanded:block/necrock_bricks"
+    }
+}

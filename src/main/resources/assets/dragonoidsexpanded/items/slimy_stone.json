@@ -1,6 +1,6 @@
 {
     "model": {
         "type": "minecraft:model",
-        "model": "dragonoidsexpanded:item/slimy_stone"
+        "model": "dragonoidsexpanded:item/slimy/slimy_stone"
     }
 }

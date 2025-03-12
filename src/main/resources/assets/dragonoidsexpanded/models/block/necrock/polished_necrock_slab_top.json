@@ -1,0 +1,8 @@
+{
+    "parent": "block/slab_top",
+    "textures": {
+        "bottom": "dragonoidsexpanded:block/polished_necrock",
+        "side": "dragonoidsexpanded:block/polished_necrock",
+        "top": "dragonoidsexpanded:block/polished_necrock"
+    }
+}
