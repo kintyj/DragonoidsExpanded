@@ -49,7 +49,7 @@ public class ManticorePaw extends Item implements GeoItem {
     
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "manticore_paw", 20, state -> PlayState.STOP)
+        controllers.add(new AnimationController<>(this, "manticore_paw", 0, state -> PlayState.STOP)
 				.triggerableAnim("use", USE_ANIM));
     }
 
