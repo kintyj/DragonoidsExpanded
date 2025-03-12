@@ -151,7 +151,7 @@ public class Manticore extends TamableAnimal
             } else {
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.manticore.idle"));
             }
-        }));
+        }).triggerableAnim("chew", RawAnimation.begin().thenPlayXTimes("animation.manticore.chew", 4)));
     }
     // #endregion
 
@@ -160,6 +160,20 @@ public class Manticore extends TamableAnimal
 
     @Override
     public void aiStep() {
+        if (isChewing) {
+            if (chewingTimer == CHEWING_TIME) {
+                if (!level().isClientSide) {
+                    triggerAnim("bodyController", "chew");
+                    playSound(DragonoidsExpanded.MANTICORE_CHEW.get());
+                }
+                chewingTimer--;
+            } else if (chewingTimer <= 0) {
+                isChewing = false;
+            } else {
+                chewingTimer--;
+            }
+        }
+
         if (!level().isClientSide) {
             if (timer <= 0) {
                 timer = getRandom().nextIntBetweenInclusive(roarDelayMin, roarDelayMax);
@@ -188,15 +202,7 @@ public class Manticore extends TamableAnimal
 
     @Override
     protected void customServerAiStep(@Nonnull ServerLevel level) {
-        if (isChewing) {
-            if (chewingTimer == CHEWING_TIME) {
-                playSound(DragonoidsExpanded.MANTICORE_CHEW.get());
-            } else if (chewingTimer <= 0) {
-                isChewing = false;
-            } else {
-                chewingTimer--;
-            }
-        } else {
+        if (!isChewing) {
             tickBrain(this);
         }
     }
