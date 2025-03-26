@@ -598,24 +598,19 @@ public class FrilledDrake extends TamableAnimal
             new MoveToWalkTarget<>()); 
     }
 
-    private Predicate<LivingEntity> canTarget = (target) -> getGrowthScore() >= DrakeAge.DRAKELING.getAge();
-
-    @SuppressWarnings("null")
-    private Predicate<LivingEntity> isValidTarget = (target) -> !(target instanceof FrilledDrake 
-        || target instanceof Creeper
-        || target instanceof Bat
-        || target instanceof GlowSquid
-        || (this.getOwner() != null && this.getOwner().is(target))
-        || (this.getOwner() != null && !(target instanceof Mob))
-        || (target instanceof Player && ((Player) target).isCreative()));
-
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({"unchecked", "null"})
     @Override
     public BrainActivityGroup<? extends FrilledDrake> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
             new FirstApplicableBehaviour<>(
                 new Alert<FrilledDrake>()
-                    .alert(isValidTarget)
+                    .alert((target) -> !(target instanceof FrilledDrake 
+                        || target instanceof Creeper
+                        || target instanceof Bat
+                        || target instanceof GlowSquid
+                        || (this.getOwner() != null && this.getOwner().is(target))
+                        || (this.getOwner() != null && !(target instanceof Mob))
+                        || (target instanceof Player && ((Player) target).isCreative())))
                     .canInform((target) -> target instanceof FrilledDrake frilledDrake
                         && frilledDrake.getGrowthScore() >= DrakeAge.DRAKELING.getAge())
                     .whenStarting((e) -> {
@@ -625,8 +620,23 @@ public class FrilledDrake extends TamableAnimal
                     .startCondition((e) -> e.getGrowthScore() < DrakeAge.DRAKELING.getAge()),
                 new SetAttackTarget<FrilledDrake>()
                     .targetFinder((e) -> e.tempTarget)
-                    .startCondition(e -> e.tempTarget != null && isValidTarget.and(canTarget).test(e.tempTarget)),
-                new TargetOrRetaliate<>().attackablePredicate(isValidTarget.and(canTarget)),
+                    .startCondition(e -> e.tempTarget != null 
+                        && !(e.tempTarget instanceof FrilledDrake 
+                            || e.tempTarget instanceof Creeper
+                            || e.tempTarget instanceof Bat
+                            || e.tempTarget instanceof GlowSquid
+                            || (this.getOwner() != null && this.getOwner().is(e.tempTarget))
+                            || (this.getOwner() != null && !(e.tempTarget instanceof Mob))
+                            || (e.tempTarget instanceof Player && ((Player) e.tempTarget).isCreative())) 
+                        && getGrowthScore() >= DrakeAge.DRAKELING.getAge()),
+                new TargetOrRetaliate<>().attackablePredicate((target) -> !(target instanceof FrilledDrake 
+                        || target instanceof Creeper
+                        || target instanceof Bat
+                        || target instanceof GlowSquid
+                        || (this.getOwner() != null && this.getOwner().is(target))
+                        || (this.getOwner() != null && !(target instanceof Mob))
+                        || (target instanceof Player && ((Player) target).isCreative())) 
+                    && getGrowthScore() >= DrakeAge.DRAKELING.getAge()),
                 new SetPlayerLookTarget<>(),
                 new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
             new OneRandomBehaviour<>(
