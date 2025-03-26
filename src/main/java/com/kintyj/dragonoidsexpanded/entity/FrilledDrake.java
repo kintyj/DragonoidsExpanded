@@ -1,7 +1,6 @@
 package com.kintyj.dragonoidsexpanded.entity;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -844,6 +843,7 @@ public class FrilledDrake extends TamableAnimal
     public void onAlert(LivingEntity entity, LivingEntity target) {
         if (entity instanceof FrilledDrake frilledDrake && frilledDrake.getColor() == this.getColor()) {
             tempTarget = target;
+            DragonoidsExpanded.LOGGER.info("I have " + entity.getName().getString() + ", " + target.getName().getString());
         }
     }
 }
