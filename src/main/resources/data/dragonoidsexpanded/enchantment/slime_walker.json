@@ -9,9 +9,16 @@
         "effect": {
           "type": "minecraft:attribute",
           "amount": {
-            "type": "minecraft:linear",
-            "base": 0.0405,
-            "per_level_above_first": 0.0505
+            "type": "minecraft:lookup",
+            "values": [
+              0.04,
+              0.08,
+              0.16,
+              0.32,
+              0.64,
+              1.28
+            ],
+            "fallback": 1.28
           },
           "attribute": "minecraft:movement_speed",
           "id": "dragonoidsexpanded:enchantment.slime_walker",
@@ -107,7 +114,11 @@
       {
         "effect": {
           "type": "minecraft:attribute",
-          "amount": 1.0,
+          "amount": {
+            "type": "minecraft:linear",
+            "base": 1.4,
+            "per_level_above_first": 0.1
+          },
           "attribute": "minecraft:movement_efficiency",
           "id": "dragonoidsexpanded:enchantment.slime_walker",
           "operation": "add_value"
@@ -168,7 +179,7 @@
             "movement_scale": -0.2
           },
           "particle": {
-            "type": "minecraft:soul"
+            "type": "minecraft:item_slime"
           },
           "speed": 1.0,
           "vertical_position": {
@@ -209,7 +220,7 @@
             "max_exclusive": 1.0,
             "min_inclusive": 0.6
           },
-          "sound": "minecraft:particle.soul_escape",
+          "sound": "minecraft:entity.slime.squish",
           "volume": 0.6
         },
         "requirements": {
@@ -249,10 +260,10 @@
     "base": 25,
     "per_level_above_first": 10
   },
-  "max_level": 3,
+  "max_level": 6,
   "min_cost": {
     "base": 10,
-    "per_level_above_first": 10
+    "per_level_above_first": 5
   },
   "slots": ["feet"],
   "supported_items": "#minecraft:enchantable/foot_armor",
