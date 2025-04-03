@@ -6,6 +6,10 @@
         {
             "type": "patchouli:text",
             "text": "The Frilled Drake is best known for it's utility as a form of transportation in mountainous regions, thanks to it's powerful jump."
+        },
+        {
+            "type": "patchouli:entity",
+            "entity": "dragonoidsexpanded:frilled_drake"
         }
     ]
 }
