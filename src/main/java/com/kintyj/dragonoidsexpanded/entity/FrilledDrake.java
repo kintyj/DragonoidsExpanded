@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.kintyj.dragonoidsexpanded.DragonoidsExpanded;
+import com.kintyj.dragonoidsexpanded.brain.behaviour.Alert;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -60,6 +61,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
 import net.tslat.smartbrainlib.api.core.navigation.SmoothAmphibiousPathNavigation;
@@ -78,14 +80,17 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.animation.RawAnimation;
 
 public class FrilledDrake extends TamableAnimal
-        implements Enemy, GeoEntity, PlayerRideableJumping, SmartBrainOwner<FrilledDrake> {
+        implements Enemy, GeoEntity, PlayerRideableJumping, SmartBrainOwner<FrilledDrake>, IAlertable {
     private static final int yawnDelayMin = 200;
     private static final int yawnDelayMax = 1200;
     private static final int blinkDelay = 300;
     private static final int blinkTime = 30;
 
     public int blinkTimer;
-    public boolean blinking = true;
+    public boolean blinking = false;
+
+    @Nullable
+    public LivingEntity tempTarget = null;
 
     public boolean isBlinking() {
         return blinking;
@@ -214,11 +219,11 @@ public class FrilledDrake extends TamableAnimal
 
     private boolean isIncubating() {
         return (getGrowthScore() < DrakeAge.HATCHLING.getAge()
-                && level().getBlockState(this.blockPosition().below()).is(Blocks.SLIME_BLOCK)
-                && level().getBlockState(this.blockPosition().north()).is(Blocks.SLIME_BLOCK)
-                && level().getBlockState(this.blockPosition().south()).is(Blocks.SLIME_BLOCK)
-                && level().getBlockState(this.blockPosition().west()).is(Blocks.SLIME_BLOCK)
-                && level().getBlockState(this.blockPosition().east()).is(Blocks.SLIME_BLOCK));
+            && level().getBlockState(this.blockPosition().below()).is(Blocks.SLIME_BLOCK)
+            && level().getBlockState(this.blockPosition().north()).is(Blocks.SLIME_BLOCK)
+            && level().getBlockState(this.blockPosition().south()).is(Blocks.SLIME_BLOCK)
+            && level().getBlockState(this.blockPosition().west()).is(Blocks.SLIME_BLOCK)
+            && level().getBlockState(this.blockPosition().east()).is(Blocks.SLIME_BLOCK));
     }
 
     @Override
@@ -226,8 +231,10 @@ public class FrilledDrake extends TamableAnimal
         super.tick();
 
         if (!level().isClientSide) {
-            if (this.tickCount % DrakeAge.TIME_BETWEEN_GROWTH == 0 && getGrowthScore() < DrakeAge.MAX_GROWTH.getAge()
-                    && (getGrowthScore() >= DrakeAge.HATCHLING.getAge() || isIncubating())) {
+            if (this.tickCount % DrakeAge.TIME_BETWEEN_GROWTH == 0 
+                    && getGrowthScore() < DrakeAge.MAX_GROWTH.getAge()
+                    && (getGrowthScore() >= DrakeAge.HATCHLING.getAge() 
+                    || isIncubating())) {
                 setGrowthScore(getGrowthScore() + 1);
             }
         }
@@ -247,16 +254,13 @@ public class FrilledDrake extends TamableAnimal
     public void setScale(float scale) {
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(BASE_ATTACK_DAMAGE * (0.1f + scale * (2.5f - 0.1f)));
         this.getAttribute(Attributes.ATTACK_SPEED).setBaseValue(BASE_ATTACK_SPEED * (0.5f + scale * (1.5f - 0.5f)));
-        this.getAttribute(Attributes.ATTACK_KNOCKBACK)
-                .setBaseValue(BASE_ATTACK_KNOCKBACK * (0.15f + scale * (1.25f - 0.15f)));
+        this.getAttribute(Attributes.ATTACK_KNOCKBACK).setBaseValue(BASE_ATTACK_KNOCKBACK * (0.15f + scale * (1.25f - 0.15f)));
         setAttackRange(BASE_ATTACK_RANGE * (0.5f + scale * (1.5f - 0.5f)));
         this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(BASE_STEP_HEIGHT * (0.5f + scale * (2f - 0.5f)));
-        this.getAttribute(Attributes.MOVEMENT_SPEED)
-                .setBaseValue(BASE_MOVEMENT_SPEED * (0.85f + scale * (1.5f - 0.85f)));
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED * (0.85f + scale * (1.5f - 0.85f)));
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_HEALTH * (0.25f + scale * (2f - 0.25f)));
         this.getAttribute(Attributes.ARMOR).setBaseValue(ARMOR * (0.1f + scale * (1f - 0.1f)));
-        this.getAttribute(Attributes.KNOCKBACK_RESISTANCE)
-                .setBaseValue(KNOCKBACK_RESIST * (0.1f + scale * (1f - 0.1f)));
+        this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(KNOCKBACK_RESIST * (0.1f + scale * (1f - 0.1f)));
         this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(BASE_JUMP_STRENGTH * (0.25f + scale * (2f - 0.25f)));
         this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getBaseValue());
 
@@ -293,82 +297,78 @@ public class FrilledDrake extends TamableAnimal
 
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "attackController", event -> {
-            return PlayState.CONTINUE;
-        }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
+        controllers.add(
+            new AnimationController<>(this, "attackController", event -> PlayState.CONTINUE)
+                .triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
                 .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.frilled_drake.yawn")));
-        controllers.add(new AnimationController<>(this, "defaultController", 3, event -> {
-            if (this.getGrowthScore() < DrakeAge.HATCHLING.getAge()) {
-                return event.setAndContinue(
-                        isIncubating() ? RawAnimation.begin().thenLoop("animation.frilled_drake.incubate")
-                                : RawAnimation.begin().thenLoop("animation.frilled_drake.egg"));
-            }
-
-            float currentYaw = this.getYRot();
-            float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
-
-            float sidewaysAmount = 0.0f;
-            boolean sideways = true;
-
-            if (!this.onGround()) {
-                return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.in_air"));
-            }
-
-            if (!event.isMoving()) {
-                if (Math.abs(deltaYaw) > 5.0F) {
-                    if (deltaYaw > 0) { // Turning right
-                        return event
-                                .setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.turn_right"));
-                    } else { // Turning left
-                        return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left"));
-                    }
-                } else { // If not turning, ensure the idle animation starts
-                    if (this.isAggressive()) {
-                        return event.setAndContinue(
-                                (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.angry_float")
-                                        : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
-                    } else {
-                        return event.setAndContinue(
-                                (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.float")
-                                        : (this.getState() == DrakeState.AWAKE.getState()
-                                                ? RawAnimation.begin().thenLoop("animation.frilled_drake.idle")
-                                                : (this.getState() == DrakeState.SITTING.getState()
-                                                        ? RawAnimation.begin()
-                                                                .thenLoop("animation.frilled_drake.sit_idle")
-                                                        : RawAnimation.begin()
-                                                                .thenLoop("animation.frilled_drake.sleeping")))));
-                    }
+            
+        controllers.add(
+            new AnimationController<>(this, "defaultController", 3, event -> {
+                if (this.getGrowthScore() < DrakeAge.HATCHLING.getAge()) {
+                    return event.setAndContinue(
+                        isIncubating() 
+                            ? RawAnimation.begin().thenLoop("animation.frilled_drake.incubate")
+                            : RawAnimation.begin().thenLoop("animation.frilled_drake.egg"));
                 }
-            } else if (this.isAggressive()) {
-                return event.setAndContinue((this.isInWater()
+
+                float currentYaw = this.getYRot();
+                float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
+
+                float sidewaysAmount = 0.0f;
+                boolean sideways = true;
+
+                if (!this.onGround()) {
+                    return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.in_air"));
+                }
+
+                if (!event.isMoving()) {
+                    if (Math.abs(deltaYaw) > 5.0F) {
+                        if (deltaYaw > 0) { // Turning right
+                            return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.turn_right"));
+                        } else { // Turning left
+                            return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left"));
+                        }
+                    } else { // If not turning, ensure the idle animation starts
+                        if (this.isAggressive()) {
+                            return event.setAndContinue(
+                                (this.isInWater() 
+                                    ? RawAnimation.begin().thenLoop("animation.frilled_drake.angry_float")
+                                    : RawAnimation.begin().thenLoop("animation.frilled_drake.idle")));
+                        } else {
+                            return event.setAndContinue(
+                                (this.isInWater() 
+                                    ? RawAnimation.begin().thenLoop("animation.frilled_drake.float")
+                                    : (this.getState() == DrakeState.AWAKE.getState()
+                                        ? RawAnimation.begin().thenLoop("animation.frilled_drake.idle")
+                                        : (this.getState() == DrakeState.SITTING.getState()
+                                            ? RawAnimation.begin().thenLoop("animation.frilled_drake.sit_idle")
+                                            : RawAnimation.begin().thenLoop("animation.frilled_drake.sleeping")))));
+                        }
+                    }
+                } else if (this.isAggressive()) {
+                    return event.setAndContinue((this.isInWater()
                         ? RawAnimation.begin().thenLoop("animation.frilled_drake.aggressive_swim")
                         : RawAnimation.begin().thenLoop("animation.frilled_drake.intimidate")));
-            } else {
-                return event.setAndContinue(
-                        (this.isInWater() ? RawAnimation.begin().thenLoop("animation.frilled_drake.swim")
-                                : (sideways ? RawAnimation.begin().thenLoop("animation.frilled_drake.walk")
-                                        : (sidewaysAmount > 0.0f
-                                                ? RawAnimation.begin().thenLoop("animation.frilled_drake.strafe_left")
-                                                : RawAnimation.begin()
-                                                        .thenLoop("animation.frilled_drake.strafe_right")))));
-            }
-        }).triggerableAnim("jump", RawAnimation.begin().thenPlay("animation.frilled_drake.jump"))
-                .triggerableAnim("claw_strike_left",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_left"))
-                .triggerableAnim("claw_strike_right",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_right"))
-                .triggerableAnim("animation.frilled_drake.turn_right",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.turn_right"))
-                .triggerableAnim("animation.frilled_drake.turn_left",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left"))
-                .triggerableAnim("sit_down",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.sitdown"))
-                .triggerableAnim("lay_down",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.laydown"))
-                .triggerableAnim("wake_up",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.wake_up"))
-                .triggerableAnim("hatch",
-                        RawAnimation.begin().thenPlay("animation.frilled_drake.hatch")));
+                } else {
+                    return event.setAndContinue(
+                        (this.isInWater() 
+                            ? RawAnimation.begin().thenLoop("animation.frilled_drake.swim")
+                            : (sideways ? RawAnimation.begin().thenLoop("animation.frilled_drake.walk")
+                                : (sidewaysAmount > 0.0f
+                                    ? RawAnimation.begin().thenLoop("animation.frilled_drake.strafe_left")
+                                    : RawAnimation.begin().thenLoop("animation.frilled_drake.strafe_right")))));
+                }
+            })
+                .triggerableAnim("jump", RawAnimation.begin().thenPlay("animation.frilled_drake.jump"))
+                .triggerableAnim("claw_strike_left", RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_left"))
+                .triggerableAnim("claw_strike_right", RawAnimation.begin().thenPlay("animation.frilled_drake.claw_strike_right"))
+                .triggerableAnim("animation.frilled_drake.turn_right", RawAnimation.begin().thenPlay("animation.frilled_drake.turn_right"))
+                .triggerableAnim("animation.frilled_drake.turn_left", RawAnimation.begin().thenPlay("animation.frilled_drake.turn_left"))
+                .triggerableAnim("sit_down", RawAnimation.begin().thenPlay("animation.frilled_drake.sitdown"))
+                .triggerableAnim("lay_down", RawAnimation.begin().thenPlay("animation.frilled_drake.laydown"))
+                .triggerableAnim("wake_up", RawAnimation.begin().thenPlay("animation.frilled_drake.wake_up"))
+                .triggerableAnim("alert", RawAnimation.begin().thenPlay("animation.frilled_drake.alert"))
+                .triggerableAnim("hatch", RawAnimation.begin().thenPlay("animation.frilled_drake.hatch")));
     }
     // #endregion
 
@@ -426,8 +426,7 @@ public class FrilledDrake extends TamableAnimal
 
     // #region ?
     @Override
-    public SpawnGroupData finalizeSpawn(@Nonnull ServerLevelAccessor level, @Nonnull DifficultyInstance difficulty,
-            @Nonnull EntitySpawnReason spawnReason, @Nullable SpawnGroupData spawnGroupData) {
+    public SpawnGroupData finalizeSpawn(@Nonnull ServerLevelAccessor level, @Nonnull DifficultyInstance difficulty, @Nonnull EntitySpawnReason spawnReason, @Nullable SpawnGroupData spawnGroupData) {
         SpawnGroupData spawnGroupDataInternal = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData);
         this.setColor(level().getRandom().nextInt(0, 4));
         setGrowthScore(0);
@@ -446,11 +445,13 @@ public class FrilledDrake extends TamableAnimal
 
     // #region Help
     public static AttributeSupplier.Builder createMobAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 450.0).add(Attributes.ATTACK_DAMAGE, 10.0)
-                .add(Attributes.ATTACK_KNOCKBACK, 1.0)
-                .add(Attributes.ATTACK_SPEED, 2.4).add(Attributes.FOLLOW_RANGE, 50.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.STEP_HEIGHT, 3)
-                .add(Attributes.JUMP_STRENGTH, 5.0);
+        return Mob.createMobAttributes()
+            .add(Attributes.MAX_HEALTH, 450.0)
+            .add(Attributes.ATTACK_DAMAGE, 10.0)
+            .add(Attributes.ATTACK_KNOCKBACK, 1.0)
+            .add(Attributes.ATTACK_SPEED, 2.4).add(Attributes.FOLLOW_RANGE, 50.0)
+            .add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.STEP_HEIGHT, 3)
+            .add(Attributes.JUMP_STRENGTH, 5.0);
     }
     // #endregion
 
@@ -503,49 +504,47 @@ public class FrilledDrake extends TamableAnimal
     // #region Ai Step
     @Override
     public void aiStep() {
-        
-        if (!level().isClientSide){ 
-            if (getGrowthScore() >= DrakeAge.HATCHLING.getAge()) {
-                if (getState() != DrakeState.SLEEPING.getState()) {
-                    blinkTimer++;
+        if (getGrowthScore() >= DrakeAge.HATCHLING.getAge()) {
+            if (getState() != DrakeState.SLEEPING.getState()) {
+                blinkTimer++;
 
-                    if (blinking) {
-                        if (blinkTimer > blinkTime) {
-                            DragonoidsExpanded.LOGGER.info("I have stopped blinking.");
-                            blinkTimer = 0;
-                            blinking = false;
-                            DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
-                        }
-                    } else if (blinkTimer > blinkDelay) {
-                        DragonoidsExpanded.LOGGER.info("I have started blinking.");
+                if (blinking) {
+                    if (blinkTimer > blinkTime) {
+                        DragonoidsExpanded.LOGGER.info("I have stopped blinking.");
                         blinkTimer = 0;
-                        blinking = true;
+                        blinking = false;
                         DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
                     }
+                } else if (blinkTimer > blinkDelay) {
+                    DragonoidsExpanded.LOGGER.info("I have started blinking.");
+                    blinkTimer = 0;
+                    blinking = true;
+                    DragonoidsExpanded.LOGGER.info("Blinking: " + blinking);
                 }
+            }
 
+            if (!level().isClientSide) { 
                 if (getState() != DrakeState.SLEEPING.getState()) {
                     timer--;
 
                     if (timer <= 0) {
                         timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);
                         triggerAnim("attackController", "yawn");
-                        playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get(),
-                                (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()),
-                                (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
+                        playSound(DragonoidsExpanded.FRILLED_DRAKE_YAWN.get(), (0.5f + 0.5f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()), (1.5f - 0.75f * getGrowthScore() / DrakeAge.MAX_GROWTH.getAge()));
                     }
                 }
+            }
 
-                if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
-                    triggerAnim("defaultController", "lay_down");
-                    setState(DrakeState.SLEEPING.getState());
-                } else if ((!level().isNight() || isAggressive())
-                        && getState() == DrakeState.SLEEPING.getState()) {
-                    triggerAnim("defaultController", "wake_up");
-                    setState(DrakeState.AWAKE.getState());
-                }
+            if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
+                triggerAnim("defaultController", "lay_down");
+                setState(DrakeState.SLEEPING.getState());
+            } else if ((!level().isNight() || isAggressive())
+                    && getState() == DrakeState.SLEEPING.getState()) {
+                triggerAnim("defaultController", "wake_up");
+                setState(DrakeState.AWAKE.getState());
             }
         }
+        
         super.aiStep();
     }
 
@@ -577,12 +576,11 @@ public class FrilledDrake extends TamableAnimal
     @Override
     public List<ExtendedSensor<? extends FrilledDrake>> getSensors() {
         return ObjectArrayList.of(
-                new NearbyLivingEntitySensor<FrilledDrake>()
-                        .setPredicate((target,
-                                entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())), // This
-                new NearbyAdultSensor<>(),
-                new HurtBySensor<>(),
-                new InWaterSensor<>()); // This tracks the last damage source and attacker
+            new NearbyLivingEntitySensor<FrilledDrake>()
+                .setPredicate((target, entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
+            new NearbyAdultSensor<>(),
+            new HurtBySensor<>(),
+            new InWaterSensor<>());
     }
     // #endregion
 
@@ -590,74 +588,89 @@ public class FrilledDrake extends TamableAnimal
     @Override
     public BrainActivityGroup<? extends FrilledDrake> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
-                new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 6)
-                        .runFor((entity) -> 1200).whenStarting((entity) -> {
-                            DragonoidsExpanded.LOGGER.info("They are now ready to breed.");
-                        }).whenStopping((entity) -> {
-                            DragonoidsExpanded.LOGGER.info("They are no longer ready to breed.");
-                        })
-                        .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
-                new LookAtTarget<FrilledDrake>()
-                        .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
-                new MoveToWalkTarget<>()); // Walk towards
-                                           // the current
-                                           // walk target
+            new BreedWithPartner<FrilledDrake>().closeEnoughDist((entity, partner) -> 6)
+                .runFor((entity) -> 1200).whenStarting((entity) -> DragonoidsExpanded.LOGGER.info("They are now ready to breed."))
+                .whenStopping((entity) -> DragonoidsExpanded.LOGGER.info("They are no longer ready to breed."))
+                .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
+            new LookAtTarget<FrilledDrake>()
+                .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
+            new MoveToWalkTarget<>()); 
     }
 
-    @SuppressWarnings({ "unchecked", "null" })
+    @SuppressWarnings({"unchecked", "null"})
     @Override
-    public BrainActivityGroup<? extends FrilledDrake> getIdleTasks() { // These are the tasks that run when the mob
-                                                                       // isn't doing anything else (usually)
+    public BrainActivityGroup<? extends FrilledDrake> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
-                new FirstApplicableBehaviour<>(
-                        new TargetOrRetaliate<>().attackablePredicate(
-                                (target) -> !(target instanceof FrilledDrake || target instanceof Creeper
-                                        || getGrowthScore() < DrakeAge.DRAKELING.getAge()
-                                        || target instanceof Bat
-                                        || target instanceof GlowSquid
-                                        || (this.getOwner() != null && this.getOwner().is(target))
-                                        || (this.getOwner() != null && !(target instanceof Mob))
-                                        || (target instanceof Player && ((Player) target).isCreative()))),
-                        new SetPlayerLookTarget<>(),
-                        new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
-                new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<FrilledDrake>().speedModifier(0.5f)
-                                .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
-                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
+            new FirstApplicableBehaviour<>(
+                new Alert<FrilledDrake>()
+                    .alert((target) -> !(target instanceof FrilledDrake 
+                        || target instanceof Creeper
+                        || target instanceof Bat
+                        || target instanceof GlowSquid
+                        || (this.getOwner() != null && this.getOwner().is(target))
+                        || (this.getOwner() != null && !(target instanceof Mob))
+                        || (target instanceof Player && ((Player) target).isCreative())))
+                    .canInform((target) -> target instanceof FrilledDrake frilledDrake
+                        && frilledDrake.getGrowthScore() >= DrakeAge.DRAKELING.getAge())
+                    .whenStarting((e) -> {
+                        triggerAnim("attackController", "alert");
+                        playSound(DragonoidsExpanded.FRILLED_DRAKE_ALERT.get());
+                    })
+                    .startCondition((e) -> e.getGrowthScore() < DrakeAge.DRAKELING.getAge()),
+                new SetAttackTarget<FrilledDrake>()
+                    .targetFinder((e) -> e.tempTarget)
+                    .startCondition(e -> e.tempTarget != null 
+                        && !(e.tempTarget instanceof FrilledDrake 
+                            || e.tempTarget instanceof Creeper
+                            || e.tempTarget instanceof Bat
+                            || e.tempTarget instanceof GlowSquid
+                            || (this.getOwner() != null && this.getOwner().is(e.tempTarget))
+                            || (this.getOwner() != null && !(e.tempTarget instanceof Mob))
+                            || (e.tempTarget instanceof Player && ((Player) e.tempTarget).isCreative())) 
+                        && getGrowthScore() >= DrakeAge.DRAKELING.getAge()),
+                new TargetOrRetaliate<>().attackablePredicate((target) -> !(target instanceof FrilledDrake 
+                        || target instanceof Creeper
+                        || target instanceof Bat
+                        || target instanceof GlowSquid
+                        || (this.getOwner() != null && this.getOwner().is(target))
+                        || (this.getOwner() != null && !(target instanceof Mob))
+                        || (target instanceof Player && ((Player) target).isCreative())) 
+                    && getGrowthScore() >= DrakeAge.DRAKELING.getAge()),
+                new SetPlayerLookTarget<>(),
+                new FollowOwner<>().teleportToTargetAfter(128).stopFollowingWithin(24)),
+            new OneRandomBehaviour<>(
+                new SetRandomWalkTarget<FrilledDrake>().speedModifier(0.5f)
+                    .startCondition((entity) -> !(entity.getState() == DrakeState.SLEEPING.getState())),
+                new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
     }
 
     @SuppressWarnings({ "unchecked", "null" })
     @Override
-    public BrainActivityGroup<? extends FrilledDrake> getFightTasks() { // These are the tasks that handle fighting
-        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), // Cancel fighting if the
-                                                                             // target is
-                // no
-                // longer valid
-                new SetWalkTargetToAttackTarget<>(),
-                new FirstApplicableBehaviour<>(
-                        new LeapAtTarget<>(0)
-                                .verticalJumpStrength(((mob, entity) -> {
-                                    float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
-                                    return 0.5f + distanceToEntity / 6f;
-                                }))
-                                .leapRange((mob, entity) -> 25f)
-                                .jumpStrength(((mob, entity) -> {
-                                    return (float) entity.getAttribute(Attributes.JUMP_STRENGTH).getBaseValue();
-                                }))
-                                .whenStarting(entity -> {
-                                    setAggressive(true);
-                                    // triggerAnim("defaultController", "jump"); (No SFX)
-                                })
-                                .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
-                                    return (BrainUtil.getTargetOfEntity(entity) != null
-                                            && BrainUtil.getTargetOfEntity(entity).distanceTo(entity) > 7);
-                                }).cooldownFor((entity) -> 120), // Set the walk target to the attack target
-                        new AnimatableMeleeAttack<>(12).whenStarting(entity -> {
-                            setAggressive(true);
-                            triggerAnim("attackController", "bite");
-                        }).whenStopping(entity -> setAggressive(false))
-
-                ));
+    public BrainActivityGroup<? extends FrilledDrake> getFightTasks() {
+        return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(), 
+            new InvalidateAttackTarget<FrilledDrake>()
+                .invalidateIf((e, target) -> e.tempTarget != null),
+            new SetWalkTargetToAttackTarget<>(),
+            new FirstApplicableBehaviour<>(
+                new LeapAtTarget<>(0)
+                    .verticalJumpStrength(((mob, entity) -> 0.5f + (float) Math.abs(entity.position().y - mob.position().y) / 6f))
+                    .leapRange((mob, entity) -> 25f)
+                    .jumpStrength(((mob, entity) -> (float) entity.getAttribute(Attributes.JUMP_STRENGTH).getBaseValue()))
+                    .whenStarting((entity) -> {
+                        setAggressive(true);
+                        // triggerAnim("defaultController", "jump"); (No SFX)
+                    })
+                    .whenStopping(entity -> setAggressive(false))
+                    .startCondition(
+                        (entity) -> (BrainUtil.getTargetOfEntity(entity) != null 
+                            && BrainUtil.getTargetOfEntity(entity).distanceTo(entity) > 7))
+                    .cooldownFor((entity) -> 120), 
+                new AnimatableMeleeAttack<>(12)
+                    .whenStarting(entity -> {
+                        setAggressive(true);
+                        triggerAnim("attackController", "bite");
+                    })
+                    .whenStopping(entity -> setAggressive(false))));
     }
     // #endregion
 
@@ -678,12 +691,12 @@ public class FrilledDrake extends TamableAnimal
             AABB aabb1 = entity.getBoundingBox();
             AABB aabb2 = this.getBoundingBox();
             aabb = new AABB(
-                    Math.min(aabb2.minX, aabb1.minX),
-                    aabb2.minY,
-                    Math.min(aabb2.minZ, aabb1.minZ),
-                    Math.max(aabb2.maxX, aabb1.maxX),
-                    aabb2.maxY,
-                    Math.max(aabb2.maxZ, aabb1.maxZ));
+                Math.min(aabb2.minX, aabb1.minX),
+                aabb2.minY,
+                Math.min(aabb2.minZ, aabb1.minZ),
+                Math.max(aabb2.maxX, aabb1.maxX),
+                aabb2.maxY,
+                Math.max(aabb2.maxZ, aabb1.maxZ));
         } else {
             aabb = this.getBoundingBox();
         }
@@ -713,8 +726,7 @@ public class FrilledDrake extends TamableAnimal
             targetYaw = this.getYHeadRot();
             float deltaYaw = Mth.wrapDegrees(targetYaw - currentYaw);
 
-            DragonoidsExpanded.LOGGER
-                    .info("Current Yaw: " + currentYaw + "\nTarget Yaw: " + targetYaw + "\nDelta Yaw: " + deltaYaw);
+            DragonoidsExpanded.LOGGER.info("Current Yaw: " + currentYaw + "\nTarget Yaw: " + targetYaw + "\nDelta Yaw: " + deltaYaw);
 
             if (Math.abs(deltaYaw) > 5.0F) { // Only trigger animation for significant rotation
                 if (deltaYaw < 0) {
@@ -765,8 +777,7 @@ public class FrilledDrake extends TamableAnimal
         if (travelVector.z > 0.0) {
             float f = Mth.sin(this.getYRot() * (float) (Math.PI / 180.0));
             float f1 = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
-            this.setDeltaMovement(this.getDeltaMovement().add((double) (-0.4F * f * playerJumpPendingScale), 0.0,
-                    (double) (0.4F * f1 * playerJumpPendingScale)));
+            this.setDeltaMovement(this.getDeltaMovement().add((double) (-0.4F * f * playerJumpPendingScale), 0.0, (double) (0.4F * f1 * playerJumpPendingScale)));
         }
     }
 
@@ -826,5 +837,13 @@ public class FrilledDrake extends TamableAnimal
         if (delta < -maxStep)
             delta = -maxStep;
         return currentYaw + delta;
+    }
+
+    @Override
+    public void onAlert(LivingEntity entity, LivingEntity target) {
+        if (entity instanceof FrilledDrake frilledDrake && frilledDrake.getColor() == this.getColor()) {
+            tempTarget = target;
+            DragonoidsExpanded.LOGGER.info("I have " + entity.getName().getString() + ", " + target.getName().getString());
+        }
     }
 }

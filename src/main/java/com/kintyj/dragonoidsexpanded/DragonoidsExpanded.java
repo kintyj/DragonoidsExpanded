@@ -383,6 +383,7 @@ public class DragonoidsExpanded {
 			prop, 1.0f, 1.0f));
 	public static final DeferredItem<Item> MANTICORE_PAW = ITEMS.registerItem("manticore_paw", (prop) -> new ManticorePaw(prop));
 	// #endregion
+	
 	// Creates a creative tab with the id "examplemod:example_tab" for the example
 	// item, that is placed after the combat tab
 	public static final DeferredHolder<CreativeModeTab, CreativeModeTab> DRAGONOIDS_EXPANDED_ITEMS_TAB = CREATIVE_MODE_TABS

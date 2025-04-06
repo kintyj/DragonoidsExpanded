@@ -149,7 +149,7 @@ public class Manticore extends TamableAnimal
             } else {
                 return event.setAndContinue(RawAnimation.begin().thenPlay("animation.manticore.idle"));
             }
-        }).triggerableAnim("chew", RawAnimation.begin().thenPlayXTimes("animation.manticore.chew", 4)));
+        }).triggerableAnim("chew", RawAnimation.begin().thenPlay("animation.manticore.chew")));
     }
     // #endregion
 
