@@ -117,7 +117,7 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     implementation "net.tslat.smartbrainlib:SmartBrainLib-neoforge-1.21.4:1.16.7"
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.4:4.8.4"
-    implementation "curse.maven:patchouli-306770:6164617"
+    implementation "curse.maven:modonomicon-538392:6390929"
     //implementation "curse.maven:patchouli-306770:6164617"
     //implementation "curse.maven:architectury-api-419699:6206631"
     //implementation "curse.maven:mc-reflections-1071746:6028829"

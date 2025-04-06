@@ -1,0 +1,31 @@
+{
+	"background_u_index": 0,
+	"background_v_index": 0,
+	"category": "dragonoids",
+	"description": "Please note, most of these are non breedable.",
+	"hide_while_locked": false,
+	"icon": {
+		"item": "dragonoidsexpanded:frilled_drake_egg_blue"
+	},
+	"name": "Frilled Drake",
+	"pages": [
+		{
+			"type": "modonomicon:entity",
+			"anchor": "",
+			"condition": {
+				"type": "modonomicon:none"
+			},
+			"default_rotation": -45.0,
+			"entity_id": "dragonoidsexpanded:frilled_drake",
+			"name": "Frilled Drake",
+			"offset": 0.0,
+			"rotate": true,
+			"scale": 0.5,
+			"text": "The Frilled Drake is best known for it's utility as a form of transportation in mountainous regions, thanks to it's powerful jump."
+		}
+	],
+	"show_when_any_parent_unlocked": false,
+	"sort_number": 0,
+	"x": 0,
+	"y": 0
+}
