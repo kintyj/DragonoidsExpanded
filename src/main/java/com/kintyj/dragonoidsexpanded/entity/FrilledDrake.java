@@ -669,7 +669,7 @@ public class FrilledDrake extends TamableAnimal
                     .whenStopping(entity -> setAggressive(false))
                     .startCondition(
                         (entity) -> (BrainUtil.getTargetOfEntity(entity) != null 
-                            && BrainUtil.getTargetOfEntity(entity).distanceTo(entity) > 7 && BrainUtil.getTargetOfEntity(entity).getPos().y >= entity.getPos().y))
+                            && BrainUtil.getTargetOfEntity(entity).distanceTo(entity) > 7 && BrainUtil.getTargetOfEntity(entity).position().y >= entity.position().y))
                     .cooldownFor((entity) -> 120), 
                 new AnimatableMeleeAttack<>(12)
                     .whenStarting(entity -> {
