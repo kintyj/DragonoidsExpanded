@@ -68,7 +68,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(DragonoidsExpanded.MODID)
 public class DragonoidsExpanded {
-	// Define mod id in a common place for everything to reference
+    // Define mod id in a common place for everything to reference
 	public static final String MODID = "dragonoidsexpanded";
 	// Directly reference a slf4j logger
 	public static final Logger LOGGER = LogUtils.getLogger();

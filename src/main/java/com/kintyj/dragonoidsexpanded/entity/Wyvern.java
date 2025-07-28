@@ -57,8 +57,8 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager.ControllerRegistrar;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -151,7 +151,7 @@ public class Wyvern extends TamableAnimal
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
 
-        controllers.add(new AnimationController<>(this, "wingController", 20, event -> {
+        controllers.add(new AnimationController<>("wingController", 20, event -> {
             if (event.isMoving()) {
                 return event.setAndContinue(
                         (RawAnimation.begin().thenLoop("animation.wyvern.wings_folded")));
@@ -160,12 +160,12 @@ public class Wyvern extends TamableAnimal
             }
         }));
 
-        controllers.add(new AnimationController<>(this, "attackController", 10, event -> {
+        controllers.add(new AnimationController<>("attackController", 10, event -> {
             return PlayState.CONTINUE;
         }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.wyvern.bite"))
                 .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.wyvern.yawn")));
 
-        controllers.add(new AnimationController<>(this, "bodyController", 10, event -> {
+        controllers.add(new AnimationController<>("bodyController", 10, event -> {
             if (event.isMoving()) {
                 if (this.isAggressive()) {
                     return event.setAndContinue((RawAnimation.begin().thenLoop("animation.wyvern.walk_1")));

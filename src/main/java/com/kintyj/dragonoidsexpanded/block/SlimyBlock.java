@@ -44,7 +44,7 @@ public class SlimyBlock extends Block {
 
     @Override
     public void fallOn(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockPos pos, @Nonnull Entity entity,
-            float fallDistance) {
+            double fallDistance) {
         if (entity.isSuppressingBounce()) {
             super.fallOn(level, state, pos, entity, fallDistance);
         } else {

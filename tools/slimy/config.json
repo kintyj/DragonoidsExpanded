@@ -1,0 +1,7 @@
+{
+    "block_model_dir": "E:/MinecraftMods/DragonoidsExpanded/src/main/resources/assets/dragonoidsexpanded/models/block/slimy", 
+    "block_texture_dir": "E:/MinecraftMods/DragonoidsExpanded/src/main/resources/assets/dragonoidsexpanded/textures/block/slimy", 
+    "item_model_dir": "E:/MinecraftMods/DragonoidsExpanded/src/main/resources/assets/dragonoidsexpanded/models/item/slimy", 
+    "item_dir": "E:/MinecraftMods/DragonoidsExpanded/src/main/resources/assets/dragonoidsexpanded/items", 
+    "blockstate_dir": "E:/MinecraftMods/DragonoidsExpanded/src/main/resources/assets/dragonoidsexpanded/blockstates"
+}

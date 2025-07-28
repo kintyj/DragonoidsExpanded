@@ -59,16 +59,11 @@ public class DrakelordsMace extends Item {
     }
 
     public static Tool createToolProperties() {
-        return new Tool(List.of(), 1.0F, 2);
+        return new Tool(List.of(), 1.0F, 2, false);
     }
 
     @Override
-    public boolean canAttackBlock(@Nonnull BlockState p_333875_, @Nonnull Level p_333847_, @Nonnull BlockPos p_334073_, @Nonnull Player p_334042_) {
-        return !p_334042_.isCreative();
-    }
-
-    @Override
-    public boolean hurtEnemy(@Nonnull ItemStack p_334046_, @Nonnull LivingEntity p_333712_, @Nonnull LivingEntity p_333812_) {
+    public void hurtEnemy(@Nonnull ItemStack p_334046_, @Nonnull LivingEntity p_333712_, @Nonnull LivingEntity p_333812_) {
         if (canSmashAttack(p_333812_)) {
             ServerLevel serverlevel = (ServerLevel)p_333812_.level();
             p_333812_.setDeltaMovement(p_333812_.getDeltaMovement().with(Direction.Axis.Y, 0.01F));
@@ -93,8 +88,6 @@ public class DrakelordsMace extends Item {
 
             knockback(serverlevel, p_333812_, p_333712_);
         }
-
-        return true;
     }
 
     @SuppressWarnings("null")
@@ -120,7 +113,7 @@ public class DrakelordsMace extends Item {
             if (!canSmashAttack(livingentity)) {
                 return 0.0F;
             } else {
-                float f1 = livingentity.fallDistance;
+                float f1 = (float)livingentity.fallDistance;
                 float f2;
                 if (f1 <= 3.0F) {
                     f2 = 4.0F * f1;
@@ -165,7 +158,7 @@ public class DrakelordsMace extends Item {
                 flag = !p_344407_.isSpectator();
                 flag1 = p_344407_ != attacker && p_344407_ != target;
                 flag2 = !attacker.isAlliedTo(p_344407_);
-                if (p_344407_ instanceof TamableAnimal tamableanimal && tamableanimal.isTame() && attacker.getUUID().equals(tamableanimal.getOwnerUUID())) {
+                if (p_344407_ instanceof TamableAnimal tamableanimal && tamableanimal.isTame() && attacker.getUUID().equals(tamableanimal.getOwnerReference())) {
                     flag6 = true;
                     break label62;
                 }

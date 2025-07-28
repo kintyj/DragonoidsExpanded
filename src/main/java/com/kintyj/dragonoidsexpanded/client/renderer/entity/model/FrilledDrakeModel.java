@@ -6,13 +6,14 @@ import com.kintyj.dragonoidsexpanded.entity.FrilledDrake.DrakeState;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
 
 public class FrilledDrakeModel extends GeoModel<FrilledDrake> {
 	// Models must be stored in assets/<modid>/geo with subfolders supported inside
 	// the geo folder
 	private static final ResourceLocation model = ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
-			"geo/entity/frilled_drake.geo.json");
+			"entity/frilled_drake");
 	// Textures must be stored in assets/<modid>/geo with subfolders supported
 	// inside the textures folder
 	private static final ResourceLocation[][] texture = {
@@ -119,40 +120,48 @@ public class FrilledDrakeModel extends GeoModel<FrilledDrake> {
 	// supported inside the animations folder
 	private static final ResourceLocation animation = ResourceLocation.fromNamespaceAndPath(
 			DragonoidsExpanded.MODID,
-			"animations/entity/frilled_drake.animation.json");
+			"entity/frilled_drake");
 
 	@Override
-	public ResourceLocation getModelResource(FrilledDrake object, GeoRenderer<FrilledDrake> renderer) {
+	public void addAdditionalStateData(FrilledDrake animatable, GeoRenderState renderState) {
+		renderState.addGeckolibData(FrilledDrake.IS_BLINKING, animatable.isBlinking());
+		renderState.addGeckolibData(FrilledDrake.ANIM_GROWTH_SCORE, animatable.getGrowthScore());
+		renderState.addGeckolibData(FrilledDrake.ANIM_STATE, animatable.getState());
+		renderState.addGeckolibData(FrilledDrake.ANIM_COLOR, animatable.getColor());
+	}
+
+	@Override
+	public ResourceLocation getModelResource(GeoRenderState renderState) {
 		return FrilledDrakeModel.model;
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(FrilledDrake object, GeoRenderer<FrilledDrake> renderer) {
-		if (object.getGrowthScore() > FrilledDrake.DrakeAge.ELDER.getAge()) {
-			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
-					? FrilledDrakeModel.closedTexture[object.getColor()][4]
-					: FrilledDrakeModel.texture[object.getColor()][4]; // 401-402 days - Elder
-		} else if (object.getGrowthScore() > FrilledDrake.DrakeAge.ADULT.getAge()) {
-			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
-					? FrilledDrakeModel.closedTexture[object.getColor()][3]
-					: FrilledDrakeModel.texture[object.getColor()][3]; // 301-400 days - Adult
-		} else if (object.getGrowthScore() > FrilledDrake.DrakeAge.TEEN.getAge()) {
-			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
-					? FrilledDrakeModel.closedTexture[object.getColor()][2]
-					: FrilledDrakeModel.texture[object.getColor()][2]; // 101-300 days - Teen
-		} else if (object.getGrowthScore() > FrilledDrake.DrakeAge.DRAKELING.getAge()) {
-			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
-					? FrilledDrakeModel.closedTexture[object.getColor()][1]
-					: FrilledDrakeModel.texture[object.getColor()][1]; // 021-100 days - Drakeling
-		} else {
-			return (object.isBlinking() || object.getState() == DrakeState.SLEEPING.getState())
-					? FrilledDrakeModel.closedTexture[object.getColor()][0]
-					: FrilledDrakeModel.texture[object.getColor()][0]; // 000-020 days - Hatchling
-		}
+	public ResourceLocation getAnimationResource(FrilledDrake animatable) {
+		return FrilledDrakeModel.animation;
 	}
 
 	@Override
-	public ResourceLocation getAnimationResource(FrilledDrake object) {
-		return FrilledDrakeModel.animation;
+	public ResourceLocation getTextureResource(GeoRenderState renderState) {
+		if (renderState.getGeckolibData(FrilledDrake.ANIM_GROWTH_SCORE) > FrilledDrake.DrakeAge.ELDER.getAge()) {
+			return (renderState.getGeckolibData(FrilledDrake.IS_BLINKING) || renderState.getGeckolibData(FrilledDrake.ANIM_STATE) == DrakeState.SLEEPING.getState())
+					? FrilledDrakeModel.closedTexture[renderState.getGeckolibData(FrilledDrake.ANIM_COLOR)][4]
+					: FrilledDrakeModel.texture[renderState.getGeckolibData(FrilledDrake.ANIM_COLOR)][4]; // 401-402 days - Elder
+		} else if (renderState.getGeckolibData(FrilledDrake.ANIM_GROWTH_SCORE) > FrilledDrake.DrakeAge.ADULT.getAge()) {
+			return (renderState.getGeckolibData(FrilledDrake.IS_BLINKING) || renderState.getGeckolibData(FrilledDrake.ANIM_STATE) == DrakeState.SLEEPING.getState())
+					? FrilledDrakeModel.closedTexture[renderState.getGeckolibData(FrilledDrake.ANIM_COLOR)][3]
+					: FrilledDrakeModel.texture[renderState.getGeckolibData(FrilledDrake.ANIM_COLOR)][3]; // 301-400 days - Adult
+		} else if (renderState.getGeckolibData(FrilledDrake.ANIM_GROWTH_SCORE) > FrilledDrake.DrakeAge.TEEN.getAge()) {
+			return (renderState.getGeckolibData(FrilledDrake.IS_BLINKING) || renderState.getGeckolibData(FrilledDrake.ANIM_STATE) == DrakeState.SLEEPING.getState())
+					? FrilledDrakeModel.closedTexture[renderState.getGeckolibData(FrilledDrake.ANIM_COLOR)][2]
+					: FrilledDrakeModel.texture[renderState.getGeckolibData(FrilledDrake.ANIM_COLOR)][2]; // 101-300 days - Teen
+		} else if (renderState.getGeckolibData(FrilledDrake.ANIM_GROWTH_SCORE) > FrilledDrake.DrakeAge.DRAKELING.getAge()) {
+			return (renderState.getGeckolibData(FrilledDrake.IS_BLINKING) || renderState.getGeckolibData(FrilledDrake.ANIM_STATE) == DrakeState.SLEEPING.getState())
+					? FrilledDrakeModel.closedTexture[renderState.getGeckolibData(FrilledDrake.ANIM_COLOR)][1]
+					: FrilledDrakeModel.texture[renderState.getGeckolibData(FrilledDrake.ANIM_COLOR)][1]; // 021-100 days - Drakeling
+		} else {
+			return (renderState.getGeckolibData(FrilledDrake.IS_BLINKING) || renderState.getGeckolibData(FrilledDrake.ANIM_STATE) == DrakeState.SLEEPING.getState())
+					? FrilledDrakeModel.closedTexture[renderState.getGeckolibData(FrilledDrake.ANIM_COLOR)][0]
+					: FrilledDrakeModel.texture[renderState.getGeckolibData(FrilledDrake.ANIM_COLOR)][0]; // 000-020 days - Hatchling
+		}
 	}
 }

@@ -17,6 +17,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -25,8 +26,8 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager.ControllerRegistrar;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
@@ -49,7 +50,7 @@ public class ManticorePaw extends Item implements GeoItem {
     
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "manticore_paw", 0, state -> PlayState.STOP)
+        controllers.add(new AnimationController<>("manticore_paw", 0, state -> PlayState.STOP)
 				.triggerableAnim("use", USE_ANIM));
     }
 
@@ -125,7 +126,7 @@ public class ManticorePaw extends Item implements GeoItem {
     }
 
     @Override
-    public void inventoryTick(@Nonnull ItemStack stack, @Nonnull Level level, @Nonnull Entity entity, int slotId, boolean isSelected) {
+    public void inventoryTick(@Nonnull ItemStack stack, @Nonnull ServerLevel level, @Nonnull Entity entity, EquipmentSlot slot) {
         if (getTick(stack) % INVENTORY_TICK_SKIP == 0) {
             if (level.random.nextFloat() < INVENTORY_EFFECT_CHANCE) {
                 if (level.random.nextFloat() < INVENTORY_ACTIVATION_CHANCE) {

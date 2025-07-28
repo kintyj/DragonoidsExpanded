@@ -7,13 +7,14 @@ import com.kintyj.dragonoidsexpanded.item.ManticorePaw;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
 
 public class ManticorePawModel extends GeoModel<ManticorePaw> {
     // Models must be stored in assets/<modid>/geo with subfolders supported inside
 	// the geo folder
 	private static final ResourceLocation model = ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
-			"geo/item/manticore_paw.geo.json");
+			"item/manticore_paw");
 	// Textures must be stored in assets/<modid>/geo with subfolders supported
 	// inside the textures folder
 	private static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
@@ -22,21 +23,20 @@ public class ManticorePawModel extends GeoModel<ManticorePaw> {
 	// supported inside the animations folder
 	private static final ResourceLocation animation = ResourceLocation.fromNamespaceAndPath(
 			DragonoidsExpanded.MODID,
-			"animations/item/manticore_paw.animation.json");
+			"item/manticore_paw");
 
     @Override
-    public ResourceLocation getAnimationResource(ManticorePaw animatable) {
+    public ResourceLocation getModelResource(GeoRenderState renderState) {
         return ManticorePawModel.animation;
     }
 
     @Override
-    public ResourceLocation getModelResource(ManticorePaw animatable, @Nullable GeoRenderer<ManticorePaw> renderer) {
-        return ManticorePawModel.model;
+    public ResourceLocation getAnimationResource(ManticorePaw animatable) {
+        return ManticorePawModel.texture;
     }
 
     @Override
-    public ResourceLocation getTextureResource(ManticorePaw animatable, @Nullable GeoRenderer<ManticorePaw> renderer) {
-        return ManticorePawModel.texture;
+    public ResourceLocation getTextureResource(GeoRenderState renderState) {
+        return ManticorePawModel.model;
     }
-    
 }

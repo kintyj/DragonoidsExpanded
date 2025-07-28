@@ -58,17 +58,16 @@ public class Whip extends Item {
     public static final Set<ItemAbility> DEFAULT_WHIP_ACTIONS = of(WHIP_WHIP_ITEM_ABILITY);
 
     public Whip(ToolMaterial material, Item.Properties properties, float attackDamage, float attackSpeed) {
-        super(material.applyToolProperties(properties, DragonoidsExpanded.WHIP_EFFICIENT_TAG_KEY, attackDamage, attackSpeed).component(DragonoidsExpanded.WHIP_STATE, new WhipStateComponent(0)));
+        super(material.applyToolProperties(properties, DragonoidsExpanded.WHIP_EFFICIENT_TAG_KEY, attackDamage, attackSpeed, 1.0f).component(DragonoidsExpanded.WHIP_STATE, new WhipStateComponent(0)));
     }
 
-    @Override
-    public boolean canAttackBlock(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player) {
-        return !player.isCreative();
-    }
+    //@Override
+    //public boolean canAttackBlock(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player) {
+    //    return !player.isCreative();
+    //}
 
     @Override
-    public boolean hurtEnemy(@Nonnull ItemStack stack, @Nonnull LivingEntity target, @Nonnull LivingEntity attacker) {
-        return true;
+    public void hurtEnemy(@Nonnull ItemStack stack, @Nonnull LivingEntity target, @Nonnull LivingEntity attacker) {
     }
 
     @Override
@@ -146,14 +145,14 @@ public class Whip extends Item {
         return super.interactLivingEntity(stack, player, interactionTarget, usedHand);
     }
 
-    @Override
-    public void appendHoverText(@Nonnull ItemStack pStack, @Nonnull TooltipContext pContext, @Nonnull List<Component> pTooltipComponents,
-    @Nonnull TooltipFlag pTooltipFlag) {
-
-        pTooltipComponents
-                .add(Component.literal("State: " + String.valueOf(pStack.get(DragonoidsExpanded.WHIP_STATE))));
-        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-    }
+    //@Override
+    //public void appendHoverText(@Nonnull ItemStack pStack, @Nonnull TooltipContext pContext, @Nonnull List<Component> pTooltipComponents,
+    //@Nonnull TooltipFlag pTooltipFlag) {
+//
+    //    pTooltipComponents
+    //            .add(Component.literal("State: " + String.valueOf(pStack.get(DragonoidsExpanded.WHIP_STATE))));
+    //    super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+    //}
 
     @SuppressWarnings("null")
     @Override

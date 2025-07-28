@@ -73,11 +73,12 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
+import software.bernie.geckolib.animatable.manager.AnimatableManager.ControllerRegistrar;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
 
 public class FrilledDrake extends TamableAnimal
         implements Enemy, GeoEntity, PlayerRideableJumping, SmartBrainOwner<FrilledDrake>, IAlertable {
@@ -88,6 +89,11 @@ public class FrilledDrake extends TamableAnimal
 
     public int blinkTimer;
     public boolean blinking = false;
+
+    public static final DataTicket<Boolean> IS_BLINKING = DataTicket.create("dragonoidsexpanded_is_blinking", Boolean.class);
+    public static final DataTicket<Integer> ANIM_GROWTH_SCORE = DataTicket.create("dragonoidsexpanded_growth_score", Integer.class);
+    public static final DataTicket<Integer> ANIM_STATE = DataTicket.create("dragonoidsexpanded_state", Integer.class);
+    public static final DataTicket<Integer> ANIM_COLOR = DataTicket.create("dragonoidsexpanded_color", Integer.class);
 
     @Nullable
     public LivingEntity tempTarget = null;
@@ -298,12 +304,12 @@ public class FrilledDrake extends TamableAnimal
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
         controllers.add(
-            new AnimationController<>(this, "attackController", event -> PlayState.CONTINUE)
+            new AnimationController<>("attackController", event -> PlayState.CONTINUE)
                 .triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.frilled_drake.bite"))
                 .triggerableAnim("yawn", RawAnimation.begin().thenPlay("animation.frilled_drake.yawn")));
             
         controllers.add(
-            new AnimationController<>(this, "defaultController", 3, event -> {
+            new AnimationController<FrilledDrake>("defaultController", 3, event -> {
                 if (this.getGrowthScore() < DrakeAge.HATCHLING.getAge()) {
                     return event.setAndContinue(
                         isIncubating() 
@@ -467,9 +473,9 @@ public class FrilledDrake extends TamableAnimal
     @Override
     public void readAdditionalSaveData(@Nonnull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        setGrowthScore(compound.getInt("GrowthStage"));
-        setColor(compound.getInt("Color"));
-        setAttackRange(compound.getFloat("AttackRange"));
+        setGrowthScore(compound.getInt("GrowthStage").get());
+        setColor(compound.getInt("Color").get());
+        setAttackRange(compound.getFloat("AttackRange").get());
     }
     // #endregion
 
@@ -535,10 +541,10 @@ public class FrilledDrake extends TamableAnimal
                 }
             }
 
-            if (level().isNight() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
+            if (level().isDarkOutside() && !isAggressive() && getState() != DrakeState.SLEEPING.getState()) {
                 triggerAnim("defaultController", "lay_down");
                 setState(DrakeState.SLEEPING.getState());
-            } else if ((!level().isNight() || isAggressive())
+            } else if ((!level().isDarkOutside() || isAggressive())
                     && getState() == DrakeState.SLEEPING.getState()) {
                 triggerAnim("defaultController", "wake_up");
                 setState(DrakeState.AWAKE.getState());
@@ -710,7 +716,7 @@ public class FrilledDrake extends TamableAnimal
         Vec2 vec2 = this.getRiddenRotation(player);
         this.setRot(vec2.y, vec2.x);
         this.setYHeadRot(player.getYHeadRot());
-        if (this.isControlledByLocalInstance()) {
+        if (this.isLocalClientAuthoritative()) {
             // Check if on ground to allow for jumping
             if (this.onGround()) {
                 this.isJumping = false;

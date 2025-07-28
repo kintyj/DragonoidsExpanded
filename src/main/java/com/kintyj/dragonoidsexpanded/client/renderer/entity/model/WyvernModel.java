@@ -5,13 +5,14 @@ import com.kintyj.dragonoidsexpanded.entity.Wyvern;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
 
 public class WyvernModel extends GeoModel<Wyvern> {
 	// Models must be stored in assets/<modid>/geo with subfolders supported inside
 	// the geo folder
 	private static final ResourceLocation model = ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
-			"geo/entity/wyvern.geo.json");
+			"entity/wyvern");
 	// Textures must be stored in assets/<modid>/geo with subfolders supported
 	// inside the textures folder
 	private static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(DragonoidsExpanded.MODID,
@@ -20,20 +21,20 @@ public class WyvernModel extends GeoModel<Wyvern> {
 	// supported inside the animations folder
 	private static final ResourceLocation animation = ResourceLocation.fromNamespaceAndPath(
 			DragonoidsExpanded.MODID,
-			"animations/entity/wyvern.animation.json");
+			"entity/wyvern");
 
 	@Override
-	public ResourceLocation getModelResource(Wyvern object, GeoRenderer<Wyvern> renderer) {
+	public ResourceLocation getModelResource(GeoRenderState renderState) {
 		return WyvernModel.model;
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(Wyvern object, GeoRenderer<Wyvern> renderer) {
-		return WyvernModel.texture;
+	public ResourceLocation getAnimationResource(Wyvern animatable) {
+		return WyvernModel.animation;
 	}
 
 	@Override
-	public ResourceLocation getAnimationResource(Wyvern object) {
-		return WyvernModel.animation;
+	public ResourceLocation getTextureResource(GeoRenderState renderState) {
+		return WyvernModel.texture;
 	}
 }

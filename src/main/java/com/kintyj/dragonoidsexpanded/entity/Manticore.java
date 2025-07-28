@@ -52,8 +52,8 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager.ControllerRegistrar;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -123,14 +123,14 @@ public class Manticore extends TamableAnimal
 
     @Override
     public void registerControllers(ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "attackController", event -> {
+        controllers.add(new AnimationController<>("attackController", event -> {
             return PlayState.CONTINUE;
         }).triggerableAnim("bite", RawAnimation.begin().thenPlay("animation.manticore.bite"))
                 .triggerableAnim("leftStrike", RawAnimation.begin().thenPlay("animation.manticore.left_strike"))
                 .triggerableAnim("rightStrike", RawAnimation.begin().thenPlay("animation.manticore.right_strike"))
                 .triggerableAnim("roar", RawAnimation.begin().thenPlay("animation.manticore.roar")));
 
-        controllers.add(new AnimationController<>(this, "tailController", 20, event -> {
+        controllers.add(new AnimationController<>("tailController", 20, event -> {
             if (event.isMoving()) {
                 return event.setAndContinue(
                         (RawAnimation.begin().thenLoop("animation.manticore.walk_stinger")));
@@ -139,7 +139,7 @@ public class Manticore extends TamableAnimal
             }
 
         }));
-        controllers.add(new AnimationController<>(this, "bodyController", 10, event -> {
+        controllers.add(new AnimationController<>("bodyController", 10, event -> {
             if (event.isMoving()) {
                 if (this.isAggressive()) {
                     return event.setAndContinue((RawAnimation.begin().thenLoop("animation.manticore.sprint")));
