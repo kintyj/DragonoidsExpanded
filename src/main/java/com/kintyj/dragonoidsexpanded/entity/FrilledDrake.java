@@ -323,7 +323,7 @@ public class FrilledDrake extends TamableAnimal
                 float sidewaysAmount = 0.0f;
                 boolean sideways = true;
 
-                if (!this.onGround()) {
+                if (!this.onGround() && this.getDeltaMovement().y > 0 && !this.isInWater()) {
                     return event.setAndContinue(RawAnimation.begin().thenPlay("animation.frilled_drake.in_air"));
                 }
 
