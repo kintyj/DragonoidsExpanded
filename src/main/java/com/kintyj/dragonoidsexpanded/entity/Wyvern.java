@@ -140,6 +140,18 @@ public class Wyvern extends TamableAnimal
     }
     // #endregion\
 
+    public boolean AngyDino(Entity target) {
+        if (target instanceof Wyvern) {
+            return ((Wyvern)target).getColor() != this.getColor();
+        } else {
+            return !(target instanceof Creeper
+                || target instanceof Bat
+                || target instanceof GlowSquid
+                || (this.getOwner() != null && this.getOwner().is(target))
+                || (this.getOwner() != null && !(target instanceof Mob)));
+        }
+    }
+
     // #region Animations
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -210,7 +222,7 @@ public class Wyvern extends TamableAnimal
             if (timer <= 0) {
                 timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);
                 triggerAnim("attackController", "yawn");
-                playSound(DragonoidsExpanded.WYVERN_CALL.get());
+                playSound(DragonoidsExpanded.WYVERN_CALL.get(), 3.0, 1.0);
 
             } else {
                 timer--;
@@ -267,13 +279,7 @@ public class Wyvern extends TamableAnimal
                                                                  // isn't doing anything else (usually)
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<>(
-                        new TargetOrRetaliate<>().attackablePredicate(
-                                (target) -> !(target instanceof Wyvern
-                                        || target instanceof Creeper
-                                        || target instanceof Bat
-                                        || target instanceof GlowSquid
-                                        || (this.getOwner() != null && this.getOwner().is(target))
-                                        || (this.getOwner() != null && !(target instanceof Mob))))),
+                        new TargetOrRetaliate<>().attackablePredicate(this::AngyDino)),
                 new FirstApplicableBehaviour<>(
                         new TargetOrRetaliate<>(),
                         new SetPlayerLookTarget<>(),
