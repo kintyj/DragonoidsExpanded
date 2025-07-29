@@ -222,7 +222,7 @@ public class Wyvern extends TamableAnimal
             if (timer <= 0) {
                 timer = getRandom().nextIntBetweenInclusive(yawnDelayMin, yawnDelayMax);
                 triggerAnim("attackController", "yawn");
-                playSound(DragonoidsExpanded.WYVERN_CALL.get(), 3.0, 1.0);
+                playSound(DragonoidsExpanded.WYVERN_CALL.get(), 3.0f, 1.0f);
 
             } else {
                 timer--;
