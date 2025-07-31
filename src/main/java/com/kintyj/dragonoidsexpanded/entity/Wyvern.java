@@ -263,12 +263,9 @@ public class Wyvern extends TamableAnimal
     }
 
     @Override
-    public BrainActivityGroup<? extends Wyvern> getCoreTasks() { // These are the tasks that run all the time
-                                                                 // (usually)
+    public BrainActivityGroup<? extends Wyvern> getCoreTasks() { // These are the tasks that run all the time (usually)
         return BrainActivityGroup.coreTasks(
-
                 new LookAtTarget<Wyvern>(),
-
                 new MoveToWalkTarget<>()); // Walk towards
                                            // the current
                                            // walk target
@@ -296,18 +293,6 @@ public class Wyvern extends TamableAnimal
         return BrainActivityGroup.fightTasks(new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>(),
                 new FirstApplicableBehaviour<>(
-                        new LeapAtTarget<>(0)
-                                .verticalJumpStrength(((mob, entity) -> {
-                                    float distanceToEntity = (float) Math.abs(entity.position().y - mob.position().y);
-                                    return 0.5f + distanceToEntity / 6f;
-                                }))
-                                .whenStarting(entity -> {
-                                    setAggressive(true);
-                                })
-                                .whenStopping(entity -> setAggressive(false)).startCondition(entity -> {
-                                    return (BrainUtil.getTargetOfEntity(entity) != null
-                                            && BrainUtil.getTargetOfEntity(entity).distanceTo(entity) > 7);
-                                }).cooldownFor((entity) -> 120), // Set the walk target to the attack target
                         new AnimatableMeleeAttack<>(12).whenStarting(entity -> {
                             setAggressive(true);
                             triggerAnim("attackController", "bite");
